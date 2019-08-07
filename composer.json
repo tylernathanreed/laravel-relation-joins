@@ -1,0 +1,12 @@
+{
+    "name": "reedware/laravel-relation-joins",
+    "description": "Adds the ability to join on a relationship by name.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tyler Reed",
+            "email": "tylernathanreed@gmail.com"
+        }
+    ],
+    "require": {}
+}
