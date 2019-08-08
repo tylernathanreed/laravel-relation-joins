@@ -1,8 +1,11 @@
 <?php
 
+namespace Reedware\LaravelRelationJoins\Tests;
+
 use Mockery as m;
 use RuntimeException;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Container\Container;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Query\Builder as BaseBuilder;
+use Reedware\LaravelRelationJoins\LaravelRelationJoinServiceProvider;
 
 class DatabaseEloquentRelationJoinTest extends TestCase
 {
@@ -19,6 +23,7 @@ class DatabaseEloquentRelationJoinTest extends TestCase
         parent::setUp();
 
         $this->setUpConnectionResolver();
+        $this->registerServiceProvider();
     }
 
     protected function setUpConnectionResolver()
@@ -31,6 +36,15 @@ class DatabaseEloquentRelationJoinTest extends TestCase
             return new BaseBuilder($conn, $grammar, $processor);
         });
         $resolver->shouldReceive('connection')->andReturn($conn);
+    }
+
+    protected function registerServiceProvider()
+    {
+        $container = Container::getInstance();
+
+        $provider = $container->make(LaravelRelationJoinServiceProvider::class, ['app' => $container]);
+
+        $provider->boot();
     }
 
     protected function tearDown(): void

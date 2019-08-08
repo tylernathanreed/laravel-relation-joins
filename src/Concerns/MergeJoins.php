@@ -1,10 +1,8 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Query;
+namespace Reedware\LaravelRelationJoins\Concerns;
 
-use Illuminate\Database\Query\Builder as Query;
-
-class Builder extends Query
+trait MergeJoins
 {
     /**
      * Merge an array of join clauses and bindings.
