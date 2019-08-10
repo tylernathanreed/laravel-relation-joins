@@ -1,11 +1,10 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Relations;
+namespace Reedware\LaravelRelationJoins\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany as Relation;
 
-class BelongsToMany extends Relation
+trait JoinsBelongsToManyRelations
 {
     /**
      * Adds the constraints for a relationship join.
@@ -46,30 +45,11 @@ class BelongsToMany extends Relation
             $table = $on = $this->table;
         }
 
-        $this->performRelationJoin($table, $on, $query, $type);
+        $query->join($table, $on.'.'.$this->foreignPivotKey, '=', $this->getQualifiedParentKeyName(), $type);
 
         return $query->whereColumn(
             $this->getQualifiedRelatedKeyName(), '=', $on.'.'.$this->relatedPivotKey
         );
-    }
-
-    /**
-     * Set the join clause for the relation query.
-     *
-     * @param  string  $table
-     * @param  string  $on
-     * @param  \Illuminate\Database\Eloquent\Builder|null  $query
-     * @param  string  $type
-     *
-     * @return $this
-     */
-    protected function performRelationJoin($table, $on, $query = null, $type = 'inner')
-    {
-        $query = $query ?: $this->query;
-
-        $query->join($table, $on.'.'.$this->foreignPivotKey, '=', $this->getQualifiedParentKeyName(), $type);
-
-        return $this;
     }
 
     /**

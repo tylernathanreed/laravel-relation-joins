@@ -17,6 +17,6 @@ class EloquentBuilder extends Eloquent
      */
     public static function newFromParent($parent)
     {
-        return (new static($parent->getQuery()))->inheritProperties($parent);
+        return new static($parent->getQuery());
     }
 }

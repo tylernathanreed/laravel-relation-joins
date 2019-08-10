@@ -3,6 +3,7 @@
 namespace Reedware\LaravelRelationJoins\Concerns;
 
 use ReflectionClass;
+use ReflectionProperty;
 
 trait ForwardsParentCalls
 {
@@ -14,7 +15,7 @@ trait ForwardsParentCalls
      */
     public static function newFromParent($parent)
     {
-        return (new static)->inheritProperties($parent);
+        return new static;
     }
 
     /**
@@ -33,7 +34,48 @@ trait ForwardsParentCalls
 
             $property->setAccessible(true);
 
-        	$this->{$property->getName()} = $property->getValue($this);
+        	$this->{$property->getName()} = $property->getValue($parent);
+
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of the specified property from the given parent.
+     *
+     * @param  mixed                       $parent
+     * @param  \ReflectionProperty|string  $property
+     * @return mixed
+     */
+    public static function getParentPropertyValue($parent, $property)
+    {
+        if(is_string($property)) {
+            $property = new ReflectionProperty($parent, $property);
+        }
+
+        $property->setAccessible(true);
+
+        return $property->getValue($parent);
+    }
+
+    /**
+     * Assigns the acquired properties from this class back onto the parent.
+     *
+     * @param  mixed  $parent
+     * @return void
+     */
+    public function assignAcquiredProperties($parent)
+    {
+        foreach ((new ReflectionClass($parent))->getProperties() as $property) {
+
+            if($property->isStatic()) {
+                continue;
+            }
+
+            $property->setAccessible(true);
+
+            $property->setValue($parent, $property->getValue($this));
 
         }
 
@@ -52,7 +94,11 @@ trait ForwardsParentCalls
     {
         $instance = static::newFromParent($parent);
 
+        $instance->inheritProperties($parent);
+
         $result = $instance->{$method}(...$arguments);
+
+        $instance->assignAcquiredProperties($parent);
 
         return $result === $instance ? $parent : $result;
     }

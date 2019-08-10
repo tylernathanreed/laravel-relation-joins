@@ -1,11 +1,10 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Relations;
+namespace Reedware\LaravelRelationJoins\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough as Relation;
 
-class HasManyThrough extends Relation
+trait JoinsHasOneOrManyThroughRelations
 {
     /**
      * Add the constraints for a relationship query.
@@ -57,24 +56,6 @@ class HasManyThrough extends Relation
         return $query->whereColumn(
             $query->qualifyColumn($this->secondKey), '=', $on.'.'.$this->secondLocalKey
         );
-    }
-
-    /**
-     * Set the join clause for the relation query.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder|null  $query
-     * @param  string  $type
-     * @return $this
-     */
-    protected function performRelationJoin($query = null, $type = 'inner')
-    {
-        $query = $query ?: $this->query;
-
-        $query->join($this->throughParent->getTable(), function ($join) {
-            $join->on($this->getQualifiedFirstKeyName(), '=', $this->getQualifiedLocalKeyName());
-        }, null, null, $type);
-
-        return $this;
     }
 
     /**

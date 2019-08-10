@@ -1,11 +1,10 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Relations;
+namespace Reedware\LaravelRelationJoins\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo as Relation;
 
-class BelongsTo extends Relation
+trait JoinsBelongsToRelations
 {
     /**
      * Adds the constraints for a relationship join.

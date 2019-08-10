@@ -1,11 +1,10 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Relations;
+namespace Reedware\LaravelRelationJoins\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany as Relation;
 
-abstract class HasOneOrMany extends Relation
+trait JoinsHasOneOrManyRelations
 {
     /**
      * Adds the constraints for a relationship join.

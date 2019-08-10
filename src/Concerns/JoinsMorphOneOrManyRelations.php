@@ -1,11 +1,15 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Relations;
+namespace Reedware\LaravelRelationJoins\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 
-abstract class MorphOneOrMany extends HasOneOrMany
+trait JoinsMorphOneOrManyRelations
 {
+    use JoinsHasOneOrManyRelations {
+        getRelationJoinQuery as getMorphOneOrManyParentRelationJoinQuery;
+    }
+
     /**
      * Adds the constraints for a relationship join.
      *
@@ -17,7 +21,7 @@ abstract class MorphOneOrMany extends HasOneOrMany
      */
     public function getRelationJoinQuery(Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
     {
-        return parent::getRelationJoinQuery($query, $parentQuery, $type, $alias)->where(
+        return $this->getMorphOneOrManyParentRelationJoinQuery($query, $parentQuery, $type, $alias)->where(
             $this->morphType, '=', $this->morphClass
         );
     }
@@ -33,7 +37,7 @@ abstract class MorphOneOrMany extends HasOneOrMany
      */
     public function getRelationJoinQueryForSelfRelation(Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
     {
-        return parent::getRelationJoinQueryForSelfRelation($query, $parentQuery, $type, $alias)->where(
+        return $this->getMorphOneOrManyParentRelationJoinQueryForSelfRelation($query, $parentQuery, $type, $alias)->where(
             $this->morphType, '=', $this->morphClass
         );
     }
