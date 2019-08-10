@@ -58,7 +58,7 @@ User::query()->joinRelation('posts.comments');
 This is honestly where I felt a lot of the existing solutions were lacking. They either created custom "where" clauses, or limited the query to only supporting certain types of "where" clauses. With this package, there are no known restrictions, and the means of adding the constraints is very intuitive:
 
 ```php
-User::query()->joinRelation('posts', function($join) {
+User::query()->joinRelation('posts', function ($join) {
     $join->where('posts.created_at', '>=', '2019-01-01');
 });
 ```
@@ -67,14 +67,14 @@ This will tack on the specific constraints to the already provided relationship 
 
 ```php
 // Disabling soft deletes for only the "Post" model
-User::query()->joinRelation('posts', function($join) {
+User::query()->joinRelation('posts', function ($join) {
     $join->withTrashed();
 });
 ```
 
 ```php
 // Using a query scope on the "Post" model
-User::query()->joinRelation('posts', function($join) {
+User::query()->joinRelation('posts', function ($join) {
     $join->active();
 });
 ```
@@ -89,9 +89,9 @@ Here's an example:
 
 ```php
 // Using a query scope on the "Post" model
-User::query()->joinRelation('posts', function($join) {
+User::query()->joinRelation('posts', function ($join) {
     $join->where('is_active', '=', 1);
-})->joinThroughRelation('posts.comments', function($join) {
+})->joinThroughRelation('posts.comments', function ($join) {
     $join->where('comments.title', 'like', '%looking for something%');
 });
 ```
