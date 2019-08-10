@@ -34,14 +34,9 @@ class DatabaseEloquentRelationJoinTest extends TestCase
 
         $mockConnection->shouldReceive('getQueryGrammar')->andReturn($grammar = new Grammar);
         $mockConnection->shouldReceive('getPostProcessor')->andReturn($mockProcessor = m::mock(Processor::class));
-
-        /*
-        $grammar = new Grammar;
-        $processor = m::mock(Processor::class);
-        $conn->shouldReceive('query')->andReturnUsing(function () use ($conn, $grammar, $processor) {
-            return new BaseBuilder($conn, $grammar, $processor);
-        });
-        */
+        $mockConnection->shouldReceive('query')->andReturnUsing(function () use ($mockConnection, $grammar, $mockProcessor) {
+            return new BaseBuilder($mockConnection, $grammar, $mockProcessor);
+        });        
     }
 
     protected function registerServiceProvider()

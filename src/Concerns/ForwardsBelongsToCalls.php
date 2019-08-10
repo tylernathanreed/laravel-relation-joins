@@ -23,7 +23,7 @@ trait ForwardsBelongsToCalls
                 $parent->getParent(),
                 static::getParentPropertyValue($parent, 'foreignKey'),
                 static::getParentPropertyValue($parent, 'ownerKey'),
-                static::getParentPropertyValue($parent, 'relation')
+                method_exists($parent, 'getRelationName') ? $parent->getRelationName() : static::getParentPropertyValue($parent, 'relation')
             );
         });
     }
