@@ -1,0 +1,27 @@
+dist: xenial
+language: php
+
+env:
+  global:
+    - SETUP=stable
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 7.1
+    - php: 7.1
+      env: SETUP=lowest
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  - phpenv config-rm xdebug.ini || true
+  - travis_retry composer self-update
+
+install:
+  - if [[ $SETUP = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest; fi
+  - if [[ $SETUP = 'lowest' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable --no-suggest; fi
+
+script: vendor/bin/phpunit
