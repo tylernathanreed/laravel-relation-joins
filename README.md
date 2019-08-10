@@ -1,10 +1,28 @@
+# Laravel Relation Joins
+
 This package adds the ability to join on a relationship by name.
+
+## Introduction
 
 Eloquent doesn't offer any tools for joining, so we've been stuck with the base query builder joins. While Eloquent does have the "has" concept for existence, there are still times where you want to return information about the related entities, or aggregate information together.
 
 I've seen other packages out there that try to accompish a goal similar to this one. I tried to get on board with at least one of them, but they all fell short for a number of reasons. Let me first explain the features of this package, and you might see why this one is better (at least what for what I intend to use it for).
 
-## 1. Performing a join via relationship
+## Installation
+
+#### Using Composer
+
+```
+composer install reedware/laravel-relation-joins
+```
+
+#### Versioning
+
+This package was built with the latest version of Laravel in mind, but support goes back to Laravel 5.5.
+
+## Usage
+
+### 1. Performing a join via relationship
 
 This is the entire point of this package, so here's a basic example:
 
@@ -22,7 +40,7 @@ User::query()->rightJoinRelation('posts');
 User::query()->crossJoinRelation('posts');
 ```
 
-## 2. Joining to nested relationships
+### 2. Joining to nested relationships
 
 One of the shining abilities of being able to join through relationships shows up when you have to navigate through a nested web of relationships. When trying to join on a relation through another relation, you can use the "dot" syntax, similar to how the "has" and "with" concepts work:
 
@@ -30,7 +48,7 @@ One of the shining abilities of being able to join through relationships shows u
 User::query()->joinRelation('posts.comments');
 ```
 
-## 3. Adding join constraints
+### 3. Adding join constraints
 
 This is honestly where I felt a lot of the existing solutions were lacking. They either created custom "where" clauses, or limited the query to only supporting certain types of "where" clauses. With this package, there are no known restrictions, and the means of adding the constraints is very intuitive:
 
@@ -56,7 +74,7 @@ User::query()->joinRelation('posts', function($join) {
 });
 ```
 
-## 4. Joining through relationships
+### 4. Joining through relationships
 
 There are times where you want to tack on clauses for intermediate joins. This can get a bit tricky in some other packages (by trying to automatically deduce whether or not to apply a join, or by not handling this situation at all).
 
@@ -75,7 +93,7 @@ User::query()->joinRelation('posts', function($join) {
 
 The second part, `joinThroughRelation`, will only apply the `comments` relation join, but it will do so as if it came from the `Post` model.
 
-## 5. Joining on circular relationships
+### 5. Joining on circular relationships
 
 This package also supports joining on circular relations, and handles it the same way the "has" concept does:
 
@@ -92,7 +110,7 @@ User::query()->joinRelation('employees');
 
 Now clearly, if you're wanting to apply constraints on the `employees` relation, having this sort of naming convention isn't desirable. This brings me to the next feature:
 
-## 6. Aliasing joins
+### 6. Aliasing joins
 
 You could alias the above example like so:
 
@@ -133,7 +151,7 @@ User::query()->joinRelation('roles as users_roles,positions');
 // SQL: select * from "users" inner join "role_user" as "position_user" on "position_user"."user_id" = "users"."id" inner join "roles" as "positions" on "positions"."id" = "position_user"."role_id"
 ```
 
-## 7. Everything else
+### 7. Everything else
 
 Everything else you would need for joins: aggregates, grouping, ordering, selecting, etc. all go through the already established query builder, where none of that was changed. Meaning I can easily do something like this:
 
