@@ -27,8 +27,12 @@ trait JoinsBelongsToRelations
             $query->getModel()->setTable($alias);
         }
 
+        $foreignKeyName = method_exists($this, 'getQualifiedForeignKeyName')
+            ? $this->getQualifiedForeignKeyName()
+            : $this->getQualifiedForeignKey();
+
         return $query->whereColumn(
-            $query->qualifyColumn($this->ownerKey), '=', $this->getQualifiedForeignKeyName()
+            $this->getQualifiedOwnerKeyName(), '=', $foreignKeyName
         );
     }
 }

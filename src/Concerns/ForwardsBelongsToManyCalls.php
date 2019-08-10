@@ -18,16 +18,16 @@ trait ForwardsBelongsToManyCalls
     public static function newFromParent($parent)
     {
         return static::noConstraints(function() use ($parent) {
-            $using = $parent->getPivotClass();
+            $using = static::getParentPropertyValue($parent, 'using');
 
             $relation = new BelongsToMany(
                 $parent->getQuery(),
                 $parent->getParent(),
                 $parent->getTable(),
-                $parent->getForeignPivotKeyName(),
-                $parent->getRelatedPivotKeyName(),
-                $parent->getParentKeyName(),
-                $parent->getRelatedKeyName(),
+                static::getParentPropertyValue($parent, 'foreignPivotKey'),
+                static::getParentPropertyValue($parent, 'relatedPivotKey'),
+                static::getParentPropertyValue($parent, 'parentKey'),
+                static::getParentPropertyValue($parent, 'relatedKey'),
                 $parent->getRelationName()
             );
 

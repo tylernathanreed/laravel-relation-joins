@@ -37,7 +37,7 @@ trait JoinsRelationships
         }
 
         $joinQuery = $relation->getRelationJoinQuery(
-            $relation->getRelated()->newQueryWithoutRelationships(), $relatedQuery ?: $this, $type, $alias ?? null
+            $relation->getRelated()->newQuery(), $relatedQuery ?: $this, $type, $alias ?? null
         );
 
         // If we're simply passing through a relation, then we want to advance the relation

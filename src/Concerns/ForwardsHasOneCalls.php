@@ -22,7 +22,7 @@ trait ForwardsHasOneCalls
                 $parent->getQuery(),
                 $parent->getParent(),
                 $parent->getQualifiedForeignKeyName(),
-                $parent->getLocalKeyName()
+                static::getParentPropertyValue($parent, 'localKey')
             );
         });
     }

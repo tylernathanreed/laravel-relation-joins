@@ -53,7 +53,7 @@ trait ForwardsRelationCalls
         ForwardsHasManyThroughCalls::getRelationJoinQuery as getHasManyThroughRelationJoinQuery;
         ForwardsHasManyThroughCalls::newFromParent as newHasManyThroughFromParent;
 
-        ForwardsHasManyThroughCalls::getQualifiedSecondLocalKeyName insteadof ForwardsHasOneThroughCalls;
+        ForwardsHasManyThroughCalls::getRelationCountHash insteadof ForwardsHasOneThroughCalls;
     }
 
     use ForwardsMorphOneCalls {

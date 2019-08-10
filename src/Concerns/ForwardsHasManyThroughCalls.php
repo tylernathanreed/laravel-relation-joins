@@ -22,10 +22,10 @@ trait ForwardsHasManyThroughCalls
                 $parent->getQuery(),
                 static::getParentPropertyValue($parent, 'farParent'),
                 $parent->getParent(),
-                $parent->getFirstKeyName(),
-                $parent->getForeignKeyName(),
-                $parent->getLocalKeyName(),
-                $parent->getSecondLocalKeyName()
+                static::getParentPropertyValue($parent, 'firstKey'),
+                static::getParentPropertyValue($parent, 'secondKey'),
+                static::getParentPropertyValue($parent, 'localKey'),
+                static::getParentPropertyValue($parent, 'secondLocalKey')
             );
         });
     }

@@ -20,10 +20,10 @@ trait ForwardsBelongsToCalls
         return static::noConstraints(function() use ($parent) {
             return new BelongsTo(
                 $parent->getQuery(),
-                $parent->getChild(),
-                $parent->getForeignKeyName(),
-                $parent->getOwnerKeyName(),
-                $parent->getRelationName()
+                $parent->getParent(),
+                static::getParentPropertyValue($parent, 'foreignKey'),
+                static::getParentPropertyValue($parent, 'ownerKey'),
+                static::getParentPropertyValue($parent, 'relation')
             );
         });
     }

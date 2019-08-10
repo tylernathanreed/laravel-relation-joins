@@ -3,9 +3,17 @@
 namespace Reedware\LaravelRelationJoins\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Reedware\LaravelRelationJoins\Qualify;
 
 trait JoinsHasOneOrManyThroughRelations
 {
+    /**
+     * The count of self joins.
+     *
+     * @var int
+     */
+    protected static $selfJoinCount = 0;
+
     /**
      * Add the constraints for a relationship query.
      *
@@ -46,7 +54,7 @@ trait JoinsHasOneOrManyThroughRelations
         }
 
         $query->join($table, function ($join) use ($parentQuery, $on) {
-            $join->on($on.'.'.$this->firstKey, '=', $parentQuery->qualifyColumn($this->localKey));
+            $join->on($on.'.'.$this->firstKey, '=', Qualify::column($parentQuery, $this->localKey));
 
             if ($this->throughParentSoftDeletes()) {
                 $join->whereNull($on.'.'.$this->throughParent->getDeletedAtColumn());
@@ -54,17 +62,17 @@ trait JoinsHasOneOrManyThroughRelations
         }, null, null, $type);
 
         return $query->whereColumn(
-            $query->qualifyColumn($this->secondKey), '=', $on.'.'.$this->secondLocalKey
+            $this->getQualifiedForeignKeyName(), '=', $on.'.'.$this->secondLocalKey
         );
     }
 
     /**
-     * Get the qualified second local key on the through parent model.
+     * Get a relationship join table hash.
      *
      * @return string
      */
-    public function getQualifiedSecondLocalKeyName()
+    public function getRelationCountHash()
     {
-        return $this->throughParent->qualifyColumn($this->secondLocalKey);
+        return 'laravel_reserved_'.static::$selfJoinCount++;
     }
 }

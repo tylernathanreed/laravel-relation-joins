@@ -23,7 +23,7 @@ trait ForwardsMorphOneCalls
                 $parent->getParent(),
                 $parent->getQualifiedMorphType(),
                 $parent->getQualifiedForeignKeyName(),
-                $parent->getLocalKeyName()
+                static::getParentPropertyValue($parent, 'localKey')
             );
         });
     }
