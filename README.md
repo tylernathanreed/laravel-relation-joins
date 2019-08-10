@@ -18,7 +18,7 @@ I've seen other packages out there that try to accompish a goal similar to this 
 #### Using Composer
 
 ```
-composer install reedware/laravel-relation-joins
+composer require reedware/laravel-relation-joins
 ```
 
 #### Versioning
