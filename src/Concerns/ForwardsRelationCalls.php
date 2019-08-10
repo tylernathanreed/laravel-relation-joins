@@ -17,7 +17,12 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 trait ForwardsRelationCalls
 {
-    use ForwardsParentCalls;
+    use ForwardsParentCalls {
+        ForwardsParentCalls::inheritProperties as __inheritProperties;
+        ForwardsParentCalls::getParentPropertyValue as __getParentPropertyValue;
+        ForwardsParentCalls::assignAcquiredProperties as __assignAcquiredProperties;
+        ForwardsParentCalls::callFromParent as __callFromParent;
+    }
 
     use ForwardsBelongsToCalls {
         ForwardsBelongsToCalls::getRelationJoinQuery as getBelongsToRelationJoinQuery;
@@ -47,6 +52,8 @@ trait ForwardsRelationCalls
     use ForwardsHasManyThroughCalls {
         ForwardsHasManyThroughCalls::getRelationJoinQuery as getHasManyThroughRelationJoinQuery;
         ForwardsHasManyThroughCalls::newFromParent as newHasManyThroughFromParent;
+
+        ForwardsHasManyThroughCalls::getQualifiedSecondLocalKeyName insteadof ForwardsHasOneThroughCalls;
     }
 
     use ForwardsMorphOneCalls {
@@ -57,6 +64,9 @@ trait ForwardsRelationCalls
     use ForwardsMorphManyCalls {
         ForwardsMorphManyCalls::getRelationJoinQuery as getMorphManyRelationJoinQuery;
         ForwardsMorphManyCalls::newFromParent as newMorphManyFromParent;
+
+        ForwardsMorphManyCalls::getRelationJoinQueryForSelfRelation insteadof ForwardsMorphOneCalls;
+        ForwardsMorphManyCalls::getMorphOneOrManyParentRelationJoinQuery insteadof ForwardsMorphOneCalls;
     }
 
     use ForwardsMorphToManyCalls {
@@ -164,5 +174,52 @@ trait ForwardsRelationCalls
         }
 
         throw new InvalidArgumentException('Unable to construct joinable relation instance from [' . get_class($parent) . '].');
+    }
+
+    /**
+     * Inherits the properties from the specified parent class.
+     *
+     * @param  mixed  $parent
+     * @return void
+     */
+    public function inheritProperties($parent)
+    {
+        return $this->__inheritProperties($parent);
+    }
+
+    /**
+     * Returns the value of the specified property from the given parent.
+     *
+     * @param  mixed                       $parent
+     * @param  \ReflectionProperty|string  $property
+     * @return mixed
+     */
+    public static function getParentPropertyValue($parent, $property)
+    {
+        return static::__getParentPropertyValue($parent, $property);
+    }
+
+    /**
+     * Assigns the acquired properties from this class back onto the parent.
+     *
+     * @param  mixed  $parent
+     * @return void
+     */
+    public function assignAcquiredProperties($parent)
+    {
+        return $this->__assignAcquiredProperties($parent);
+    }
+
+    /**
+     * Handles an incoming call from the specified parent instance.
+     *
+     * @param  mixed   $parent
+     * @param  string  $method
+     * @param  array   $arguments
+     * @return mixed
+     */
+    public static function callFromParent($parent, $method, $arguments = [])
+    {
+        return static::__callFromParent($parent, $method, $arguments);
     }
 }
