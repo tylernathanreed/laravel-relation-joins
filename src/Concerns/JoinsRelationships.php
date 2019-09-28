@@ -5,6 +5,7 @@ namespace Reedware\LaravelRelationJoins\Concerns;
 use Closure;
 use RuntimeException;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -104,11 +105,31 @@ trait JoinsRelationships
             $this->mergeJoins($baseJoinQuery->joins, $baseJoinQuery->bindings['join']);
         }
 
-        return $this->join($baseJoinQuery->from, function ($join) use ($baseJoinQuery) {
-            if (! empty($baseJoinQuery->wheres)) {
-                $join->mergeWheres($baseJoinQuery->wheres, $baseJoinQuery->bindings['where']);
+        $this->join($baseJoinQuery->from, function ($join) use ($baseJoinQuery) {
+            if (empty($wheres = $baseJoinQuery->wheres)) {
+                return;
             }
+
+            $wheres = array_map(function($where) {
+                if(!isset($where['query'])) {
+                    return $where;
+                }
+
+                $joinClause = new JoinClause($where['query'], 'inner', $where['query']->from);
+
+                foreach(array_keys(get_object_vars($where['query'])) as $key) {
+                    $joinClause->{$key} = $where['query']->{$key};
+                }
+
+                $where['query'] = $joinClause;
+
+                return $where;
+            }, $wheres);
+
+            $join->mergeWheres($wheres, $baseJoinQuery->bindings['where']);
         }, null, null, $type);
+
+        return $this;
     }
 
     /**
