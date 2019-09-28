@@ -772,6 +772,21 @@ class DatabaseEloquentRelationJoinTest extends TestCase
 
         $this->assertEquals('select * from "users" inner join "suppliers" on "suppliers"."id" = "users"."supplier_id" and ("supplier"."state" in (?, ?, ?) or "supplier"."has_international_restrictions" = ?)', $builder->toSql());
     }
+
+    public function testBelongsToWithRecursiveNestedClauseRelationJoin()
+    {
+        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('supplier', function($join) {
+            $join->where(function($join) {
+                $join->whereIn('supplier.state', ['AZ', 'CA', 'TX']);
+                $join->orWhere(function($join) {
+                    $join->where('supplier.has_international_restrictions', 1);
+                    $join->where('supplier.country', '!=', 'US');
+                });
+            });
+        });
+
+        $this->assertEquals('select * from "users" inner join "suppliers" on "suppliers"."id" = "users"."supplier_id" and ("supplier"."state" in (?, ?, ?) or ("supplier"."has_international_restrictions" = ? and "supplier"."country" != ?))', $builder->toSql());
+    }
 }
 
 class EloquentRelationJoinModelStub extends Model
