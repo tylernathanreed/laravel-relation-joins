@@ -106,30 +106,52 @@ trait JoinsRelationships
         }
 
         $this->join($baseJoinQuery->from, function ($join) use ($baseJoinQuery) {
-            if (empty($wheres = $baseJoinQuery->wheres)) {
+            if (empty($baseJoinQuery->wheres)) {
                 return;
             }
 
-            $wheres = array_map(function($where) {
-                if(!isset($where['query'])) {
-                    return $where;
-                }
+            // There's an issue with mixing query builder where clauses
+            // with join builder where clauses. To solve for this, we
+            // have to recursively replace the nested where queries.
 
-                $joinClause = new JoinClause($where['query'], 'inner', $where['query']->from);
+            $this->replaceWhereNestedQueryBuildersWithJoinBuilders($baseJoinQuery);
 
-                foreach(array_keys(get_object_vars($where['query'])) as $key) {
-                    $joinClause->{$key} = $where['query']->{$key};
-                }
-
-                $where['query'] = $joinClause;
-
-                return $where;
-            }, $wheres);
-
-            $join->mergeWheres($wheres, $baseJoinQuery->bindings['where']);
+            $join->mergeWheres($baseJoinQuery->wheres, $baseJoinQuery->bindings['where']);
         }, null, null, $type);
 
         return $this;
+    }
+
+    /**
+     * Replaces the query builders in nested "where" clauses with join builders.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     *
+     * @return void
+     */
+    protected function replaceWhereNestedQueryBuildersWithJoinBuilders($query)
+    {
+        $wheres = $query->wheres;
+
+        $wheres = array_map(function($where) {
+            if(!isset($where['query'])) {
+                return $where;
+            }
+
+            $this->replaceWhereNestedQueryBuildersWithJoinBuilders($where['query']);
+
+            $joinClause = new JoinClause($where['query'], 'inner', $where['query']->from);
+
+            foreach(array_keys(get_object_vars($where['query'])) as $key) {
+                $joinClause->{$key} = $where['query']->{$key};
+            }
+
+            $where['query'] = $joinClause;
+
+            return $where;
+        }, $wheres);
+
+        $query->wheres = $wheres;
     }
 
     /**
