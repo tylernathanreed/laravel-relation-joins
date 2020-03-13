@@ -3,6 +3,8 @@
 [![Latest Stable Version](https://poser.pugx.org/reedware/laravel-relation-joins/v/stable)](https://packagist.org/packages/reedware/laravel-relation-joins)
 [![Total Downloads](https://poser.pugx.org/reedware/laravel-relation-joins/downloads)](https://packagist.org/packages/reedware/laravel-relation-joins)
 [![Laravel Version](https://img.shields.io/badge/Laravel-5.5%2B-blue)](https://laravel.com/)
+[![Laravel Version](https://img.shields.io/badge/Laravel-6.x-blue)](https://laravel.com/)
+[![Laravel Version](https://img.shields.io/badge/Laravel-7.x-blue)](https://laravel.com/)
 [![Build Status](https://travis-ci.com/tylernathanreed/laravel-relation-joins.svg?branch=master)](https://travis-ci.com/tylernathanreed/laravel-relation-joins)
 
 This package adds the ability to join on a relationship by name.
