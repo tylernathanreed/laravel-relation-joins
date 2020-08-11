@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Query\Builder as BaseBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Reedware\LaravelRelationJoins\LaravelRelationJoinServiceProvider;
 
 class DatabaseEloquentRelationJoinTest extends TestCase
