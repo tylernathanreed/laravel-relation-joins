@@ -4,6 +4,7 @@ namespace Reedware\LaravelRelationJoins\Tests;
 
 use Mockery as m;
 use RuntimeException;
+use Illuminate\Support\Arr;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
 use Illuminate\Database\Connection;
@@ -14,16 +15,38 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Query\Builder as BaseBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Reedware\LaravelRelationJoins\LaravelRelationJoinServiceProvider;
 
 class DatabaseEloquentRelationJoinTest extends TestCase
 {
+    protected $version;
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->assignLaravelVersion();
         $this->setUpConnectionResolver();
         $this->registerServiceProvider();
+    }
+
+    protected function assignLaravelVersion()
+    {
+        $this->version = static::getLaravelVersion();
+    }
+
+    public static function getLaravelVersion()
+    {
+        $composer = json_decode(file_get_contents(__DIR__ . '/../composer.lock'));
+
+        if(is_null($composer)) {
+            throw new RuntimeException('Unable to determine Laravel Version.');
+        }
+
+        return substr(Arr::first($composer->packages, function($package) {
+            return $package->name == 'illuminate/support';
+        })->version, 1);
     }
 
     protected function setUpConnectionResolver()
@@ -51,6 +74,11 @@ class DatabaseEloquentRelationJoinTest extends TestCase
     protected function tearDown(): void
     {
         m::close();
+    }
+
+    public function isVersionAfter($version)
+    {
+        return version_compare($this->version, $version) >= 0;
     }
 
     public function testSimpleHasOneRelationJoin()
@@ -457,7 +485,11 @@ class DatabaseEloquentRelationJoinTest extends TestCase
     {
         $builder = (new EloquentCountryModelStub)->newQuery()->joinRelation('postsThroughSoftDeletingUser');
 
-        $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
+        if($this->isVersionAfter('7.10.0')) {
+            $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
+        } else {
+            $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
+        }
     }
 
     public function testChildSoftDeletesHasManyThroughRelationJoin()
@@ -527,7 +559,11 @@ class DatabaseEloquentRelationJoinTest extends TestCase
     {
         $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('employeePosts as employees,posts');
 
-        $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id" and "employees"."deleted_at" is null inner join "posts" on "posts"."user_id" = "employees"."id" and "users"."deleted_at" is null where "users"."deleted_at" is null', $builder->toSql());
+        if($this->isVersionAfter('7.10.0')) {
+            $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id" and "employees"."deleted_at" is null inner join "posts" on "posts"."user_id" = "employees"."id" where "users"."deleted_at" is null', $builder->toSql());
+        } else {
+            $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id" and "employees"."deleted_at" is null inner join "posts" on "posts"."user_id" = "employees"."id" and "users"."deleted_at" is null where "users"."deleted_at" is null', $builder->toSql());
+        }
     }
 
     public function testHasManySelfThroughRelationJoin()
@@ -541,7 +577,11 @@ class DatabaseEloquentRelationJoinTest extends TestCase
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('employeesThroughSoftDeletingDepartment as employees');
 
-        $this->assertEquals('select * from "users" inner join "departments" on "departments"."supervisor_id" = "users"."id" and "departments"."deleted_at" is null inner join "users" as "employees" on "employees"."department_id" = "departments"."id" and "departments"."deleted_at" is null', $builder->toSql());
+        if($this->isVersionAfter('7.10.0')) {
+            $this->assertEquals('select * from "users" inner join "departments" on "departments"."supervisor_id" = "users"."id" and "departments"."deleted_at" is null inner join "users" as "employees" on "employees"."department_id" = "departments"."id"', $builder->toSql());
+        } else {
+            $this->assertEquals('select * from "users" inner join "departments" on "departments"."supervisor_id" = "users"."id" and "departments"."deleted_at" is null inner join "users" as "employees" on "employees"."department_id" = "departments"."id" and "departments"."deleted_at" is null', $builder->toSql());
+        }
     }
 
     public function testBelongsToManySelfRelationJoin()
@@ -786,6 +826,13 @@ class DatabaseEloquentRelationJoinTest extends TestCase
         });
 
         $this->assertEquals('select * from "users" inner join "suppliers" on "suppliers"."id" = "users"."supplier_id" and ("supplier"."state" in (?, ?, ?) or ("supplier"."has_international_restrictions" = ? and "supplier"."country" != ?))', $builder->toSql());
+    }
+
+    public function testReflectionUsingCustomBuilder()
+    {
+        $builder = (new EloquentUserModelWithCustomBuilderStub)->newQuery()->joinRelation('roles');
+
+        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
     }
 }
 
@@ -1157,4 +1204,32 @@ class EloquentSoftDeletingUserRolePivotStub extends EloquentRelationJoinPivotStu
     use SoftDeletes;
 
     protected $table = 'role_user';
+}
+
+class EloquentUserModelWithCustomBuilderStub extends EloquentUserModelStub
+{
+    /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
+    public function newEloquentBuilder($query)
+    {
+        return new CustomBuilder($query);
+    }
+}
+
+class CustomBuilder extends EloquentBuilder
+{
+    /**
+     * The methods that should be returned from query builder.
+     *
+     * @var array
+     */
+    protected $passthru = [
+        'insert', 'insertGetId', 'getBindings', 'toSql',
+        'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'sum', 'getConnection',
+        'myCustomOverrideforTesting'
+    ];
 }
