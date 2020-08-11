@@ -67,15 +67,24 @@ trait ForwardsParentCalls
      */
     public function assignAcquiredProperties($parent)
     {
-        foreach ((new ReflectionClass($parent))->getProperties() as $property) {
+        $self = new ReflectionClass($this);
 
-            if($property->isStatic()) {
+        foreach ((new ReflectionClass($parent))->getProperties() as $parentProperty) {
+
+            if(!$self->hasProperty($parentProperty->getName())) {
                 continue;
             }
 
-            $property->setAccessible(true);
+            $selfProperty = $self->getProperty($parentProperty->getName());
 
-            $property->setValue($parent, $property->getValue($this));
+            if($parentProperty->isStatic()) {
+                continue;
+            }
+
+            $parentProperty->setAccessible(true);
+            $selfProperty->setAccessible(true);
+
+            $parentProperty->setValue($parent, $selfProperty->getValue($this));
 
         }
 
