@@ -24,10 +24,10 @@ cache:
 before_install:
   - phpenv config-rm xdebug.ini || true
   - travis_retry composer self-update
-  - composer show -D
 
 install:
   - if [[ $SETUP = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest; fi
   - if [[ $SETUP = 'lowest' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable --no-suggest; fi
+  - composer show -D
 
 script: vendor/bin/phpunit
