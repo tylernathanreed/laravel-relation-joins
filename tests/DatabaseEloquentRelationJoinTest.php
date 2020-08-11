@@ -787,6 +787,13 @@ class DatabaseEloquentRelationJoinTest extends TestCase
 
         $this->assertEquals('select * from "users" inner join "suppliers" on "suppliers"."id" = "users"."supplier_id" and ("supplier"."state" in (?, ?, ?) or ("supplier"."has_international_restrictions" = ? and "supplier"."country" != ?))', $builder->toSql());
     }
+
+    public function testReflectionUsingCustomBuilder()
+    {
+        $builder = (new EloquentUserModelWithCustomBuilderStub)->newQuery()->joinRelation('roles');
+
+        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
+    }
 }
 
 class EloquentRelationJoinModelStub extends Model
@@ -1157,4 +1164,32 @@ class EloquentSoftDeletingUserRolePivotStub extends EloquentRelationJoinPivotStu
     use SoftDeletes;
 
     protected $table = 'role_user';
+}
+
+class EloquentUserModelWithCustomBuilderStub extends EloquentUserModelStub
+{
+    /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
+    public function newEloquentBuilder($query)
+    {
+        return new CustomBuilder($query);
+    }
+}
+
+class CustomBuilder extends EloquentBuilder
+{
+    /**
+     * The methods that should be returned from query builder.
+     *
+     * @var array
+     */
+    protected $passthru = [
+        'insert', 'insertGetId', 'getBindings', 'toSql',
+        'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'sum', 'getConnection',
+        'myCustomOverrideforTesting'
+    ];
 }
