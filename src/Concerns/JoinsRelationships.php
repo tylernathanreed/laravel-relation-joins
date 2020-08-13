@@ -138,6 +138,10 @@ trait JoinsRelationships
                 return $where;
             }
 
+            if($where['type'] == 'Exists' || $where['type'] == 'NotExists') {
+                return $where;
+            }
+
             $this->replaceWhereNestedQueryBuildersWithJoinBuilders($where['query']);
 
             $joinClause = new JoinClause($where['query'], 'inner', $where['query']->from);
