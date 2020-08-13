@@ -1709,7 +1709,45 @@ class DatabaseEloquentRelationJoinTest extends TestCase
         });
 
         $this->assertEquals('select * from "users" inner join "suppliers" on "suppliers"."id" = "users"."supplier_id" and ("supplier"."state" in (?, ?, ?) or ("supplier"."has_international_restrictions" = ? and "supplier"."country" != ?))', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));        
+        $this->assertEquals(CustomBuilder::class, get_class($builder));
+    }
+
+    public function testHasRelationWithinRelationJoin()
+    {
+        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function($join) {
+            $join->has('comments');
+        });
+
+        $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and exists (select * from "comments" where "posts"."id" = "comments"."post_id")', $builder->toSql());
+    }
+
+    public function testHasRelationWithinRelationJoinWithCustomBuilder()
+    {
+        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts', function($join) {
+            $join->has('comments');
+        });
+
+        $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and exists (select * from "comments" where "posts"."id" = "comments"."post_id")', $builder->toSql());
+        $this->assertEquals(CustomBuilder::class, get_class($builder));
+    }
+
+    public function testDoesntHaveRelationWithinRelationJoin()
+    {
+        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function($join) {
+            $join->doesntHave('comments');
+        });
+
+        $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and not exists (select * from "comments" where "posts"."id" = "comments"."post_id")', $builder->toSql());
+    }
+
+    public function testDoesntHaveRelationWithinRelationJoinWithCustomBuilder()
+    {
+        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts', function($join) {
+            $join->doesntHave('comments');
+        });
+
+        $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and not exists (select * from "comments" where "posts"."id" = "comments"."post_id")', $builder->toSql());
+        $this->assertEquals(CustomBuilder::class, get_class($builder));
     }
 }
 
