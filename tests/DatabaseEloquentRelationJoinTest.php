@@ -341,6 +341,24 @@ class DatabaseEloquentRelationJoinTest extends TestCase
         $this->assertEquals(CustomBuilder::class, get_class($builder));
     }
 
+    public function testOnMacro()
+    {
+        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('phone', function($join) {
+            $join->on('phones.extra', '=', 'users.extra');
+        });
+
+        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" and "phones"."extra" = "users"."extra"', $builder->toSql());
+    }
+
+    public function testOnMacroWithCustomBuilder()
+    {
+        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('phone', function($join) {
+            $join->on('phones.extra', '=', 'users.extra');
+        });
+
+        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" and "phones"."extra" = "users"."extra"', $builder->toSql());
+    }
+
     public function testMorphToRelationJoinThrowsException()
     {
         $this->expectException(RuntimeException::class);
