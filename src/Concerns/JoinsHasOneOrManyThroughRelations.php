@@ -71,8 +71,8 @@ trait JoinsHasOneOrManyThroughRelations
      *
      * @return string
      */
-    public function getRelationCountHash()
+    public function getRelationCountHash($incrementJoinCount = true)
     {
-        return 'laravel_reserved_'.static::$selfJoinCount++;
+        return 'laravel_reserved_'.($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
     }
 }
