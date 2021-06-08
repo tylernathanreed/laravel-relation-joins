@@ -2,7 +2,6 @@
 
 [![Latest Stable Version](https://poser.pugx.org/reedware/laravel-relation-joins/v/stable)](https://packagist.org/packages/reedware/laravel-relation-joins)
 [![Total Downloads](https://poser.pugx.org/reedware/laravel-relation-joins/downloads)](https://packagist.org/packages/reedware/laravel-relation-joins)
-[![Laravel Version](https://img.shields.io/badge/Laravel-5.5%2B-blue)](https://laravel.com/)
 [![Laravel Version](https://img.shields.io/badge/Laravel-6.x%2B-blue)](https://laravel.com/)
 [![Build Status](https://travis-ci.com/tylernathanreed/laravel-relation-joins.svg?branch=master)](https://travis-ci.com/tylernathanreed/laravel-relation-joins)
 
@@ -24,7 +23,9 @@ composer require reedware/laravel-relation-joins
 
 #### Versioning
 
-This package was built with the latest version of Laravel in mind, but support goes back to Laravel 5.5.
+This package was built with the latest version of Laravel in mind, but support goes back to Laravel 6.0.
+
+For Laravel 5.5, use version 1.x of this package.
 
 ## Usage
 
