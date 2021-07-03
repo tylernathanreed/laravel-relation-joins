@@ -2,21 +2,22 @@
 
 namespace Reedware\LaravelRelationJoins\Tests;
 
-use Mockery as m;
-use RuntimeException;
-use Illuminate\Support\Arr;
-use PHPUnit\Framework\TestCase;
+use Closure;
 use Illuminate\Container\Container;
 use Illuminate\Database\Connection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Grammars\Grammar;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Database\ConnectionResolverInterface;
-use Illuminate\Database\Query\Builder as BaseBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder as BaseBuilder;
+use Illuminate\Database\Query\Grammars\Grammar;
+use Illuminate\Database\Query\Processors\Processor;
+use Illuminate\Support\Arr;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Reedware\LaravelRelationJoins\LaravelRelationJoinServiceProvider;
+use RuntimeException;
 
 class DatabaseEloquentRelationJoinTest extends TestCase
 {
@@ -107,1128 +108,799 @@ class DatabaseEloquentRelationJoinTest extends TestCase
         $this->assertEquals(EloquentBuilder::class, get_class($builder));
     }
 
-    public function testSimpleHasOneRelationJoin()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleHasOneRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('phone');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('phone');
 
         $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleHasOneRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleHasOneInverseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('phone');
-
-        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleHasOneInverseRelationJoin()
-    {
-        $builder = (new EloquentPhoneModelStub)->newQuery()->joinRelation('user');
+        $builder = $query(new EloquentPhoneModelStub)->joinRelation('user');
 
         $this->assertEquals('select * from "phones" inner join "users" on "users"."id" = "phones"."user_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleHasOneInverseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleHasManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPhoneModelStub)->useCustomBuilder()->newQuery()->joinRelation('user');
-
-        $this->assertEquals('select * from "phones" inner join "users" on "users"."id" = "phones"."user_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleHasManyRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('comments');
+        $builder = $query(new EloquentPostModelStub)->joinRelation('comments');
 
         $this->assertEquals('select * from "posts" inner join "comments" on "comments"."post_id" = "posts"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleHasManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleHasManyInverseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->joinRelation('comments');
-
-        $this->assertEquals('select * from "posts" inner join "comments" on "comments"."post_id" = "posts"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleHasManyInverseRelationJoin()
-    {
-        $builder = (new EloquentCommentModelStub)->newQuery()->joinRelation('post');
+        $builder = $query(new EloquentCommentModelStub)->joinRelation('post');
 
         $this->assertEquals('select * from "comments" inner join "posts" on "posts"."id" = "comments"."post_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleHasManyInverseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleBelongsToManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCommentModelStub)->useCustomBuilder()->newQuery()->joinRelation('post');
-
-        $this->assertEquals('select * from "comments" inner join "posts" on "posts"."id" = "comments"."post_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleBelongsToManyRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('roles');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('roles');
 
         $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleBelongsToManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleBelongsToManyInverseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('roles');
-
-        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleBelongsToManyInverseRelationJoin()
-    {
-        $builder = (new EloquentRoleModelStub)->newQuery()->joinRelation('users');
+        $builder = $query(new EloquentRoleModelStub)->joinRelation('users');
 
         $this->assertEquals('select * from "roles" inner join "role_user" on "role_user"."role_id" = "roles"."id" inner join "users" on "users"."id" = "role_user"."user_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleBelongsToManyInverseRelationJoinWithCustomBuilder()
-    {
-        $builder = (new EloquentRoleModelStub)->useCustomBuilder()->newQuery()->joinRelation('users');
-
-        $this->assertEquals('select * from "roles" inner join "role_user" on "role_user"."role_id" = "roles"."id" inner join "users" on "users"."id" = "role_user"."user_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleHasOneThroughRelationJoin()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleHasOneThroughRelationJoin(Closure $query, string $builderClass)
     {
         if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
             return;
         }
 
-        $builder = (new EloquentSupplierModelStub)->newQuery()->joinRelation('userHistory');
+        $builder = $query(new EloquentSupplierModelStub)->joinRelation('userHistory');
 
         $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" inner join "history" on "history"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleHasOneThroughRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleHasOneThroughInverseRelationJoin(Closure $query, string $builderClass)
     {
         if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
             return;
         }
 
-        $builder = (new EloquentSupplierModelStub)->useCustomBuilder()->newQuery()->joinRelation('userHistory');
-
-        $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" inner join "history" on "history"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleHasOneThroughInverseRelationJoin()
-    {
-        if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
-            return;
-        }
-
-        $builder = (new EloquentUserHistoryModelStub)->newQuery()->joinRelation('user.supplier');
+        $builder = $query(new EloquentUserHistoryModelStub)->joinRelation('user.supplier');
 
         $this->assertEquals('select * from "history" inner join "users" on "users"."id" = "history"."user_id" inner join "suppliers" on "suppliers"."id" = "users"."supplier_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleHasOneThroughInverseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleHasManyThroughRelationJoin(Closure $query, string $builderClass)
     {
-        if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
-            return;
-        }
-
-        $builder = (new EloquentUserHistoryModelStub)->useCustomBuilder()->newQuery()->joinRelation('user.supplier');
-
-        $this->assertEquals('select * from "history" inner join "users" on "users"."id" = "history"."user_id" inner join "suppliers" on "suppliers"."id" = "users"."supplier_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleHasManyThroughRelationJoin()
-    {
-        $builder = (new EloquentCountryModelStub)->newQuery()->joinRelation('posts');
+        $builder = $query(new EloquentCountryModelStub)->joinRelation('posts');
 
         $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleHasManyThroughRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleHasManyThroughInverseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCountryModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts');
-
-        $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleHasManyThroughInverseRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('user.country');
+        $builder = $query(new EloquentPostModelStub)->joinRelation('user.country');
 
         $this->assertEquals('select * from "posts" inner join "users" on "users"."id" = "posts"."user_id" inner join "countries" on "countries"."id" = "users"."country_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleHasManyThroughInverseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleMorphOneRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->joinRelation('user.country');
-
-        $this->assertEquals('select * from "posts" inner join "users" on "users"."id" = "posts"."user_id" inner join "countries" on "countries"."id" = "users"."country_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleMorphOneRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('image');
+        $builder = $query(new EloquentPostModelStub)->joinRelation('image');
 
         $this->assertEquals('select * from "posts" inner join "images" on "images"."imageable_id" = "posts"."id" and "images"."imageable_type" = ?', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleMorphOneRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleMorphManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->joinRelation('image');
-
-        $this->assertEquals('select * from "posts" inner join "images" on "images"."imageable_id" = "posts"."id" and "images"."imageable_type" = ?', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleMorphManyRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('polymorphicComments');
+        $builder = $query(new EloquentPostModelStub)->joinRelation('polymorphicComments');
 
         $this->assertEquals('select * from "posts" inner join "comments" on "comments"."commentable_id" = "posts"."id" and "comments"."commentable_type" = ?', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleMorphManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleMorphToManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->joinRelation('polymorphicComments');
-
-        $this->assertEquals('select * from "posts" inner join "comments" on "comments"."commentable_id" = "posts"."id" and "comments"."commentable_type" = ?', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleMorphToManyRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('tags');
+        $builder = $query(new EloquentPostModelStub)->joinRelation('tags');
 
         $this->assertEquals('select * from "posts" inner join "taggables" on "taggables"."taggable_id" = "posts"."id" and "taggables"."taggable_type" = ? inner join "tags" on "tags"."id" = "taggables"."tag_id"', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleMorphToManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testSimpleMorphedByManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->joinRelation('tags');
-
-        $this->assertEquals('select * from "posts" inner join "taggables" on "taggables"."taggable_id" = "posts"."id" and "taggables"."taggable_type" = ? inner join "tags" on "tags"."id" = "taggables"."tag_id"', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testSimpleMorphedByManyRelationJoin()
-    {
-        $builder = (new EloquentTagModelStub)->newQuery()->joinRelation('posts');
+        $builder = $query(new EloquentTagModelStub)->joinRelation('posts');
 
         $this->assertEquals('select * from "tags" inner join "taggables" on "taggables"."tag_id" = "tags"."id" and "taggables"."taggable_type" = ? inner join "posts" on "posts"."id" = "taggables"."taggable_id"', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testSimpleMorphedByManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testOnMacro(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentTagModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts');
-
-        $this->assertEquals('select * from "tags" inner join "taggables" on "taggables"."tag_id" = "tags"."id" and "taggables"."taggable_type" = ? inner join "posts" on "posts"."id" = "taggables"."taggable_id"', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testOnMacro()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('phone', function($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('phone', function($join) {
             $join->on('phones.extra', '=', 'users.extra');
         });
 
         $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" and "phones"."extra" = "users"."extra"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testOnMacroWithCustomBuilder()
-    {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('phone', function($join) {
-            $join->on('phones.extra', '=', 'users.extra');
-        });
-
-        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" and "phones"."extra" = "users"."extra"', $builder->toSql());
-    }
-
-    public function testMorphToRelationJoinThrowsException()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMorphToRelationJoinThrowsException(Closure $query, string $builderClass)
     {
         $this->expectException(RuntimeException::class);
 
-        $builder = (new EloquentImageModelStub)->newQuery()->joinRelation('imageable');
+        $builder = $query(new EloquentImageModelStub)->joinRelation('imageable');
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMorphToRelationJoinThrowsExceptionWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMorphOneAsHasOneRelationJoin(Closure $query, string $builderClass)
     {
-        $this->expectException(RuntimeException::class);
-
-        $builder = (new EloquentImageModelStub)->useCustomBuilder()->newQuery()->joinRelation('imageable');
-    }
-
-    public function testMorphOneAsHasOneRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('postImage');
+        $builder = $query(new EloquentPostModelStub)->joinRelation('postImage');
 
         $this->assertEquals('select * from "posts" inner join "images" on "images"."imageable_id" = "posts"."id" and "imageable_type" = ?', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMorphOneAsHasOneRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMorphToAsBelongsToRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->joinRelation('postImage');
-
-        $this->assertEquals('select * from "posts" inner join "images" on "images"."imageable_id" = "posts"."id" and "imageable_type" = ?', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testMorphToAsBelongsToRelationJoin()
-    {
-        $builder = (new EloquentImageModelStub)->newQuery()->joinRelation('postImageable');
+        $builder = $query(new EloquentImageModelStub)->joinRelation('postImageable');
 
         $this->assertEquals('select * from "images" inner join "posts" on "posts"."id" = "images"."imageable_id" and "imageable_type" = ?', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMorphToAsBelongsToRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMorphManyAsHasManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentImageModelStub)->useCustomBuilder()->newQuery()->joinRelation('postImageable');
-
-        $this->assertEquals('select * from "images" inner join "posts" on "posts"."id" = "images"."imageable_id" and "imageable_type" = ?', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testMorphManyAsHasManyRelationJoin()
-    {
-        $builder = (new EloquentVideoModelStub)->newQuery()->joinRelation('videoComments');
+        $builder = $query(new EloquentVideoModelStub)->joinRelation('videoComments');
 
         $this->assertEquals('select * from "videos" inner join "comments" on "comments"."commentable_id" = "videos"."id" and "commentable_type" = ?', $builder->toSql());
         $this->assertEquals([0 => EloquentVideoModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMorphManyAsHasManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMorphToManyAsBelongsToManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentVideoModelStub)->useCustomBuilder()->newQuery()->joinRelation('videoComments');
-
-        $this->assertEquals('select * from "videos" inner join "comments" on "comments"."commentable_id" = "videos"."id" and "commentable_type" = ?', $builder->toSql());
-        $this->assertEquals([0 => EloquentVideoModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testMorphToManyAsBelongsToManyRelationJoin()
-    {
-        $builder = (new EloquentVideoModelStub)->newQuery()->joinRelation('videoTags');
+        $builder = $query(new EloquentVideoModelStub)->joinRelation('videoTags');
 
         $this->assertEquals('select * from "videos" inner join "taggables" on "taggables"."taggable_id" = "videos"."id" inner join "tags" on "tags"."id" = "taggables"."tag_id" and "taggables"."taggable_type" = ?', $builder->toSql());
         $this->assertEquals([0 => EloquentVideoModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMorphToManyAsBelongsToManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasOneUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentVideoModelStub)->useCustomBuilder()->newQuery()->joinRelation('videoTags');
-
-        $this->assertEquals('select * from "videos" inner join "taggables" on "taggables"."taggable_id" = "videos"."id" inner join "tags" on "tags"."id" = "taggables"."tag_id" and "taggables"."taggable_type" = ?', $builder->toSql());
-        $this->assertEquals([0 => EloquentVideoModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasOneUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('phone as telephones');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('phone as telephones');
 
         $this->assertEquals('select * from "users" inner join "phones" as "telephones" on "telephones"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasOneUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasOneInverseUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('phone as telephones');
-
-        $this->assertEquals('select * from "users" inner join "phones" as "telephones" on "telephones"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasOneInverseUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentPhoneModelStub)->newQuery()->joinRelation('user as contacts');
+        $builder = $query(new EloquentPhoneModelStub)->joinRelation('user as contacts');
 
         $this->assertEquals('select * from "phones" inner join "users" as "contacts" on "contacts"."id" = "phones"."user_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasOneInverseUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManyUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPhoneModelStub)->useCustomBuilder()->newQuery()->joinRelation('user as contacts');
-
-        $this->assertEquals('select * from "phones" inner join "users" as "contacts" on "contacts"."id" = "phones"."user_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManyUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('comments as feedback');
+        $builder = $query(new EloquentPostModelStub)->joinRelation('comments as feedback');
 
         $this->assertEquals('select * from "posts" inner join "comments" as "feedback" on "feedback"."post_id" = "posts"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManyUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManyInverseUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->joinRelation('comments as feedback');
-
-        $this->assertEquals('select * from "posts" inner join "comments" as "feedback" on "feedback"."post_id" = "posts"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManyInverseUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentCommentModelStub)->newQuery()->joinRelation('post as article');
+        $builder = $query(new EloquentCommentModelStub)->joinRelation('post as article');
 
         $this->assertEquals('select * from "comments" inner join "posts" as "article" on "article"."id" = "comments"."post_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManyInverseUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testBelongsToManyUsingFarAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCommentModelStub)->useCustomBuilder()->newQuery()->joinRelation('post as article');
-
-        $this->assertEquals('select * from "comments" inner join "posts" as "article" on "article"."id" = "comments"."post_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testBelongsToManyUsingFarAliasRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('roles as positions');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('roles as positions');
 
         $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" as "positions" on "positions"."id" = "role_user"."role_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testBelongsToManyUsingFarAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testBelongsToManyUsingPivotAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('roles as positions');
-
-        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" as "positions" on "positions"."id" = "role_user"."role_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testBelongsToManyUsingPivotAliasRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('roles as users_roles,roles');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('roles as users_roles,roles');
 
         $this->assertEquals('select * from "users" inner join "role_user" as "users_roles" on "users_roles"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "users_roles"."role_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testBelongsToManyUsingPivotAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testBelongsToManyUsingPivotAndFarAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('roles as users_roles,roles');
-
-        $this->assertEquals('select * from "users" inner join "role_user" as "users_roles" on "users_roles"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "users_roles"."role_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testBelongsToManyUsingPivotAndFarAliasRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('roles as position_user,positions');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('roles as position_user,positions');
 
         $this->assertEquals('select * from "users" inner join "role_user" as "position_user" on "position_user"."user_id" = "users"."id" inner join "roles" as "positions" on "positions"."id" = "position_user"."role_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
-
-    public function testBelongsToManyUsingPivotAndFarAliasRelationJoinWithCustomBuilder()
-    {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('roles as position_user,positions');
-
-        $this->assertEquals('select * from "users" inner join "role_user" as "position_user" on "position_user"."user_id" = "users"."id" inner join "roles" as "positions" on "positions"."id" = "position_user"."role_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasOneThroughUsingFarAliasRelationJoin()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasOneThroughUsingFarAliasRelationJoin(Closure $query, string $builderClass)
     {
         if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
             return;
         }
 
-        $builder = (new EloquentSupplierModelStub)->newQuery()->joinRelation('userHistory as revisions');
+        $builder = $query(new EloquentSupplierModelStub)->joinRelation('userHistory as revisions');
 
         $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" inner join "history" as "revisions" on "revisions"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasOneThroughUsingFarAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasOneThroughUsingThroughAliasRelationJoin(Closure $query, string $builderClass)
     {
         if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
             return;
         }
 
-        $builder = (new EloquentSupplierModelStub)->useCustomBuilder()->newQuery()->joinRelation('userHistory as revisions');
-
-        $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" inner join "history" as "revisions" on "revisions"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasOneThroughUsingThroughAliasRelationJoin()
-    {
-        if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
-            return;
-        }
-
-        $builder = (new EloquentSupplierModelStub)->newQuery()->joinRelation('userHistory as workers,history');
+        $builder = $query(new EloquentSupplierModelStub)->joinRelation('userHistory as workers,history');
 
         $this->assertEquals('select * from "suppliers" inner join "users" as "workers" on "workers"."supplier_id" = "suppliers"."id" inner join "history" on "history"."user_id" = "workers"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasOneThroughUsingThroughAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasOneThroughUsingThroughAndFarAliasRelationJoin(Closure $query, string $builderClass)
     {
         if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
             return;
         }
 
-        $builder = (new EloquentSupplierModelStub)->useCustomBuilder()->newQuery()->joinRelation('userHistory as workers,history');
-
-        $this->assertEquals('select * from "suppliers" inner join "users" as "workers" on "workers"."supplier_id" = "suppliers"."id" inner join "history" on "history"."user_id" = "workers"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasOneThroughUsingThroughAndFarAliasRelationJoin()
-    {
-        if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
-            return;
-        }
-
-        $builder = (new EloquentSupplierModelStub)->newQuery()->joinRelation('userHistory as workers,revisions');
+        $builder = $query(new EloquentSupplierModelStub)->joinRelation('userHistory as workers,revisions');
 
         $this->assertEquals('select * from "suppliers" inner join "users" as "workers" on "workers"."supplier_id" = "suppliers"."id" inner join "history" as "revisions" on "revisions"."user_id" = "workers"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasOneThroughUsingThroughAndFarAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasOneThroughInverseUsingFarAliasRelationJoin(Closure $query, string $builderClass)
     {
         if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
             return;
         }
 
-        $builder = (new EloquentSupplierModelStub)->useCustomBuilder()->newQuery()->joinRelation('userHistory as workers,revisions');
-
-        $this->assertEquals('select * from "suppliers" inner join "users" as "workers" on "workers"."supplier_id" = "suppliers"."id" inner join "history" as "revisions" on "revisions"."user_id" = "workers"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasOneThroughInverseUsingFarAliasRelationJoin()
-    {
-        if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
-            return;
-        }
-
-        $builder = (new EloquentUserHistoryModelStub)->newQuery()->joinRelation('user.supplier as providers');
+        $builder = $query(new EloquentUserHistoryModelStub)->joinRelation('user.supplier as providers');
 
         $this->assertEquals('select * from "history" inner join "users" on "users"."id" = "history"."user_id" inner join "suppliers" as "providers" on "providers"."id" = "users"."supplier_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasOneThroughInverseUsingFarAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasOneThroughInverseUsingThroughAliasRelationJoin(Closure $query, string $builderClass)
     {
         if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
             return;
         }
 
-        $builder = (new EloquentUserHistoryModelStub)->useCustomBuilder()->newQuery()->joinRelation('user.supplier as providers');
-
-        $this->assertEquals('select * from "history" inner join "users" on "users"."id" = "history"."user_id" inner join "suppliers" as "providers" on "providers"."id" = "users"."supplier_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasOneThroughInverseUsingThroughAliasRelationJoin()
-    {
-        if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
-            return;
-        }
-
-        $builder = (new EloquentUserHistoryModelStub)->newQuery()->joinRelation('user as workers.supplier');
+        $builder = $query(new EloquentUserHistoryModelStub)->joinRelation('user as workers.supplier');
 
         $this->assertEquals('select * from "history" inner join "users" as "workers" on "workers"."id" = "history"."user_id" inner join "suppliers" on "suppliers"."id" = "workers"."supplier_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasOneThroughInverseUsingThroughAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasOneThroughInverseUsingThroughAndFarAliasRelationJoin(Closure $query, string $builderClass)
     {
         if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
             return;
         }
 
-        $builder = (new EloquentUserHistoryModelStub)->useCustomBuilder()->newQuery()->joinRelation('user as workers.supplier');
-
-        $this->assertEquals('select * from "history" inner join "users" as "workers" on "workers"."id" = "history"."user_id" inner join "suppliers" on "suppliers"."id" = "workers"."supplier_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasOneThroughInverseUsingThroughAndFarAliasRelationJoin()
-    {
-        if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
-            return;
-        }
-
-        $builder = (new EloquentUserHistoryModelStub)->newQuery()->joinRelation('user as workers.supplier as providers');
+        $builder = $query(new EloquentUserHistoryModelStub)->joinRelation('user as workers.supplier as providers');
 
         $this->assertEquals('select * from "history" inner join "users" as "workers" on "workers"."id" = "history"."user_id" inner join "suppliers" as "providers" on "providers"."id" = "workers"."supplier_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasOneThroughInverseUsingThroughAndFarAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManyThroughUsingFarAliasRelationJoin(Closure $query, string $builderClass)
     {
-        if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
-            return;
-        }
-
-        $builder = (new EloquentUserHistoryModelStub)->useCustomBuilder()->newQuery()->joinRelation('user as workers.supplier as providers');
-
-        $this->assertEquals('select * from "history" inner join "users" as "workers" on "workers"."id" = "history"."user_id" inner join "suppliers" as "providers" on "providers"."id" = "workers"."supplier_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManyThroughUsingFarAliasRelationJoin()
-    {
-        $builder = (new EloquentCountryModelStub)->newQuery()->joinRelation('posts as articles');
+        $builder = $query(new EloquentCountryModelStub)->joinRelation('posts as articles');
 
         $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" as "articles" on "articles"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManyThroughUsingFarAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManyThroughUsingThroughAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCountryModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts as articles');
-
-        $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" as "articles" on "articles"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManyThroughUsingThroughAliasRelationJoin()
-    {
-        $builder = (new EloquentCountryModelStub)->newQuery()->joinRelation('posts as citizens,posts');
+        $builder = $query(new EloquentCountryModelStub)->joinRelation('posts as citizens,posts');
 
         $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "citizens"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManyThroughUsingThroughAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManyThroughUsingThroughAndFarAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCountryModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts as citizens,posts');
-
-        $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "citizens"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManyThroughUsingThroughAndFarAliasRelationJoin()
-    {
-        $builder = (new EloquentCountryModelStub)->newQuery()->joinRelation('posts as citizens,articles');
+        $builder = $query(new EloquentCountryModelStub)->joinRelation('posts as citizens,articles');
 
         $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManyThroughUsingThroughAndFarAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMorphOneUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCountryModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts as citizens,articles');
-
-        $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testMorphOneUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('image');
+        $builder = $query(new EloquentPostModelStub)->joinRelation('image');
 
         $this->assertEquals('select * from "posts" inner join "images" on "images"."imageable_id" = "posts"."id" and "images"."imageable_type" = ?', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMorphOneUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMorphManyUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->joinRelation('image');
-
-        $this->assertEquals('select * from "posts" inner join "images" on "images"."imageable_id" = "posts"."id" and "images"."imageable_type" = ?', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testMorphManyUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('polymorphicComments');
+        $builder = $query(new EloquentPostModelStub)->joinRelation('polymorphicComments');
 
         $this->assertEquals('select * from "posts" inner join "comments" on "comments"."commentable_id" = "posts"."id" and "comments"."commentable_type" = ?', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMorphManyUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMorphToManyUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->joinRelation('polymorphicComments');
-
-        $this->assertEquals('select * from "posts" inner join "comments" on "comments"."commentable_id" = "posts"."id" and "comments"."commentable_type" = ?', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testMorphToManyUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('tags');
+        $builder = $query(new EloquentPostModelStub)->joinRelation('tags');
 
         $this->assertEquals('select * from "posts" inner join "taggables" on "taggables"."taggable_id" = "posts"."id" and "taggables"."taggable_type" = ? inner join "tags" on "tags"."id" = "taggables"."tag_id"', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMorphToManyUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMorphedByManyUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->joinRelation('tags');
-
-        $this->assertEquals('select * from "posts" inner join "taggables" on "taggables"."taggable_id" = "posts"."id" and "taggables"."taggable_type" = ? inner join "tags" on "tags"."id" = "taggables"."tag_id"', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testMorphedByManyUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentTagModelStub)->newQuery()->joinRelation('posts');
+        $builder = $query(new EloquentTagModelStub)->joinRelation('posts');
 
         $this->assertEquals('select * from "tags" inner join "taggables" on "taggables"."tag_id" = "tags"."id" and "taggables"."taggable_type" = ? inner join "posts" on "posts"."id" = "taggables"."taggable_id"', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMorphedByManyUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testParentSoftDeletesHasOneRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentTagModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts');
-
-        $this->assertEquals('select * from "tags" inner join "taggables" on "taggables"."tag_id" = "tags"."id" and "taggables"."taggable_type" = ? inner join "posts" on "posts"."id" = "taggables"."taggable_id"', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testParentSoftDeletesHasOneRelationJoin()
-    {
-        $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('phone');
+        $builder = $query(new EloquentSoftDeletingUserModelStub)->joinRelation('phone');
 
         $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" where "users"."deleted_at" is null', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testParentSoftDeletesHasOneRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testParentSoftDeletesHasOneWithTrashedRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentSoftDeletingUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('phone');
-
-        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" where "users"."deleted_at" is null', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testParentSoftDeletesHasOneWithTrashedRelationJoin()
-    {
-        $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('phone')->withTrashed();
+        $builder = $query(new EloquentSoftDeletingUserModelStub)->joinRelation('phone')->withTrashed();
 
         $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testParentSoftDeletesHasOneWithTrashedRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testChildSoftDeletesHasOneRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentSoftDeletingUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('phone')->withTrashed();
-
-        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testChildSoftDeletesHasOneRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('softDeletingPhone');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('softDeletingPhone');
 
         $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" and "phones"."deleted_at" is null', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testChildSoftDeletesHasOneRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testChildSoftDeletesHasOneWithTrashedRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('softDeletingPhone');
-
-        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" and "phones"."deleted_at" is null', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testChildSoftDeletesHasOneWithTrashedRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('softDeletingPhone', function ($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('softDeletingPhone', function ($join) {
             $join->withTrashed();
         });
 
         $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testChildSoftDeletesHasOneWithTrashedRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testParentAndChildSoftDeletesHasOneRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('softDeletingPhone', function ($join) {
-            $join->withTrashed();
-        });
-
-        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testParentAndChildSoftDeletesHasOneRelationJoin()
-    {
-        $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('softDeletingPhone');
+        $builder = $query(new EloquentSoftDeletingUserModelStub)->joinRelation('softDeletingPhone');
 
         $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" and "phones"."deleted_at" is null where "users"."deleted_at" is null', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
-
-    public function testParentAndChildSoftDeletesHasOneRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testParentAndChildSoftDeletesHasOneWithTrashedParentRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentSoftDeletingUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('softDeletingPhone');
-
-        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" and "phones"."deleted_at" is null where "users"."deleted_at" is null', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testParentAndChildSoftDeletesHasOneWithTrashedParentRelationJoin()
-    {
-        $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('softDeletingPhone')->withTrashed();
+        $builder = $query(new EloquentSoftDeletingUserModelStub)->joinRelation('softDeletingPhone')->withTrashed();
 
         $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" and "phones"."deleted_at" is null', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testParentAndChildSoftDeletesHasOneWithTrashedParentRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testParentAndChildSoftDeletesHasOneWithTrashedChildRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentSoftDeletingUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('softDeletingPhone')->withTrashed();
-
-        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" and "phones"."deleted_at" is null', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testParentAndChildSoftDeletesHasOneWithTrashedChildRelationJoin()
-    {
-        $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('softDeletingPhone', function ($join) {
+        $builder = $query(new EloquentSoftDeletingUserModelStub)->joinRelation('softDeletingPhone', function ($join) {
             $join->withTrashed();
         });
 
         $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" where "users"."deleted_at" is null', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testParentAndChildSoftDeletesHasOneWithTrashedChildRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testParentAndChildSoftDeletesHasOneWithTrashedRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentSoftDeletingUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('softDeletingPhone', function ($join) {
-            $join->withTrashed();
-        });
-
-        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id" where "users"."deleted_at" is null', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testParentAndChildSoftDeletesHasOneWithTrashedRelationJoin()
-    {
-        $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->withTrashed()->joinRelation('softDeletingPhone', function ($join) {
+        $builder = $query(new EloquentSoftDeletingUserModelStub)->withTrashed()->joinRelation('softDeletingPhone', function ($join) {
             $join->withTrashed();
         });
 
         $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testParentAndChildSoftDeletesHasOneWithTrashedRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testParentSoftSimpleHasOneInverseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentSoftDeletingUserModelStub)->useCustomBuilder()->newQuery()->withTrashed()->joinRelation('softDeletingPhone', function ($join) {
-            $join->withTrashed();
-        });
-
-        $this->assertEquals('select * from "users" inner join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testParentSoftSimpleHasOneInverseRelationJoin()
-    {
-        $builder = (new EloquentPhoneModelStub)->newQuery()->joinRelation('softDeletingUser');
+        $builder = $query(new EloquentPhoneModelStub)->joinRelation('softDeletingUser');
 
         $this->assertEquals('select * from "phones" inner join "users" on "users"."id" = "phones"."user_id" and "users"."deleted_at" is null', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testParentSoftSimpleHasOneInverseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testChildSoftSimpleHasOneInverseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPhoneModelStub)->useCustomBuilder()->newQuery()->joinRelation('softDeletingUser');
-
-        $this->assertEquals('select * from "phones" inner join "users" on "users"."id" = "phones"."user_id" and "users"."deleted_at" is null', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testChildSoftSimpleHasOneInverseRelationJoin()
-    {
-        $builder = (new EloquentSoftDeletingPhoneModelStub)->newQuery()->joinRelation('user');
+        $builder = $query(new EloquentSoftDeletingPhoneModelStub)->joinRelation('user');
 
         $this->assertEquals('select * from "phones" inner join "users" on "users"."id" = "phones"."user_id" where "phones"."deleted_at" is null', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testChildSoftSimpleHasOneInverseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testParentSoftDeletesHasManyThroughRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentSoftDeletingPhoneModelStub)->useCustomBuilder()->newQuery()->joinRelation('user');
-
-        $this->assertEquals('select * from "phones" inner join "users" on "users"."id" = "phones"."user_id" where "phones"."deleted_at" is null', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testParentSoftDeletesHasManyThroughRelationJoin()
-    {
-        $builder = (new EloquentSoftDeletingCountryModelStub)->newQuery()->joinRelation('posts');
+        $builder = $query(new EloquentSoftDeletingCountryModelStub)->joinRelation('posts');
 
         $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "users"."id" where "countries"."deleted_at" is null', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testParentSoftDeletesHasManyThroughRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testThroughSoftDeletesHasManyThroughRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentSoftDeletingCountryModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts');
-
-        $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "users"."id" where "countries"."deleted_at" is null', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testThroughSoftDeletesHasManyThroughRelationJoin()
-    {
-        $builder = (new EloquentCountryModelStub)->newQuery()->joinRelation('postsThroughSoftDeletingUser');
+        $builder = $query(new EloquentCountryModelStub)->joinRelation('postsThroughSoftDeletingUser');
 
         if($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
         }
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testThroughSoftDeletesHasManyThroughRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testChildSoftDeletesHasManyThroughRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCountryModelStub)->useCustomBuilder()->newQuery()->joinRelation('postsThroughSoftDeletingUser');
-
-        if($this->isVersionAfter('7.10.0')) {
-            $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
-        } else {
-            $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
-        }
-
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testChildSoftDeletesHasManyThroughRelationJoin()
-    {
-        $builder = (new EloquentCountryModelStub)->newQuery()->joinRelation('softDeletingPosts');
+        $builder = $query(new EloquentCountryModelStub)->joinRelation('softDeletingPosts');
 
         $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "users"."id" and "posts"."deleted_at" is null', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testChildSoftDeletesHasManyThroughRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testParentSoftDeletesBelongsToManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCountryModelStub)->useCustomBuilder()->newQuery()->joinRelation('softDeletingPosts');
-
-        $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "users"."id" and "posts"."deleted_at" is null', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testParentSoftDeletesBelongsToManyRelationJoin()
-    {
-        $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('roles');
+        $builder = $query(new EloquentSoftDeletingUserModelStub)->joinRelation('roles');
 
         $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "role_user"."role_id" where "users"."deleted_at" is null', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testParentSoftDeletesBelongsToManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testChildSoftDeletesBelongsToManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentSoftDeletingUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('roles');
-
-        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "role_user"."role_id" where "users"."deleted_at" is null', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testChildSoftDeletesBelongsToManyRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('softDeletingRoles');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('softDeletingRoles');
 
         $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "role_user"."role_id" and "roles"."deleted_at" is null', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testChildSoftDeletesBelongsToManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testBelongsToSelfRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('softDeletingRoles');
-
-        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "role_user"."role_id" and "roles"."deleted_at" is null', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testBelongsToSelfRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('manager');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('manager');
 
         $this->assertEquals('select * from "users" inner join "users" as "self_alias_hash" on "self_alias_hash"."id" = "users"."manager_id"', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testBelongsToSelfRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testBelongsToSelfUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('manager');
-
-        $this->assertEquals('select * from "users" inner join "users" as "self_alias_hash" on "self_alias_hash"."id" = "users"."manager_id"', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testBelongsToSelfUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('manager as managers');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('manager as managers');
 
         $this->assertEquals('select * from "users" inner join "users" as "managers" on "managers"."id" = "users"."manager_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testBelongsToSelfUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManySelfRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('manager as managers');
-
-        $this->assertEquals('select * from "users" inner join "users" as "managers" on "managers"."id" = "users"."manager_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManySelfRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('employees');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('employees');
 
         $this->assertEquals('select * from "users" inner join "users" as "self_alias_hash" on "self_alias_hash"."manager_id" = "users"."id"', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
+        $this->assertEquals($builderClass, get_class($builder));
     }
-
-    public function testHasManySelfRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManySelfUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('employees');
-
-        $this->assertEquals('select * from "users" inner join "users" as "self_alias_hash" on "self_alias_hash"."manager_id" = "users"."id"', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManySelfUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('employees as employees');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('employees as employees');
 
         $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManySelfUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManyThroughSelfRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('employees as employees');
-
-        $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManyThroughSelfRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('employeePosts');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('employeePosts');
 
         $this->assertEquals('select * from "users" inner join "users" as "self_alias_hash" on "self_alias_hash"."manager_id" = "users"."id" inner join "posts" on "posts"."user_id" = "self_alias_hash"."id"', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManyThroughSelfRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManyThroughSelfUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('employeePosts');
-
-        $this->assertEquals('select * from "users" inner join "users" as "self_alias_hash" on "self_alias_hash"."manager_id" = "users"."id" inner join "posts" on "posts"."user_id" = "self_alias_hash"."id"', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManyThroughSelfUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('employeePosts as employees,posts');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('employeePosts as employees,posts');
 
         $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id" inner join "posts" on "posts"."user_id" = "employees"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManyThroughSelfUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManyThroughSoftDeletingSelfUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('employeePosts as employees,posts');
-
-        $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id" inner join "posts" on "posts"."user_id" = "employees"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManyThroughSoftDeletingSelfUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('employeePosts as employees,posts');
+        $builder = $query(new EloquentSoftDeletingUserModelStub)->joinRelation('employeePosts as employees,posts');
 
         if($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id" and "employees"."deleted_at" is null inner join "posts" on "posts"."user_id" = "employees"."id" where "users"."deleted_at" is null', $builder->toSql());
         } else {
             $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id" and "employees"."deleted_at" is null inner join "posts" on "posts"."user_id" = "employees"."id" and "users"."deleted_at" is null where "users"."deleted_at" is null', $builder->toSql());
         }
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManyThroughSoftDeletingSelfUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManySelfThroughRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentSoftDeletingUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('employeePosts as employees,posts');
-
-        if($this->isVersionAfter('7.10.0')) {
-            $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id" and "employees"."deleted_at" is null inner join "posts" on "posts"."user_id" = "employees"."id" where "users"."deleted_at" is null', $builder->toSql());
-        } else {
-            $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id" and "employees"."deleted_at" is null inner join "posts" on "posts"."user_id" = "employees"."id" and "users"."deleted_at" is null where "users"."deleted_at" is null', $builder->toSql());
-        }
-
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManySelfThroughRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('departmentEmployees');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('departmentEmployees');
 
         $this->assertEquals('select * from "users" inner join "departments" on "departments"."supervisor_id" = "users"."id" inner join "users" as "self_alias_hash" on "self_alias_hash"."department_id" = "departments"."id"', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManySelfThroughRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManySelfThroughSoftDeletingUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('departmentEmployees');
-
-        $this->assertEquals('select * from "users" inner join "departments" on "departments"."supervisor_id" = "users"."id" inner join "users" as "self_alias_hash" on "self_alias_hash"."department_id" = "departments"."id"', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManySelfThroughSoftDeletingUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('employeesThroughSoftDeletingDepartment as employees');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('employeesThroughSoftDeletingDepartment as employees');
 
         if($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "users" inner join "departments" on "departments"."supervisor_id" = "users"."id" and "departments"."deleted_at" is null inner join "users" as "employees" on "employees"."department_id" = "departments"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "users" inner join "departments" on "departments"."supervisor_id" = "users"."id" and "departments"."deleted_at" is null inner join "users" as "employees" on "employees"."department_id" = "departments"."id" and "departments"."deleted_at" is null', $builder->toSql());
         }
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManySelfThroughSoftDeletingUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testBelongsToManySelfRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('employeesThroughSoftDeletingDepartment as employees');
-
-        if($this->isVersionAfter('7.10.0')) {
-            $this->assertEquals('select * from "users" inner join "departments" on "departments"."supervisor_id" = "users"."id" and "departments"."deleted_at" is null inner join "users" as "employees" on "employees"."department_id" = "departments"."id"', $builder->toSql());
-        } else {
-            $this->assertEquals('select * from "users" inner join "departments" on "departments"."supervisor_id" = "users"."id" and "departments"."deleted_at" is null inner join "users" as "employees" on "employees"."department_id" = "departments"."id" and "departments"."deleted_at" is null', $builder->toSql());
-        }
-
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testBelongsToManySelfRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('messagedUsers');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('messagedUsers');
 
         $this->assertEquals('select * from "users" inner join "messages" on "messages"."from_user_id" = "users"."id" inner join "users" as "self_alias_hash" on "self_alias_hash"."id" = "messages"."to_user_id"', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testBelongsToManySelfRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testBelongsToManySelfUsingAliasRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('messagedUsers');
-
-        $this->assertEquals('select * from "users" inner join "messages" on "messages"."from_user_id" = "users"."id" inner join "users" as "self_alias_hash" on "self_alias_hash"."id" = "messages"."to_user_id"', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testBelongsToManySelfUsingAliasRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('messagedUsers as recipients');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('messagedUsers as recipients');
 
         $this->assertEquals('select * from "users" inner join "messages" on "messages"."from_user_id" = "users"."id" inner join "users" as "recipients" on "recipients"."id" = "messages"."to_user_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testBelongsToManySelfUsingAliasRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testThroughJoinForHasManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('messagedUsers as recipients');
-
-        $this->assertEquals('select * from "users" inner join "messages" on "messages"."from_user_id" = "users"."id" inner join "users" as "recipients" on "recipients"."id" = "messages"."to_user_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testThroughJoinForHasManyRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function ($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('posts', function ($join) {
             $join->where('posts.is_active', '=', 1);
         })->joinThroughRelation('posts.comments', function ($join) {
             $join->whereColumn('comments.created_by_id', '=', 'users.id');
@@ -1236,288 +908,202 @@ class DatabaseEloquentRelationJoinTest extends TestCase
 
         $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and "posts"."is_active" = ? inner join "comments" on "comments"."post_id" = "posts"."id" and "comments"."created_by_id" = "users"."id"', $builder->toSql());
         $this->assertEquals([0 => 1], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testThroughJoinForHasManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftHasOneRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts', function ($join) {
-            $join->where('posts.is_active', '=', 1);
-        })->joinThroughRelation('posts.comments', function ($join) {
-            $join->whereColumn('comments.created_by_id', '=', 'users.id');
-        });
-
-        $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and "posts"."is_active" = ? inner join "comments" on "comments"."post_id" = "posts"."id" and "comments"."created_by_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals([0 => 1], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftHasOneRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->leftJoinRelation('phone');
+        $builder = $query(new EloquentUserModelStub)->leftJoinRelation('phone');
 
         $this->assertEquals('select * from "users" left join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftHasOneRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftHasOneInverseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('phone');
-
-        $this->assertEquals('select * from "users" left join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftHasOneInverseRelationJoin()
-    {
-        $builder = (new EloquentPhoneModelStub)->newQuery()->leftJoinRelation('user');
+        $builder = $query(new EloquentPhoneModelStub)->leftJoinRelation('user');
 
         $this->assertEquals('select * from "phones" left join "users" on "users"."id" = "phones"."user_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftHasOneInverseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftHasManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPhoneModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('user');
-
-        $this->assertEquals('select * from "phones" left join "users" on "users"."id" = "phones"."user_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftHasManyRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->leftJoinRelation('comments');
+        $builder = $query(new EloquentPostModelStub)->leftJoinRelation('comments');
 
         $this->assertEquals('select * from "posts" left join "comments" on "comments"."post_id" = "posts"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftHasManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftHasManyInverseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('comments');
-
-        $this->assertEquals('select * from "posts" left join "comments" on "comments"."post_id" = "posts"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftHasManyInverseRelationJoin()
-    {
-        $builder = (new EloquentCommentModelStub)->newQuery()->leftJoinRelation('post');
+        $builder = $query(new EloquentCommentModelStub)->leftJoinRelation('post');
 
         $this->assertEquals('select * from "comments" left join "posts" on "posts"."id" = "comments"."post_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftHasManyInverseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftBelongsToManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCommentModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('post');
-
-        $this->assertEquals('select * from "comments" left join "posts" on "posts"."id" = "comments"."post_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftBelongsToManyRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->leftJoinRelation('roles');
+        $builder = $query(new EloquentUserModelStub)->leftJoinRelation('roles');
 
         $this->assertEquals('select * from "users" left join "role_user" on "role_user"."user_id" = "users"."id" left join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftBelongsToManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftBelongsToManyInverseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('roles');
-
-        $this->assertEquals('select * from "users" left join "role_user" on "role_user"."user_id" = "users"."id" left join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftBelongsToManyInverseRelationJoin()
-    {
-        $builder = (new EloquentRoleModelStub)->newQuery()->leftJoinRelation('users');
+        $builder = $query(new EloquentRoleModelStub)->leftJoinRelation('users');
 
         $this->assertEquals('select * from "roles" left join "role_user" on "role_user"."role_id" = "roles"."id" left join "users" on "users"."id" = "role_user"."user_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftBelongsToManyInverseRelationJoinWithCustomBuilder()
-    {
-        $builder = (new EloquentRoleModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('users');
-
-        $this->assertEquals('select * from "roles" left join "role_user" on "role_user"."role_id" = "roles"."id" left join "users" on "users"."id" = "role_user"."user_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftHasOneThroughRelationJoin()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftHasOneThroughRelationJoin(Closure $query, string $builderClass)
     {
         if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
             return;
         }
 
-        $builder = (new EloquentSupplierModelStub)->newQuery()->leftJoinRelation('userHistory');
+        $builder = $query(new EloquentSupplierModelStub)->leftJoinRelation('userHistory');
 
         $this->assertEquals('select * from "suppliers" left join "users" on "users"."supplier_id" = "suppliers"."id" left join "history" on "history"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftHasOneThroughRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftHasOneThroughInverseRelationJoin(Closure $query, string $builderClass)
     {
         if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
             return;
         }
 
-        $builder = (new EloquentSupplierModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('userHistory');
-
-        $this->assertEquals('select * from "suppliers" left join "users" on "users"."supplier_id" = "suppliers"."id" left join "history" on "history"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftHasOneThroughInverseRelationJoin()
-    {
-        if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
-            return;
-        }
-
-        $builder = (new EloquentUserHistoryModelStub)->newQuery()->leftJoinRelation('user.supplier');
+        $builder = $query(new EloquentUserHistoryModelStub)->leftJoinRelation('user.supplier');
 
         $this->assertEquals('select * from "history" left join "users" on "users"."id" = "history"."user_id" left join "suppliers" on "suppliers"."id" = "users"."supplier_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftHasOneThroughInverseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftHasManyThroughRelationJoin(Closure $query, string $builderClass)
     {
-        if(!class_exists(\Illuminate\Database\Eloquent\Relations\HasOneThrough::class)) {
-            return;
-        }
-
-        $builder = (new EloquentUserHistoryModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('user.supplier');
-
-        $this->assertEquals('select * from "history" left join "users" on "users"."id" = "history"."user_id" left join "suppliers" on "suppliers"."id" = "users"."supplier_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftHasManyThroughRelationJoin()
-    {
-        $builder = (new EloquentCountryModelStub)->newQuery()->leftJoinRelation('posts');
+        $builder = $query(new EloquentCountryModelStub)->leftJoinRelation('posts');
 
         $this->assertEquals('select * from "countries" left join "users" on "users"."country_id" = "countries"."id" left join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftHasManyThroughRelationJoinWithCustmBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftHasManyThroughInverseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCountryModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('posts');
-
-        $this->assertEquals('select * from "countries" left join "users" on "users"."country_id" = "countries"."id" left join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftHasManyThroughInverseRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->leftJoinRelation('user.country');
+        $builder = $query(new EloquentPostModelStub)->leftJoinRelation('user.country');
 
         $this->assertEquals('select * from "posts" left join "users" on "users"."id" = "posts"."user_id" left join "countries" on "countries"."id" = "users"."country_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftHasManyThroughInverseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftMorphOneRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('user.country');
-
-        $this->assertEquals('select * from "posts" left join "users" on "users"."id" = "posts"."user_id" left join "countries" on "countries"."id" = "users"."country_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftMorphOneRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->leftJoinRelation('image');
+        $builder = $query(new EloquentPostModelStub)->leftJoinRelation('image');
 
         $this->assertEquals('select * from "posts" left join "images" on "images"."imageable_id" = "posts"."id" and "images"."imageable_type" = ?', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftMorphOneRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftMorphManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('image');
-
-        $this->assertEquals('select * from "posts" left join "images" on "images"."imageable_id" = "posts"."id" and "images"."imageable_type" = ?', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftMorphManyRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->leftJoinRelation('polymorphicComments');
+        $builder = $query(new EloquentPostModelStub)->leftJoinRelation('polymorphicComments');
 
         $this->assertEquals('select * from "posts" left join "comments" on "comments"."commentable_id" = "posts"."id" and "comments"."commentable_type" = ?', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftMorphManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftMorphToManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('polymorphicComments');
-
-        $this->assertEquals('select * from "posts" left join "comments" on "comments"."commentable_id" = "posts"."id" and "comments"."commentable_type" = ?', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftMorphToManyRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->leftJoinRelation('tags');
+        $builder = $query(new EloquentPostModelStub)->leftJoinRelation('tags');
 
         $this->assertEquals('select * from "posts" left join "taggables" on "taggables"."taggable_id" = "posts"."id" and "taggables"."taggable_type" = ? left join "tags" on "tags"."id" = "taggables"."tag_id"', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
-
-    public function testLeftMorphToManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftMorphedByManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('tags');
-
-        $this->assertEquals('select * from "posts" left join "taggables" on "taggables"."taggable_id" = "posts"."id" and "taggables"."taggable_type" = ? left join "tags" on "tags"."id" = "taggables"."tag_id"', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftMorphedByManyRelationJoin()
-    {
-        $builder = (new EloquentTagModelStub)->newQuery()->leftJoinRelation('posts');
+        $builder = $query(new EloquentTagModelStub)->leftJoinRelation('posts');
 
         $this->assertEquals('select * from "tags" left join "taggables" on "taggables"."tag_id" = "tags"."id" and "taggables"."taggable_type" = ? left join "posts" on "posts"."id" = "taggables"."taggable_id"', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftMorphedByManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testRightHasOneRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentTagModelStub)->useCustomBuilder()->newQuery()->leftJoinRelation('posts');
-
-        $this->assertEquals('select * from "tags" left join "taggables" on "taggables"."tag_id" = "tags"."id" and "taggables"."taggable_type" = ? left join "posts" on "posts"."id" = "taggables"."taggable_id"', $builder->toSql());
-        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testRightHasOneRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->rightJoinRelation('phone');
+        $builder = $query(new EloquentUserModelStub)->rightJoinRelation('phone');
 
         $this->assertEquals('select * from "users" right join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testRightHasOneRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testCrossHasOneRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->rightJoinRelation('phone');
-
-        $this->assertEquals('select * from "users" right join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testCrossHasOneRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->crossJoinRelation('phone');
+        $builder = $query(new EloquentUserModelStub)->crossJoinRelation('phone');
 
         $this->assertEquals('select * from "users" cross join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testCrossHasOneRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testLeftThroughJoinForHasManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->crossJoinRelation('phone');
-
-        $this->assertEquals('select * from "users" cross join "phones" on "phones"."user_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testLeftThroughJoinForHasManyRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function ($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('posts', function ($join) {
             $join->where('posts.is_active', '=', 1);
         })->leftJoinThroughRelation('posts.comments', function ($join) {
             $join->whereColumn('comments.created_by_id', '=', 'users.id');
@@ -1525,24 +1111,15 @@ class DatabaseEloquentRelationJoinTest extends TestCase
 
         $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and "posts"."is_active" = ? left join "comments" on "comments"."post_id" = "posts"."id" and "comments"."created_by_id" = "users"."id"', $builder->toSql());
         $this->assertEquals([0 => 1], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testLeftThroughJoinForHasManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testRightThroughJoinForHasManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts', function ($join) {
-            $join->where('posts.is_active', '=', 1);
-        })->leftJoinThroughRelation('posts.comments', function ($join) {
-            $join->whereColumn('comments.created_by_id', '=', 'users.id');
-        });
-
-        $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and "posts"."is_active" = ? left join "comments" on "comments"."post_id" = "posts"."id" and "comments"."created_by_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals([0 => 1], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testRightThroughJoinForHasManyRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function ($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('posts', function ($join) {
             $join->where('posts.is_active', '=', 1);
         })->rightJoinThroughRelation('posts.comments', function ($join) {
             $join->whereColumn('comments.created_by_id', '=', 'users.id');
@@ -1550,24 +1127,15 @@ class DatabaseEloquentRelationJoinTest extends TestCase
 
         $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and "posts"."is_active" = ? right join "comments" on "comments"."post_id" = "posts"."id" and "comments"."created_by_id" = "users"."id"', $builder->toSql());
         $this->assertEquals([0 => 1], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testRightThroughJoinForHasManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testCrossThroughJoinForHasManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts', function ($join) {
-            $join->where('posts.is_active', '=', 1);
-        })->rightJoinThroughRelation('posts.comments', function ($join) {
-            $join->whereColumn('comments.created_by_id', '=', 'users.id');
-        });
-
-        $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and "posts"."is_active" = ? right join "comments" on "comments"."post_id" = "posts"."id" and "comments"."created_by_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals([0 => 1], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testCrossThroughJoinForHasManyRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function ($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('posts', function ($join) {
             $join->where('posts.is_active', '=', 1);
         })->crossJoinThroughRelation('posts.comments', function ($join) {
             $join->whereColumn('comments.created_by_id', '=', 'users.id');
@@ -1575,90 +1143,62 @@ class DatabaseEloquentRelationJoinTest extends TestCase
 
         $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and "posts"."is_active" = ? cross join "comments" on "comments"."post_id" = "posts"."id" and "comments"."created_by_id" = "users"."id"', $builder->toSql());
         $this->assertEquals([0 => 1], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testCrossThroughJoinForHasManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMultipleAliasesForBelongsToRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts', function ($join) {
-            $join->where('posts.is_active', '=', 1);
-        })->crossJoinThroughRelation('posts.comments', function ($join) {
-            $join->whereColumn('comments.created_by_id', '=', 'users.id');
-        });
-
-        $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and "posts"."is_active" = ? cross join "comments" on "comments"."post_id" = "posts"."id" and "comments"."created_by_id" = "users"."id"', $builder->toSql());
-        $this->assertEquals([0 => 1], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testMultipleAliasesForBelongsToRelationJoin()
-    {
-        $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('user as authors.country as nations');
+        $builder = $query(new EloquentPostModelStub)->joinRelation('user as authors.country as nations');
 
         $this->assertEquals('select * from "posts" inner join "users" as "authors" on "authors"."id" = "posts"."user_id" inner join "countries" as "nations" on "nations"."id" = "authors"."country_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMultipleAliasesForBelongsToRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMultipleAliasesForHasManyRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentPostModelStub)->useCustomBuilder()->newQuery()->joinRelation('user as authors.country as nations');
-
-        $this->assertEquals('select * from "posts" inner join "users" as "authors" on "authors"."id" = "posts"."user_id" inner join "countries" as "nations" on "nations"."id" = "authors"."country_id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testMultipleAliasesForHasManyRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts as articles.comments as reviews');
+        $builder = $query(new EloquentUserModelStub)->joinRelation('posts as articles.comments as reviews');
 
         $this->assertEquals('select * from "users" inner join "posts" as "articles" on "articles"."user_id" = "users"."id" inner join "comments" as "reviews" on "reviews"."post_id" = "articles"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMultipleAliasesForHasManyRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testMultipleAliasesForHasManyThroughRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts as articles.comments as reviews');
-
-        $this->assertEquals('select * from "users" inner join "posts" as "articles" on "articles"."user_id" = "users"."id" inner join "comments" as "reviews" on "reviews"."post_id" = "articles"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testMultipleAliasesForHasManyThroughRelationJoin()
-    {
-        $builder = (new EloquentCountryModelStub)->newQuery()->joinRelation('posts as citizens,articles.likes as feedback,favorites');
+        $builder = $query(new EloquentCountryModelStub)->joinRelation('posts as citizens,articles.likes as feedback,favorites');
 
         $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id" inner join "comments" as "feedback" on "feedback"."post_id" = "articles"."id" inner join "likes" as "favorites" on "favorites"."comment_id" = "feedback"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testMultipleAliasesForHasManyThroughRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasManyUsingLocalScopeRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCountryModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts as citizens,articles.likes as feedback,favorites');
-
-        $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id" inner join "comments" as "feedback" on "feedback"."post_id" = "articles"."id" inner join "likes" as "favorites" on "favorites"."comment_id" = "feedback"."id"', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasManyUsingLocalScopeRelationJoin()
-    {
-        $builder = (new EloquentCountryModelStub)->newQuery()->joinRelation('users', function ($join) {
+        $builder = $query(new EloquentCountryModelStub)->joinRelation('users', function ($join) {
             $join->active();
         });
 
         $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "active" = ?', $builder->toSql());
         $this->assertEquals([0 => 1], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasManyUsingLocalScopeRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testBelongsToWithNestedClauseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentCountryModelStub)->useCustomBuilder()->newQuery()->joinRelation('users', function ($join) {
-            $join->active();
-        });
-
-        $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "active" = ?', $builder->toSql());
-        $this->assertEquals([0 => 1], $builder->getBindings());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testBelongsToWithNestedClauseRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('supplier', function($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('supplier', function($join) {
             $join->where(function($join) {
                 $join->whereIn('supplier.state', ['AZ', 'CA', 'TX']);
                 $join->orWhere('supplier.has_international_restrictions', 1);
@@ -1666,24 +1206,15 @@ class DatabaseEloquentRelationJoinTest extends TestCase
         });
 
         $this->assertEquals('select * from "users" inner join "suppliers" on "suppliers"."id" = "users"."supplier_id" and ("supplier"."state" in (?, ?, ?) or "supplier"."has_international_restrictions" = ?)', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testBelongsToWithNestedClauseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testBelongsToWithRecursiveNestedClauseRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('supplier', function($join) {
-            $join->where(function($join) {
-                $join->whereIn('supplier.state', ['AZ', 'CA', 'TX']);
-                $join->orWhere('supplier.has_international_restrictions', 1);
-            });
-        });
-
-        $this->assertEquals('select * from "users" inner join "suppliers" on "suppliers"."id" = "users"."supplier_id" and ("supplier"."state" in (?, ?, ?) or "supplier"."has_international_restrictions" = ?)', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testBelongsToWithRecursiveNestedClauseRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('supplier', function($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('supplier', function($join) {
             $join->where(function($join) {
                 $join->whereIn('supplier.state', ['AZ', 'CA', 'TX']);
                 $join->orWhere(function($join) {
@@ -1694,60 +1225,54 @@ class DatabaseEloquentRelationJoinTest extends TestCase
         });
 
         $this->assertEquals('select * from "users" inner join "suppliers" on "suppliers"."id" = "users"."supplier_id" and ("supplier"."state" in (?, ?, ?) or ("supplier"."has_international_restrictions" = ? and "supplier"."country" != ?))', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testBelongsToWithRecursiveNestedClauseRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testHasRelationWithinRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('supplier', function($join) {
-            $join->where(function($join) {
-                $join->whereIn('supplier.state', ['AZ', 'CA', 'TX']);
-                $join->orWhere(function($join) {
-                    $join->where('supplier.has_international_restrictions', 1);
-                    $join->where('supplier.country', '!=', 'US');
-                });
-            });
-        });
-
-        $this->assertEquals('select * from "users" inner join "suppliers" on "suppliers"."id" = "users"."supplier_id" and ("supplier"."state" in (?, ?, ?) or ("supplier"."has_international_restrictions" = ? and "supplier"."country" != ?))', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testHasRelationWithinRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('posts', function($join) {
             $join->has('comments');
         });
 
         $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and exists (select * from "comments" where "posts"."id" = "comments"."post_id")', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testHasRelationWithinRelationJoinWithCustomBuilder()
+    /**
+     * @dataProvider queryDataProvider
+     */
+    public function testDoesntHaveRelationWithinRelationJoin(Closure $query, string $builderClass)
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts', function($join) {
-            $join->has('comments');
-        });
-
-        $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and exists (select * from "comments" where "posts"."id" = "comments"."post_id")', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
-    }
-
-    public function testDoesntHaveRelationWithinRelationJoin()
-    {
-        $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('posts', function($join) {
             $join->doesntHave('comments');
         });
 
         $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and not exists (select * from "comments" where "posts"."id" = "comments"."post_id")', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
     }
 
-    public function testDoesntHaveRelationWithinRelationJoinWithCustomBuilder()
+    /**
+     * Returns the query resolvers for each test.
+     *
+     * @return array
+     */
+    public function queryDataProvider()
     {
-        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery()->joinRelation('posts', function($join) {
-            $join->doesntHave('comments');
-        });
+        $newQuery = function ($model) {
+            return $model->useCustomBuilder(false)->newQuery();
+        };
 
-        $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and not exists (select * from "comments" where "posts"."id" = "comments"."post_id")', $builder->toSql());
-        $this->assertEquals(CustomBuilder::class, get_class($builder));
+        $customQuery = function ($model) {
+            return $model->useCustomBuilder()->newQuery();
+        };
+
+        return [
+            'Eloquent Builder' => [$newQuery, EloquentBuilder::class],
+            'Custom Builder' => [$customQuery, CustomBuilder::class]
+        ];
     }
 }
 
