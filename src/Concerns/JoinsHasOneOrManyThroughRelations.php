@@ -3,7 +3,6 @@
 namespace Reedware\LaravelRelationJoins\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
-use Reedware\LaravelRelationJoins\Qualify;
 
 trait JoinsHasOneOrManyThroughRelations
 {
@@ -54,7 +53,7 @@ trait JoinsHasOneOrManyThroughRelations
         }
 
         $query->join($table, function ($join) use ($parentQuery, $on) {
-            $join->on($on.'.'.$this->firstKey, '=', Qualify::column($parentQuery, $this->localKey));
+            $join->on($on.'.'.$this->firstKey, '=', $parentQuery->qualifyColumn($this->localKey));
 
             if ($this->throughParentSoftDeletes()) {
                 $join->whereNull($on.'.'.$this->throughParent->getDeletedAtColumn());

@@ -3,7 +3,6 @@
 namespace Reedware\LaravelRelationJoins\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
-use Reedware\LaravelRelationJoins\Qualify;
 
 trait JoinsHasOneOrManyRelations
 {
@@ -29,7 +28,7 @@ trait JoinsHasOneOrManyRelations
         }
 
         return $query->whereColumn(
-            Qualify::column($query, $this->getForeignKeyName()), '=', $this->getQualifiedParentKeyName()
+            $query->qualifyColumn($this->getForeignKeyName()), '=', $this->getQualifiedParentKeyName()
         );
     }
 }

@@ -15,8 +15,6 @@ class MorphToMany extends Relation
      */
     public function getQualifiedRelatedKeyName()
     {
-        return method_exists($this->related, 'qualifyColumn')
-            ? $this->related->qualifyColumn($this->relatedKey)
-            : $this->related->getTable().'.'.$this->relatedKey;
+        return $this->related->qualifyColumn($this->relatedKey);
     }
 }
