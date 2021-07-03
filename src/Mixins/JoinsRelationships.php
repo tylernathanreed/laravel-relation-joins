@@ -170,12 +170,12 @@ class JoinsRelationships
 
             $wheres = $query->wheres;
 
-            $wheres = array_map(function($where) {
-                if(!isset($where['query'])) {
+            $wheres = array_map(function ($where) {
+                if (!isset($where['query'])) {
                     return $where;
                 }
 
-                if($where['type'] == 'Exists' || $where['type'] == 'NotExists') {
+                if ($where['type'] == 'Exists' || $where['type'] == 'NotExists') {
                     return $where;
                 }
 
@@ -183,7 +183,7 @@ class JoinsRelationships
 
                 $joinClause = new JoinClause($where['query'], 'inner', $where['query']->from);
 
-                foreach(array_keys(get_object_vars($where['query'])) as $key) {
+                foreach (array_keys(get_object_vars($where['query'])) as $key) {
                     $joinClause->{$key} = $where['query']->{$key};
                 }
 

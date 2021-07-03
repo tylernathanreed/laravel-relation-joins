@@ -31,39 +31,39 @@ class RelationJoinQuery
      */
     public static function get(Relation $relation, Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
     {
-        if($relation instanceof BelongsTo) {
+        if ($relation instanceof BelongsTo) {
             return static::belongsTo($relation, $query, $parentQuery, $type, $alias);
         }
 
-        else if($relation instanceof MorphToMany) {
+        else if ($relation instanceof MorphToMany) {
             return static::morphToMany($relation, $query, $parentQuery, $type, $alias);
         }
 
-        else if($relation instanceof BelongsToMany) {
+        else if ($relation instanceof BelongsToMany) {
             return static::belongsToMany($relation, $query, $parentQuery, $type, $alias);
         }
 
-        else if($relation instanceof HasMany) {
+        else if ($relation instanceof HasMany) {
             return static::hasOneOrMany($relation, $query, $parentQuery, $type, $alias);
         }
 
-        else if($relation instanceof HasManyThrough) {
+        else if ($relation instanceof HasManyThrough) {
             return static::hasOneOrManyThrough($relation, $query, $parentQuery, $type, $alias);
         }
 
-        else if($relation instanceof HasOne) {
+        else if ($relation instanceof HasOne) {
             return static::hasOneOrMany($relation, $query, $parentQuery, $type, $alias);
         }
 
-        else if($relation instanceof HasOneThrough) {
+        else if ($relation instanceof HasOneThrough) {
             return static::hasOneOrManyThrough($relation, $query, $parentQuery, $type, $alias);
         }
 
-        else if($relation instanceof MorphMany) {
+        else if ($relation instanceof MorphMany) {
             return static::morphOneOrMany($relation, $query, $parentQuery, $type, $alias);
         }
 
-        else if($relation instanceof MorphOne) {
+        else if ($relation instanceof MorphOne) {
             return static::morphOneOrMany($relation, $query, $parentQuery, $type, $alias);
         }
 
