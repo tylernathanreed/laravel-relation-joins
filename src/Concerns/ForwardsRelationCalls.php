@@ -52,8 +52,6 @@ trait ForwardsRelationCalls
     use ForwardsHasManyThroughCalls {
         ForwardsHasManyThroughCalls::getRelationJoinQuery as getHasManyThroughRelationJoinQuery;
         ForwardsHasManyThroughCalls::newFromParent as newHasManyThroughFromParent;
-
-        ForwardsHasManyThroughCalls::getRelationCountHash insteadof ForwardsHasOneThroughCalls;
     }
 
     use ForwardsMorphOneCalls {

@@ -7,13 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 trait JoinsHasOneOrManyThroughRelations
 {
     /**
-     * The count of self joins.
-     *
-     * @var int
-     */
-    protected static $selfJoinCount = 0;
-
-    /**
      * Add the constraints for a relationship query.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
@@ -63,15 +56,5 @@ trait JoinsHasOneOrManyThroughRelations
         return $query->whereColumn(
             $this->getQualifiedForeignKeyName(), '=', $on.'.'.$this->secondLocalKey
         );
-    }
-
-    /**
-     * Get a relationship join table hash.
-     *
-     * @return string
-     */
-    public function getRelationCountHash($incrementJoinCount = true)
-    {
-        return 'laravel_reserved_'.($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
     }
 }

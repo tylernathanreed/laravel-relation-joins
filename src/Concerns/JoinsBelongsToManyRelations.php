@@ -48,19 +48,7 @@ trait JoinsBelongsToManyRelations
         $query->join($table, $on.'.'.$this->foreignPivotKey, '=', $this->getQualifiedParentKeyName(), $type);
 
         return $query->whereColumn(
-            $this->getQualifiedRelatedKeyName(), '=', $on.'.'.$this->relatedPivotKey
+            $this->related->qualifyColumn($this->relatedKey), '=', $on.'.'.$this->relatedPivotKey
         );
-    }
-
-    /**
-     * Get the fully qualified related key name for the relation.
-     *
-     * @return string
-     */
-    public function getQualifiedRelatedKeyName()
-    {
-        return method_exists($this->related, 'qualifyColumn')
-            ? $this->related->qualifyColumn($this->relatedKey)
-            : $this->related->getTable().'.'.$this->relatedKey;
     }
 }
