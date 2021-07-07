@@ -17,12 +17,15 @@ This package adds the ability to join on a relationship by name.
     - [2. Joining to nested relationships](#joining-nested)
     - [3. Adding join constraints](#joining-constraints)
         - [Query Scopes](#joining-constraints-scopes)
-        - [Soft Deletes](#joining-constraints-soft-deleted)
-    - [4. Joining through relationships](#joining-through)
-    - [5. Joining on circular relationships](#joining-circular)
-    - [6. Aliasing joins](#joining-aliasing)
+        - [Soft Deletes](#joining-constraints-soft-deletes)
+    - [4. Adding pivot constraints](#joining-constraints-pivot)
+        - [Query Scopes](#joining-constraints-pivot-scopes)
+        - [Soft Deletes](#joining-constraints-pivot-soft-deletes)
+    - [5. Joining through relationships](#joining-through)
+    - [6. Joining on circular relationships](#joining-circular)
+    - [7. Aliasing joins](#joining-aliasing)
         - [Aliasing Pivot Tables](#joining-aliasing-pivot)
-    - [7. Everything else](#joining-miscellaneous)
+    - [8. Everything else](#joining-miscellaneous)
 
 <a name="introduction"></a>
 ## Introduction
@@ -108,7 +111,7 @@ User::query()->joinRelation('posts', function ($join) {
 });
 ```
 
-<a name="joining-constraints-soft-deleted"></a>
+<a name="joining-constraints-soft-deletes"></a>
 #### Soft Deletes
 
 It can be frustrating to respecify soft deletes in all of your joins, when the model itself already knows how to do this. When using relation joins, soft deletes are automatically handled! Additionally, you can still leverage the query scopes that ship with soft deletes:
@@ -120,8 +123,55 @@ User::query()->joinRelation('posts', function ($join) {
 });
 ```
 
+<a name="joining-constraints-pivot"></a>
+### 4. Adding pivot constraints
+
+Constraints aren't limited to just the join table itself. Certain relationships require multiple joins, which introduces additional tables. You can still apply constraints on these joins directly. To be clear, this is intended for "Has One/Many Through" and "Belongs to Many" relations.
+
+```php
+// Adding pivot ("role_user") constraints for a "Belongs to Many" relation
+User::query()->joinRelation('roles', function ($join, $pivot) {
+    $pivot->where('domain', '=', 'web');
+});
+```
+
+```php
+// Adding pivot ("users") constraints for a "Has Many Through" relation
+Country::query()->joinRelation('posts', function ($join, $through) {
+    $through->where('is_admin', '=', true);
+});
+```
+
+This will tack on the specific constraints to the intermediate table.
+
+<a name="joining-constraints-pivot-scopes"></a>
+#### Query Scopes
+
+When the intermediate table is represented by a model, you can leverage query scopes for that model as well. This is default behavior for the "Has One/Many Through" relations. For the "Belongs To Many" relation, you'll need to leverage the `->using(Model::class)` method to obtain this benefit.
+
+```php
+// Using a query scope for the intermediate "RoleUser" pivot in a "Belongs to Many" relation
+User::query()->joinRelation('roles', function ($join, $pivot) {
+    $pivot->web();
+});
+```
+
+<a name="joining-constraints-pivot-soft-deletes"></a>
+#### Soft Deletes
+
+Similar to regular join constraints, soft deletes on the pivot are automatically accounted for. Additionally, you can still leverage the query scopes that ship with soft deletes:
+
+```php
+// Disabling soft deletes for the intermediate "User" model
+Country::query()->joinRelation('posts', function ($join, $through) {
+    $through->withTrashed();
+});
+```
+
+When using a "Belongs to Many" relationship, a pivot model must be specified for soft deletes to be considered.
+
 <a name="joining-through"></a>
-### 4. Joining through relationships
+### 5. Joining through relationships
 
 There are times where you want to tack on clauses for intermediate joins. This can get a bit tricky in some other packages (by trying to automatically deduce whether or not to apply a join, or by not handling this situation at all).
 
@@ -141,7 +191,7 @@ User::query()->joinRelation('posts', function ($join) {
 The second part, `joinThroughRelation`, will only apply the `comments` relation join, but it will do so as if it came from the `Post` model.
 
 <a name="joining-circular"></a>
-### 5. Joining on circular relationships
+### 6. Joining on circular relationships
 
 This package also supports joining on circular relations, and handles it the same way the "has" concept does:
 
@@ -159,7 +209,7 @@ User::query()->joinRelation('employees');
 Now clearly, if you're wanting to apply constraints on the `employees` relation, having this sort of naming convention isn't desirable. This brings me to the next feature:
 
 <a name="joining-aliasing"></a>
-### 6. Aliasing joins
+### 7. Aliasing joins
 
 You could alias the above example like so:
 
@@ -203,7 +253,7 @@ User::query()->joinRelation('roles as users_roles,positions');
 ```
 
 <a name="joining-miscellaneous"></a>
-### 7. Everything else
+### 8. Everything else
 
 Everything else you would need for joins: aggregates, grouping, ordering, selecting, etc. all go through the already established query builder, where none of that was changed. Meaning I can easily do something like this:
 
