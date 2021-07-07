@@ -126,7 +126,7 @@ User::query()->joinRelation('posts', function ($join) {
 <a name="joining-constraints-pivot"></a>
 ### 4. Adding pivot constraints
 
-Constraints aren't limited to just the join table itself. Certain relationships require multiple joins, which introduces additional tables. You can still apply constraints on these joins directly. To be clear, this is intended for "Has One/Many Through" and "Belongs to Many" relations.
+Constraints aren't limited to just the join table itself. Certain relationships require multiple joins, which introduces additional tables. You can still apply constraints on these joins directly. To be clear, this is intended for "Has One/Many Through" and "Belongs/Morph to Many" relations.
 
 ```php
 // Adding pivot ("role_user") constraints for a "Belongs to Many" relation
@@ -147,7 +147,7 @@ This will tack on the specific constraints to the intermediate table.
 <a name="joining-constraints-pivot-scopes"></a>
 #### Query Scopes
 
-When the intermediate table is represented by a model, you can leverage query scopes for that model as well. This is default behavior for the "Has One/Many Through" relations. For the "Belongs To Many" relation, you'll need to leverage the `->using(Model::class)` method to obtain this benefit.
+When the intermediate table is represented by a model, you can leverage query scopes for that model as well. This is default behavior for the "Has One/Many Through" relations. For the "Belongs/Morph To Many" relations, you'll need to leverage the `->using(Model::class)` method to obtain this benefit.
 
 ```php
 // Using a query scope for the intermediate "RoleUser" pivot in a "Belongs to Many" relation
@@ -168,7 +168,7 @@ Country::query()->joinRelation('posts', function ($join, $through) {
 });
 ```
 
-When using a "Belongs to Many" relationship, a pivot model must be specified for soft deletes to be considered.
+When using a "Belongs/Morph to Many" relationship, a pivot model must be specified for soft deletes to be considered.
 
 <a name="joining-through"></a>
 ### 5. Joining through relationships
