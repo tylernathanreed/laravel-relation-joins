@@ -3,11 +3,13 @@
 namespace Reedware\LaravelRelationJoins\Mixins;
 
 use Closure;
-use RuntimeException;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\JoinClause;
+use Reedware\LaravelRelationJoins\EloquentJoinClause;
+use ReflectionFunction;
+use RuntimeException;
 
 class JoinsRelationships
 {
@@ -53,14 +55,16 @@ class JoinsRelationships
             // without actually applying any joins. Presumably the developer has already used
             // a modified version of this join, and they don't want to do it all over again.
             if ($through) {
-                return $joinQuery;
+                return $this->applyJoinScopes($joinQuery);
             }
 
             // Next we will call any given callback as an "anonymous" scope so they can get the
             // proper logical grouping of the where clauses if needed by this Eloquent query
             // builder. Then, we will be ready to finalize and return this query instance.
             if ($callback) {
-                $joinQuery->callScope($callback);
+                $this->callJoinScope($joinQuery, $callback);
+            } else {
+                $this->applyJoinScopes($joinQuery);
             }
 
             $this->addJoinRelationWhere(
@@ -103,6 +107,93 @@ class JoinsRelationships
             }
 
             return $this;
+
+        };
+    }
+
+    /**
+     * Defines the mixin for {@see $query->applyJoinScopes()}.
+     *
+     * @return \Closure
+     */
+    protected function applyJoinScopes()
+    {
+        /**
+         * Applies the eloquent scopes to the specified query.
+         * 
+         * @param  \Illuminate\Database\Query\Builder  $joinQuery
+         * 
+         * @return \Illuminate\Database\Query\Builder
+         */
+        return function (Builder $joinQuery) {
+
+            $joins = $joinQuery->getQuery()->joins ?: [];
+
+            foreach ($joins as $join) {
+                if ($join instanceof EloquentJoinClause) {
+                    $join->applyScopes();
+                } 
+            }
+
+            return $joinQuery;
+
+        };
+    }
+
+    /**
+     * Defines the mixin for {@see $query->callJoinScope()}.
+     *
+     * @return \Closure
+     */
+    protected function callJoinScope()
+    {
+        /**
+         * Calls the provided callback on the join query.
+         * 
+         * @param  \Illuminate\Database\Query\Builder  $joinQuery
+         * @param  \Closure                            $callback
+         *
+         * @return void
+         */
+        return function (Builder $joinQuery, Closure $callback) {
+
+            $joins = $joinQuery->getQuery()->joins ?: [];
+
+            array_unshift($joins, $joinQuery);
+
+            $queries = array_map(function ($join) {
+                return $join instanceof JoinClause ? $join : $join->getQuery();
+            }, $joins);
+
+            // We will keep track of how many wheres are on each query before running the
+            // scope so that we can properly group the added scope constraints in each
+            // query as their own isolated nested where statement and avoid issues.
+
+            $originalWhereCounts = array_map(function ($query) {
+                return count($query->wheres ?: []);
+            }, $queries);
+
+            $callback(...$joins);
+
+            $this->applyJoinScopes($joinQuery);
+
+            foreach ($originalWhereCounts as $index => $count) {
+                if(count($queries[$index]->wheres ?: []) > $count) {
+                    $joinQuery->addNewWheresWithinGroup($queries[$index], $count);
+                }
+            }
+
+            // Once the constraints have been applied, we'll need to shuffle arounds the
+            // bindings so that the base query receives everything. We will apply all
+            // of the bindings from the subsequent joins onto the first query.
+
+            $joinQuery->getQuery()->bindings['join'] = [];
+
+            array_shift($queries);
+
+            foreach ($queries as $query) {
+                $joinQuery->addBinding($query->getBindings(), 'join');
+            }
 
         };
     }

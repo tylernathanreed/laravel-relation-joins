@@ -2,6 +2,7 @@
 
 namespace Reedware\LaravelRelationJoins\Tests\Unit;
 
+use BadMethodCallException;
 use Closure;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentCountryModelStub;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
@@ -229,5 +230,144 @@ class HasManyThroughTest extends TestCase
 
         $this->assertEquals('select * from "posts" left join "users" on "users"."id" = "posts"."user_id" left join "countries" on "countries"."id" = "users"."country_id"', $builder->toSql());
         $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentCountryModelStub)
+            ->joinRelation('posts', function ($join) {
+                $join->on('posts.language', '=', 'country.primary_language');
+            });
+
+        $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "users"."id" and "posts"."language" = "country"."primary_language"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentCountryModelStub)
+            ->joinRelation('posts', function ($join, $through) {
+                $through->where('users.is_admin', '=', false);
+            });
+
+        $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."is_admin" = ? inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals([false], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_scope(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentCountryModelStub)
+            ->joinRelation('posts', function ($join, $through) {
+                $through->active();
+            });
+
+        $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "active" = ? inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals([true], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_softDeletes(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentCountryModelStub)
+            ->joinRelation('postsThroughSoftDeletingUser', function ($join, $through) {
+                $through->active();
+            });
+
+        if($this->isVersionAfter('7.10.0')) {
+            $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "active" = ? and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
+        } else {
+            $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "active" = ? and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
+        }
+        $this->assertEquals([true], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_softDeletes_withTrashed(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentCountryModelStub)
+            ->joinRelation('postsThroughSoftDeletingUser', function ($join, $through) {
+                $through->withTrashed();
+            });
+
+        if($this->isVersionAfter('7.10.0')) {
+            $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
+        } else {
+            $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
+        }
+
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_softDeletes_alias(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentCountryModelStub)
+            ->joinRelation('postsThroughSoftDeletingUser as citizens,articles');
+
+        if($this->isVersionAfter('7.10.0')) {
+            $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" and "citizens"."deleted_at" is null inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id"', $builder->toSql());
+        } else {
+            $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" and "citizens"."deleted_at" is null inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id" and "users"."deleted_at" is null', $builder->toSql());
+        }
+
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_softDeletes_withTrashed_alias(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentCountryModelStub)
+            ->joinRelation('postsThroughSoftDeletingUser as citizens,articles', function ($join, $through) {
+                $through->withTrashed();
+            });
+
+        if($this->isVersionAfter('7.10.0')) {
+            $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id"', $builder->toSql());
+        } else {
+            $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id" and "users"."deleted_at" is null', $builder->toSql());
+        }
+
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_missingMethod(Closure $query, string $builderClass)
+    {
+        $this->expectException(BadMethodCallException::class);
+
+        $builder = $query(new EloquentCountryModelStub)
+            ->joinRelation('posts', function ($join, $through) {
+                $through->missingMethod();
+            });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Reedware\LaravelRelationJoins\Tests\Unit;
 
+use BadMethodCallException;
 use Closure;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentSupplierModelStub;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserHistoryModelStub;
@@ -136,5 +137,145 @@ class HasOneThroughTest extends TestCase
 
         $this->assertEquals('select * from "history" left join "users" on "users"."id" = "history"."user_id" left join "suppliers" on "suppliers"."id" = "users"."supplier_id"', $builder->toSql());
         $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentSupplierModelStub)
+            ->joinRelation('userHistory', function ($join) {
+                $join->where('history.type', '=', 'Greek');
+            });
+
+        $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" inner join "history" on "history"."user_id" = "users"."id" and "history"."type" = ?', $builder->toSql());
+        $this->assertEquals(['Greek'], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentSupplierModelStub)
+            ->joinRelation('userHistory', function ($join, $through) {
+                $through->where('users.is_admin', '=', false);
+            });
+
+        $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" and "users"."is_admin" = ? inner join "history" on "history"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals([false], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_scope(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentSupplierModelStub)
+            ->joinRelation('userHistory', function ($join, $through) {
+                $through->active();
+            });
+
+        $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" and "active" = ? inner join "history" on "history"."user_id" = "users"."id"', $builder->toSql());
+        $this->assertEquals([true], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_softDeletes(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentSupplierModelStub)
+            ->joinRelation('userHistoryThroughSoftDeletingUser', function ($join, $through) {
+                $through->active();
+            });
+
+        if($this->isVersionAfter('7.10.0')) {
+            $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" and "active" = ? and "users"."deleted_at" is null inner join "history" on "history"."user_id" = "users"."id"', $builder->toSql());
+        } else {
+            $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" and "active" = ? and "users"."deleted_at" is null inner join "history" on "history"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
+        }
+        $this->assertEquals([true], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_softDeletes_withTrashed(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentSupplierModelStub)
+            ->joinRelation('userHistoryThroughSoftDeletingUser', function ($join, $through) {
+                $through->withTrashed();
+            });
+
+        if($this->isVersionAfter('7.10.0')) {
+            $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" inner join "history" on "history"."user_id" = "users"."id"', $builder->toSql());
+        } else {
+            $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" inner join "history" on "history"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
+        }
+
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_softDeletes_alias(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentSupplierModelStub)
+            ->joinRelation('userHistoryThroughSoftDeletingUser as citizens,user_history');
+
+        if($this->isVersionAfter('7.10.0')) {
+            $this->assertEquals('select * from "suppliers" inner join "users" as "citizens" on "citizens"."supplier_id" = "suppliers"."id" and "citizens"."deleted_at" is null inner join "history" as "user_history" on "user_history"."user_id" = "citizens"."id"', $builder->toSql());
+        } else {
+            $this->assertEquals('select * from "suppliers" inner join "users" as "citizens" on "citizens"."supplier_id" = "suppliers"."id" and "citizens"."deleted_at" is null inner join "history" as "user_history" on "user_history"."user_id" = "citizens"."id" and "users"."deleted_at" is null', $builder->toSql());
+        }
+
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_softDeletes_withTrashed_alias(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentSupplierModelStub)
+            ->joinRelation('userHistoryThroughSoftDeletingUser as citizens,user_history', function ($join, $through) {
+                $through->withTrashed();
+            });
+
+        if($this->isVersionAfter('7.10.0')) {
+            $this->assertEquals('select * from "suppliers" inner join "users" as "citizens" on "citizens"."supplier_id" = "suppliers"."id" inner join "history" as "user_history" on "user_history"."user_id" = "citizens"."id"', $builder->toSql());
+        } else {
+            $this->assertEquals('select * from "suppliers" inner join "users" as "citizens" on "citizens"."supplier_id" = "suppliers"."id" inner join "history" as "user_history" on "user_history"."user_id" = "citizens"."id" and "users"."deleted_at" is null', $builder->toSql());
+        }
+
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_missingMethod(Closure $query, string $builderClass)
+    {
+        $this->expectException(BadMethodCallException::class);
+
+        $builder = $query(new EloquentSupplierModelStub)
+            ->joinRelation('userHistory', function ($join, $through) {
+                $through->missingMethod();
+            });
     }
 }

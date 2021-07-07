@@ -26,6 +26,18 @@ class EloquentUserModelStub extends EloquentRelationJoinModelStub
         return $this->belongsToMany(EloquentRoleModelStub::class, 'role_user', 'user_id', 'role_id');
     }
 
+    public function rolesUsingPivotModel()
+    {
+        return $this->belongsToMany(EloquentRoleModelStub::class, 'role_user', 'user_id', 'role_id')
+            ->using(EloquentRoleUserPivotStub::class);
+    }
+
+    public function rolesUsingSoftDeletingPivotModel()
+    {
+        return $this->belongsToMany(EloquentRoleModelStub::class, 'role_user', 'user_id', 'role_id')
+            ->using(EloquentSoftDeletingRoleUserPivotStub::class);
+    }
+
     public function softDeletingRoles()
     {
         return $this->belongsToMany(EloquentSoftDeletingRoleModelStub::class, 'role_user', 'user_id', 'role_id');

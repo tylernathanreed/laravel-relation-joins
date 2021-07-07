@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use InvalidArgumentException;
 
@@ -139,7 +140,20 @@ class RelationJoinQuery
             $table = $on = $relation->getTable();
         }
 
-        $query->join($table, $on.'.'.$relation->getForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName(), $type);
+        $query->join($table, function ($join) use ($relation, $on) {
+            $join->on($on.'.'.$relation->getForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName());
+        }, null, null, $type);
+
+        // When a belongs to many relation uses an eloquent model to define the pivot
+        // in between the two models, we should elevate the join through eloquent
+        // so that query scopes can be leveraged. This is opt-in functionality.
+
+        if (($using = $relation->getPivotClass()) != Pivot::class) {
+            $query->getQuery()->joins[0] = new EloquentJoinClause(
+                $query->getQuery()->joins[0],
+                (new $using)->setTable($on)
+            );
+        }
 
         return $query->whereColumn(
             $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on.'.'.$relation->getRelatedPivotKeyName()
@@ -176,6 +190,12 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a has one through or has many through relationship join.
+     *
+     * Soft deletes on the parent model are not handled correctly until 7.10.0.
+     * Most of the functionality works as expected otherwise. Given that 6.x
+     * is nearing EoL, and 7.x is already EoL, we'll let it slide for now.
+     *
+     * @see https://github.com/laravel/framework/commit/de4c42f04d609b119a4e0a7e6223c37bfe54cb87
      *
      * @param  \Illuminate\Database\Eloquent\Relations\Relation  $relation
      * @param  \Illuminate\Database\Eloquent\Builder             $query
@@ -217,11 +237,16 @@ class RelationJoinQuery
 
         $query->join($table, function ($join) use ($relation, $parentQuery, $on) {
             $join->on($on.'.'.$relation->getFirstKeyName(), '=', $parentQuery->qualifyColumn($relation->getLocalKeyName()));
-
-            if ($relation->throughParentSoftDeletes()) {
-                $join->whereNull($on.'.'.$relation->getParent()->getDeletedAtColumn());
-            }
         }, null, null, $type);
+
+        // The has one/many through relations use an eloquent model to define the step
+        // in between the two models. To allow pivot constraints to leverage query
+        // scopes, we are going to define the query through eloquent instead.
+
+        $query->getQuery()->joins[0] = new EloquentJoinClause(
+            $query->getQuery()->joins[0],
+            $relation->getParent()->newInstance()->setTable($on)
+        );
 
         return $query->whereColumn(
             $relation->getQualifiedForeignKeyName(), '=', $on.'.'.$relation->getSecondLocalKeyName()

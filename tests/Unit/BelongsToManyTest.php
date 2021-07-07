@@ -166,4 +166,137 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals('select * from "roles" left join "role_user" on "role_user"."role_id" = "roles"."id" left join "users" on "users"."id" = "role_user"."user_id"', $builder->toSql());
         $this->assertEquals($builderClass, get_class($builder));
     }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('roles', function ($join) {
+                $join->where('roles.name', '=', 'admin');
+            });
+
+        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "role_user"."role_id" and "roles"."name" = ?', $builder->toSql());
+        $this->assertEquals(['admin'], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('roles', function ($join, $pivot) {
+                $pivot->where('role_user.domain', '=', 'web');
+            });
+
+        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" and "role_user"."domain" = ? inner join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
+        $this->assertEquals(['web'], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_nested(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('roles', function ($join, $pivot) {
+                $pivot->where('role_user.domain', '=', 'web');
+                $pivot->where(function ($pivot) {
+                    $pivot->where('role_user.application', 'main');
+                    $pivot->orWhere('role_user.global', true);
+                });
+            });
+
+        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" and "role_user"."domain" = ? and ("role_user"."application" = ? or "role_user"."global" = ?) inner join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
+        $this->assertEquals(['web', 'main', true], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_model(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('rolesUsingPivotModel', function ($join, $pivot) {
+                $pivot->where('role_user.domain', '=', 'web');
+            });
+
+        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" and "role_user"."domain" = ? inner join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
+        $this->assertEquals(['web'], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_model_nested(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('rolesUsingPivotModel', function ($join, $pivot) {
+                $pivot->where('role_user.domain', '=', 'web');
+                $pivot->where(function ($pivot) {
+                    $pivot->where('role_user.application', 'main');
+                    $pivot->orWhere('role_user.global', true);
+                });
+            });
+
+        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" and "role_user"."domain" = ? and ("role_user"."application" = ? or "role_user"."global" = ?) inner join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
+        $this->assertEquals(['web', 'main', true], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_model_scope(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('rolesUsingPivotModel', function ($join, $pivot) {
+                $pivot->web();
+            });
+
+        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" and "domain" = ? inner join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
+        $this->assertEquals(['web'], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_model_softDeletes(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('rolesUsingSoftDeletingPivotModel');
+
+        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" and "role_user"."deleted_at" is null inner join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function constraints_pivot_model_softDeletes_withTrashed(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('rolesUsingSoftDeletingPivotModel', function ($join, $pivot) {
+                $pivot->withTrashed();
+            });
+
+        $this->assertEquals('select * from "users" inner join "role_user" on "role_user"."user_id" = "users"."id" inner join "roles" on "roles"."id" = "role_user"."role_id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
 }
