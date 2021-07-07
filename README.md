@@ -16,9 +16,12 @@ This package adds the ability to join on a relationship by name.
     - [1. Performing a join via relationship](#joining-basic)
     - [2. Joining to nested relationships](#joining-nested)
     - [3. Adding join constraints](#joining-constraints)
+        - [Query Scopes](#joining-constraints-scopes)
+        - [Soft Deletes](#joining-constraints-soft-deleted)
     - [4. Joining through relationships](#joining-through)
     - [5. Joining on circular relationships](#joining-circular)
     - [6. Aliasing joins](#joining-aliasing)
+        - [Aliasing Pivot Tables](#joining-aliasing-pivot)
     - [7. Everything else](#joining-miscellaneous)
 
 <a name="introduction"></a>
@@ -91,19 +94,29 @@ User::query()->joinRelation('posts', function ($join) {
 });
 ```
 
-This will tack on the specific constraints to the already provided relationship constraints, making this really easy to use. Here are a few more examples:
+This will tack on the specific constraints to the already provided relationship constraints, making this really easy to use.
+
+<a name="joining-constraints-scopes"></a>
+#### Query Scopes
+
+One of the most powerful features offered by this package is the ability to leverage query scopes within joins. Calling a query scope on the `$join` parameter is essentially the same as calling it on the related model.
+
+```php
+// Using the "active" query scope on the "Post" model
+User::query()->joinRelation('posts', function ($join) {
+    $join->active();
+});
+```
+
+<a name="joining-constraints-soft-deleted"></a>
+#### Soft Deletes
+
+It can be frustrating to respecify soft deletes in all of your joins, when the model itself already knows how to do this. When using relation joins, soft deletes are automatically handled! Additionally, you can still leverage the query scopes that ship with soft deletes:
 
 ```php
 // Disabling soft deletes for only the "Post" model
 User::query()->joinRelation('posts', function ($join) {
     $join->withTrashed();
-});
-```
-
-```php
-// Using a query scope on the "Post" model
-User::query()->joinRelation('posts', function ($join) {
-    $join->active();
 });
 ```
 
@@ -172,6 +185,8 @@ User::query()->joinRelation('posts as articles.comments as feedback');
 // SQL: select * from "users" inner join "posts" as "articles" on "articles"."user_id" = "users"."id" inner join "comments" as "feedback" on "feedback"."post_id" = "articles"."id"
 ```
 
+<a name="joining-aliasing-pivot"></a>
+#### Aliasing Pivot Tables
 For relations that require multiple tables (i.e. BelongsToMany, HasManyThrough, etc.), the alias will apply to the far/non-pivot table. If you need to alias the pivot/through table, you can use a double-alias:
 
 ```php
