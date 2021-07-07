@@ -36,6 +36,18 @@ class EloquentPostModelStub extends EloquentRelationJoinModelStub
         return $this->morphToMany(EloquentTagModelStub::class, 'taggable', 'taggables', 'taggable_id', 'tag_id', 'id');
     }
 
+    public function tagsUsingPivotModel()
+    {
+        return $this->morphToMany(EloquentTagModelStub::class, 'taggable', 'taggables', 'taggable_id', 'tag_id', 'id')
+            ->using(EloquentTaggableModelStub::class);
+    }
+
+    public function tagsUsingSoftDeletingPivotModel()
+    {
+        return $this->morphToMany(EloquentTagModelStub::class, 'taggable', 'taggables', 'taggable_id', 'tag_id', 'id')
+            ->using(EloquentSoftDeletingTaggableModelStub::class);
+    }
+
     public function likes()
     {
         return $this->hasManyThrough(EloquentLikeModelStub::class, EloquentCommentModelStub::class, 'post_id', 'comment_id', 'id', 'id');

@@ -199,7 +199,6 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-
     /**
      * @test
      * @dataProvider queryDataProvider

@@ -320,6 +320,17 @@ class RelationJoinQuery
             $join->where($on.'.'.$relation->getMorphType(), '=', $relation->getMorphClass());
         }, null, null, $type);
 
+        // When a belongs to many relation uses an eloquent model to define the pivot
+        // in between the two models, we should elevate the join through eloquent
+        // so that query scopes can be leveraged. This is opt-in functionality.
+
+        if (($using = $relation->getPivotClass()) != Pivot::class) {
+            $query->getQuery()->joins[0] = new EloquentJoinClause(
+                $query->getQuery()->joins[0],
+                (new $using)->setTable($on)
+            );
+        }
+
         return $query->whereColumn(
             $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on.'.'.$relation->getRelatedPivotKeyName()
         );
