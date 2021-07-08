@@ -55,7 +55,7 @@ class BelongsToTest extends TestCase
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('supplier', function ($join) {
-                $join->where(function($join) {
+                $join->where(function ($join) {
                     $join->whereIn('supplier.state', ['AZ', 'CA', 'TX']);
                     $join->orWhere('supplier.has_international_restrictions', 1);
                 });
