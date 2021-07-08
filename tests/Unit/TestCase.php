@@ -61,11 +61,11 @@ class TestCase extends TestBase
     {
         $composer = json_decode(file_get_contents(__DIR__ . '/../../composer.lock'));
 
-        if(is_null($composer)) {
+        if (is_null($composer)) {
             throw new RuntimeException('Unable to determine Laravel Version.');
         }
 
-        return substr(Arr::first($composer->packages, function($package) {
+        return substr(Arr::first($composer->packages, function ($package) {
             return $package->name == 'illuminate/support';
         })->version, 1);
     }
@@ -85,7 +85,7 @@ class TestCase extends TestBase
         $mockConnection->shouldReceive('getPostProcessor')->andReturn($mockProcessor = m::mock(Processor::class));
         $mockConnection->shouldReceive('query')->andReturnUsing(function () use ($mockConnection, $grammar, $mockProcessor) {
             return new BaseBuilder($mockConnection, $grammar, $mockProcessor);
-        });        
+        });
     }
 
     /**
@@ -117,7 +117,7 @@ class TestCase extends TestBase
      *
      * @param  string  $version
      *
-     * @return boolean
+     * @return bool
      */
     public function isVersionAfter(string $version): bool
     {

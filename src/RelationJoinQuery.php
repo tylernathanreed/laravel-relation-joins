@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -127,13 +126,13 @@ class RelationJoinQuery
         }
 
         if (! is_null($farAlias) && $farAlias != $relation->getRelated()->getTable()) {
-            $query->from($relation->getRelated()->getTable().' as '.$farAlias);
+            $query->from($relation->getRelated()->getTable() . ' as ' . $farAlias);
 
             $relation->getRelated()->setTable($farAlias);
         }
 
         if (! is_null($pivotAlias) && $pivotAlias != $relation->getTable()) {
-            $table = $relation->getTable().' as '.$pivotAlias;
+            $table = $relation->getTable() . ' as ' . $pivotAlias;
 
             $on = $pivotAlias;
         } else {
@@ -141,7 +140,7 @@ class RelationJoinQuery
         }
 
         $query->join($table, function ($join) use ($relation, $on) {
-            $join->on($on.'.'.$relation->getForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName());
+            $join->on($on . '.' . $relation->getForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName());
         }, null, null, $type);
 
         // When a belongs to many relation uses an eloquent model to define the pivot
@@ -156,7 +155,7 @@ class RelationJoinQuery
         }
 
         return $query->whereColumn(
-            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on.'.'.$relation->getRelatedPivotKeyName()
+            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on . '.' . $relation->getRelatedPivotKeyName()
         );
     }
 
@@ -178,7 +177,7 @@ class RelationJoinQuery
         }
 
         if (! is_null($alias) && $alias != $query->getModel()->getTable()) {
-            $query->from($query->getModel()->getTable().' as '.$alias);
+            $query->from($query->getModel()->getTable() . ' as ' . $alias);
 
             $query->getModel()->setTable($alias);
         }
@@ -236,7 +235,7 @@ class RelationJoinQuery
         }
 
         $query->join($table, function ($join) use ($relation, $parentQuery, $on) {
-            $join->on($on.'.'.$relation->getFirstKeyName(), '=', $parentQuery->qualifyColumn($relation->getLocalKeyName()));
+            $join->on($on . '.' . $relation->getFirstKeyName(), '=', $parentQuery->qualifyColumn($relation->getLocalKeyName()));
         }, null, null, $type);
 
         // The has one/many through relations use an eloquent model to define the step
@@ -249,7 +248,7 @@ class RelationJoinQuery
         );
 
         return $query->whereColumn(
-            $relation->getQualifiedForeignKeyName(), '=', $on.'.'.$relation->getSecondLocalKeyName()
+            $relation->getQualifiedForeignKeyName(), '=', $on . '.' . $relation->getSecondLocalKeyName()
         );
     }
 
@@ -299,13 +298,13 @@ class RelationJoinQuery
         }
 
         if (! is_null($farAlias) && $farAlias != $relation->getRelated()->getTable()) {
-            $query->from($relation->getRelated()->getTable().' as '.$farAlias);
+            $query->from($relation->getRelated()->getTable() . ' as ' . $farAlias);
 
             $relation->getRelated()->setTable($farAlias);
         }
 
         if (! is_null($pivotAlias) && $pivotAlias != $relation->getTable()) {
-            $table = $relation->getTable().' as '.$pivotAlias;
+            $table = $relation->getTable() . ' as ' . $pivotAlias;
 
             $on = $pivotAlias;
         } else {
@@ -315,9 +314,9 @@ class RelationJoinQuery
         $query = $query ?: $relation->getQuery();
 
         $query->join($table, function ($join) use ($relation, $on) {
-            $join->on($on.'.'.$relation->getForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName());
+            $join->on($on . '.' . $relation->getForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName());
 
-            $join->where($on.'.'.$relation->getMorphType(), '=', $relation->getMorphClass());
+            $join->where($on . '.' . $relation->getMorphType(), '=', $relation->getMorphClass());
         }, null, null, $type);
 
         // When a belongs to many relation uses an eloquent model to define the pivot
@@ -332,7 +331,7 @@ class RelationJoinQuery
         }
 
         return $query->whereColumn(
-            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on.'.'.$relation->getRelatedPivotKeyName()
+            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on . '.' . $relation->getRelatedPivotKeyName()
         );
     }
 }

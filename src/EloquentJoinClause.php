@@ -2,7 +2,6 @@
 
 namespace Reedware\LaravelRelationJoins;
 
-use BadMethodCallException;
 use Illuminate\Database\Eloquent\Builder as Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -65,7 +64,7 @@ class EloquentJoinClause extends JoinClause
     {
         $properties = (new ReflectionClass(Builder::class))->getProperties();
 
-        foreach($properties as $property) {
+        foreach ($properties as $property) {
             if (! $property->isPublic()) {
                 continue;
             }
@@ -114,7 +113,7 @@ class EloquentJoinClause extends JoinClause
 
     /**
      * Returns a new eloquent builder for this join clause.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function newEloquentBuilder()
@@ -139,8 +138,6 @@ class EloquentJoinClause extends JoinClause
      * @param  array   $parameters
      *
      * @return mixed
-     *
-     * @throws \BadMethodCallException
      */
     public function __call($method, $parameters)
     {

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
 use Reedware\LaravelRelationJoins\EloquentJoinClause;
-use ReflectionFunction;
 use RuntimeException;
 
 class JoinsRelationships
@@ -120,9 +119,9 @@ class JoinsRelationships
     {
         /**
          * Applies the eloquent scopes to the specified query.
-         * 
+         *
          * @param  \Illuminate\Database\Query\Builder  $joinQuery
-         * 
+         *
          * @return \Illuminate\Database\Query\Builder
          */
         return function (Builder $joinQuery) {
@@ -132,7 +131,7 @@ class JoinsRelationships
             foreach ($joins as $join) {
                 if ($join instanceof EloquentJoinClause) {
                     $join->applyScopes();
-                } 
+                }
             }
 
             return $joinQuery;
@@ -178,7 +177,7 @@ class JoinsRelationships
             $this->applyJoinScopes($joinQuery);
 
             foreach ($originalWhereCounts as $index => $count) {
-                if(count($queries[$index]->wheres ?: []) > $count) {
+                if (count($queries[$index]->wheres ?: []) > $count) {
                     $joinQuery->addNewWheresWithinGroup($queries[$index], $count);
                 }
             }
@@ -262,7 +261,7 @@ class JoinsRelationships
             $wheres = $query->wheres;
 
             $wheres = array_map(function ($where) {
-                if (!isset($where['query'])) {
+                if (! isset($where['query'])) {
                     return $where;
                 }
 

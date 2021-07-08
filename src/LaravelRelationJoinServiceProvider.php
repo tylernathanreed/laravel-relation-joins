@@ -2,10 +2,10 @@
 
 namespace Reedware\LaravelRelationJoins;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Query\Builder as Query;
 use Illuminate\Database\Eloquent\Builder as Eloquent;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder as Query;
+use Illuminate\Support\ServiceProvider;
 
 class LaravelRelationJoinServiceProvider extends ServiceProvider
 {

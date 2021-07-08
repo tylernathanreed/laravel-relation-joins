@@ -198,7 +198,7 @@ class HasOneThroughTest extends TestCase
                 $through->active();
             });
 
-        if($this->isVersionAfter('7.10.0')) {
+        if ($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" and "active" = ? and "users"."deleted_at" is null inner join "history" on "history"."user_id" = "users"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" and "active" = ? and "users"."deleted_at" is null inner join "history" on "history"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
@@ -218,7 +218,7 @@ class HasOneThroughTest extends TestCase
                 $through->withTrashed();
             });
 
-        if($this->isVersionAfter('7.10.0')) {
+        if ($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" inner join "history" on "history"."user_id" = "users"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "suppliers" inner join "users" on "users"."supplier_id" = "suppliers"."id" inner join "history" on "history"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
@@ -236,7 +236,7 @@ class HasOneThroughTest extends TestCase
         $builder = $query(new EloquentSupplierModelStub)
             ->joinRelation('userHistoryThroughSoftDeletingUser as citizens,user_history');
 
-        if($this->isVersionAfter('7.10.0')) {
+        if ($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "suppliers" inner join "users" as "citizens" on "citizens"."supplier_id" = "suppliers"."id" and "citizens"."deleted_at" is null inner join "history" as "user_history" on "user_history"."user_id" = "citizens"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "suppliers" inner join "users" as "citizens" on "citizens"."supplier_id" = "suppliers"."id" and "citizens"."deleted_at" is null inner join "history" as "user_history" on "user_history"."user_id" = "citizens"."id" and "users"."deleted_at" is null', $builder->toSql());
@@ -256,7 +256,7 @@ class HasOneThroughTest extends TestCase
                 $through->withTrashed();
             });
 
-        if($this->isVersionAfter('7.10.0')) {
+        if ($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "suppliers" inner join "users" as "citizens" on "citizens"."supplier_id" = "suppliers"."id" inner join "history" as "user_history" on "user_history"."user_id" = "citizens"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "suppliers" inner join "users" as "citizens" on "citizens"."supplier_id" = "suppliers"."id" inner join "history" as "user_history" on "user_history"."user_id" = "citizens"."id" and "users"."deleted_at" is null', $builder->toSql());

@@ -112,7 +112,7 @@ class HasManyThroughTest extends TestCase
         $builder = $query(new EloquentCountryModelStub)
             ->joinRelation('postsThroughSoftDeletingUser');
 
-        if($this->isVersionAfter('7.10.0')) {
+        if ($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
@@ -168,7 +168,7 @@ class HasManyThroughTest extends TestCase
         $builder = $query(new EloquentSoftDeletingUserModelStub)
             ->joinRelation('employeePosts as employees,posts');
 
-        if($this->isVersionAfter('7.10.0')) {
+        if ($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id" and "employees"."deleted_at" is null inner join "posts" on "posts"."user_id" = "employees"."id" where "users"."deleted_at" is null', $builder->toSql());
         } else {
             $this->assertEquals('select * from "users" inner join "users" as "employees" on "employees"."manager_id" = "users"."id" and "employees"."deleted_at" is null inner join "posts" on "posts"."user_id" = "employees"."id" and "users"."deleted_at" is null where "users"."deleted_at" is null', $builder->toSql());
@@ -198,7 +198,7 @@ class HasManyThroughTest extends TestCase
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('employeesThroughSoftDeletingDepartment as employees');
 
-        if($this->isVersionAfter('7.10.0')) {
+        if ($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "users" inner join "departments" on "departments"."supervisor_id" = "users"."id" and "departments"."deleted_at" is null inner join "users" as "employees" on "employees"."department_id" = "departments"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "users" inner join "departments" on "departments"."supervisor_id" = "users"."id" and "departments"."deleted_at" is null inner join "users" as "employees" on "employees"."department_id" = "departments"."id" and "departments"."deleted_at" is null', $builder->toSql());
@@ -290,7 +290,7 @@ class HasManyThroughTest extends TestCase
                 $through->active();
             });
 
-        if($this->isVersionAfter('7.10.0')) {
+        if ($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "active" = ? and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "active" = ? and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
@@ -310,7 +310,7 @@ class HasManyThroughTest extends TestCase
                 $through->withTrashed();
             });
 
-        if($this->isVersionAfter('7.10.0')) {
+        if ($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" inner join "posts" on "posts"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
@@ -328,7 +328,7 @@ class HasManyThroughTest extends TestCase
         $builder = $query(new EloquentCountryModelStub)
             ->joinRelation('postsThroughSoftDeletingUser as citizens,articles');
 
-        if($this->isVersionAfter('7.10.0')) {
+        if ($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" and "citizens"."deleted_at" is null inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" and "citizens"."deleted_at" is null inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id" and "users"."deleted_at" is null', $builder->toSql());
@@ -348,7 +348,7 @@ class HasManyThroughTest extends TestCase
                 $through->withTrashed();
             });
 
-        if($this->isVersionAfter('7.10.0')) {
+        if ($this->isVersionAfter('7.10.0')) {
             $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id"', $builder->toSql());
         } else {
             $this->assertEquals('select * from "countries" inner join "users" as "citizens" on "citizens"."country_id" = "countries"."id" inner join "posts" as "articles" on "articles"."user_id" = "citizens"."id" and "users"."deleted_at" is null', $builder->toSql());

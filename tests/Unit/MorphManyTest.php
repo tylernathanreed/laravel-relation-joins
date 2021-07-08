@@ -4,7 +4,6 @@ namespace Reedware\LaravelRelationJoins\Tests\Unit;
 
 use Closure;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
-use RuntimeException;
 
 class MorphManyTest extends TestCase
 {

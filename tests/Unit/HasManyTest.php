@@ -279,7 +279,7 @@ class HasManyTest extends TestCase
     public function has(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
-            ->joinRelation('posts', function($join) {
+            ->joinRelation('posts', function ($join) {
                 $join->has('comments');
             });
 
@@ -294,7 +294,7 @@ class HasManyTest extends TestCase
     public function doesntHave(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
-            ->joinRelation('posts', function($join) {
+            ->joinRelation('posts', function ($join) {
                 $join->doesntHave('comments');
             });
 

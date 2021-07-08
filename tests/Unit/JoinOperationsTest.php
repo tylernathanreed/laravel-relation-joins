@@ -13,7 +13,7 @@ class JoinOperationsTest extends TestCase
      */
     public function on(Closure $query, string $builderClass)
     {
-        $builder = $query(new EloquentUserModelStub)->joinRelation('phone', function($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('phone', function ($join) {
             $join->on('phones.extra', '=', 'users.extra');
         });
 
@@ -27,7 +27,7 @@ class JoinOperationsTest extends TestCase
      */
     public function orOn(Closure $query, string $builderClass)
     {
-        $builder = $query(new EloquentUserModelStub)->joinRelation('phone', function($join) {
+        $builder = $query(new EloquentUserModelStub)->joinRelation('phone', function ($join) {
             $join->on('phones.extra_1', '=', 'users.extra_1');
             $join->orOn('phones.extra_2', '=', 'users.extra_2');
         });
