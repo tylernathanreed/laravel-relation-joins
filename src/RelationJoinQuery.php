@@ -29,7 +29,7 @@ class RelationJoinQuery
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public static function get(Relation $relation, Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
+    public static function get(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
     {
         if ($relation instanceof BelongsTo) {
             return static::belongsTo($relation, $query, $parentQuery, $type, $alias);
@@ -81,7 +81,7 @@ class RelationJoinQuery
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function belongsTo(Relation $relation, Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
+    protected static function belongsTo(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
     {
         if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
             $alias = $relation->getRelationCountHash();
@@ -109,7 +109,7 @@ class RelationJoinQuery
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function belongsToMany(Relation $relation, Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
+    protected static function belongsToMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
     {
         if (strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
@@ -170,7 +170,7 @@ class RelationJoinQuery
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function hasOneOrMany(Relation $relation, Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
+    protected static function hasOneOrMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
     {
         if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
             $alias = $relation->getRelationCountHash();
@@ -204,7 +204,7 @@ class RelationJoinQuery
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function hasOneOrManyThrough(Relation $relation, Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
+    protected static function hasOneOrManyThrough(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
     {
         if (strpos($alias, ',') !== false) {
             [$throughAlias, $farAlias] = explode(',', $alias);
@@ -263,7 +263,7 @@ class RelationJoinQuery
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function morphOneOrMany(Relation $relation, Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
+    protected static function morphOneOrMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
     {
         return static::hasOneOrMany($relation, $query, $parentQuery, $type, $alias)->where(
             $relation->getQualifiedMorphType(), '=', $relation->getMorphClass()
@@ -281,7 +281,7 @@ class RelationJoinQuery
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function morphToMany(Relation $relation, Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
+    protected static function morphToMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
     {
         if (strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
