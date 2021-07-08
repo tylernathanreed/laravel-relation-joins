@@ -9,7 +9,6 @@ enabled:
   - no_short_echo_tag
   - no_single_line_asterisk_comment
   - no_spaces_outside_offset
-  - no_unreachable_default_argument_value
   - no_useless_else
   - no_useless_sprintf
   - non_printable_character
