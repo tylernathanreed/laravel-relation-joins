@@ -27,7 +27,7 @@ class EloquentJoinClause extends JoinClause
     /**
      * Whether or not a method call is being forwarded through eloquent.
      *
-     * @var boolean
+     * @var bool
      */
     protected $forwardingCall = false;
 

@@ -89,6 +89,7 @@ class HasManyTest extends TestCase
         $this->assertEquals('select * from "users" inner join "users" as "self_alias_hash" on "self_alias_hash"."manager_id" = "users"."id"', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
         $this->assertEquals($builderClass, get_class($builder));
     }
+
     /**
      * @test
      * @dataProvider queryDataProvider

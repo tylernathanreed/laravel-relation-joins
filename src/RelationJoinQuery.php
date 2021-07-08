@@ -88,7 +88,7 @@ class RelationJoinQuery
         }
 
         if (! is_null($alias) && $alias != $query->getModel()->getTable()) {
-            $query->from($query->getModel()->getTable().' as '.$alias);
+            $query->from($query->getModel()->getTable() . ' as ' . $alias);
 
             $query->getModel()->setTable($alias);
         }
@@ -221,13 +221,13 @@ class RelationJoinQuery
         }
 
         if (! is_null($farAlias) && $farAlias != $query->getModel()->getTable()) {
-            $query->from($query->getModel()->getTable().' as '.$farAlias);
+            $query->from($query->getModel()->getTable() . ' as ' . $farAlias);
 
             $query->getModel()->setTable($farAlias);
         }
 
         if (! is_null($throughAlias) && $throughAlias != $relation->getParent()->getTable()) {
-            $table = $relation->getParent()->getTable().' as '.$throughAlias;
+            $table = $relation->getParent()->getTable() . ' as ' . $throughAlias;
 
             $on = $throughAlias;
         } else {

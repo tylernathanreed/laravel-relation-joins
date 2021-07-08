@@ -148,7 +148,7 @@ class JoinsRelationships
     {
         /**
          * Calls the provided callback on the join query.
-         * 
+         *
          * @param  \Illuminate\Database\Query\Builder  $joinQuery
          * @param  \Closure                            $callback
          *

@@ -54,7 +54,7 @@ class BelongsToTest extends TestCase
     public function nested_constraints(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
-            ->joinRelation('supplier', function($join) {
+            ->joinRelation('supplier', function ($join) {
                 $join->where(function($join) {
                     $join->whereIn('supplier.state', ['AZ', 'CA', 'TX']);
                     $join->orWhere('supplier.has_international_restrictions', 1);
@@ -72,10 +72,10 @@ class BelongsToTest extends TestCase
     public function nested_constraints_nested(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
-            ->joinRelation('supplier', function($join) {
-                $join->where(function($join) {
+            ->joinRelation('supplier', function ($join) {
+                $join->where(function ($join) {
                     $join->whereIn('supplier.state', ['AZ', 'CA', 'TX']);
-                    $join->orWhere(function($join) {
+                    $join->orWhere(function ($join) {
                         $join->where('supplier.has_international_restrictions', 1);
                         $join->where('supplier.country', '!=', 'US');
                     });

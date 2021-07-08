@@ -2,7 +2,6 @@
 
 namespace Reedware\LaravelRelationJoins\Tests\Unit;
 
-use Closure;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Reedware\LaravelRelationJoins\Tests\CustomBuilder;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
