@@ -4,3 +4,4 @@ enabled:
 disabled:
   - elseif
   - concat_without_spaces
+  - trailing_comma_in_multiline_array
