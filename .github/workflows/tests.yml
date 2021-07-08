@@ -35,8 +35,5 @@ jobs:
           max_attempts: 2
           command: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress ${{ matrix.flags }}
 
-      - name: Check styles
-        run: vendor/bin/phpcs
-
       - name: Execute tests
         run: vendor/bin/phpunit --verbose
