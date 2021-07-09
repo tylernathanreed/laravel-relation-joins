@@ -3,6 +3,7 @@
 [![Laravel Version](https://img.shields.io/badge/Laravel-6.x%2F7.x%2F8.x-blue)](https://laravel.com/)
 [![Build Status](https://github.com/tylernathanreed/laravel-relation-joins/workflows/tests/badge.svg)](https://github.com/tylernathanreed/laravel-relation-joins/actions)
 [![Style Status](https://github.com/tylernathanreed/laravel-relation-joins/workflows/style/badge.svg)](https://github.com/tylernathanreed/laravel-relation-joins/actions)
+[![Coverage Status](https://coveralls.io/repos/github/tylernathanreed/laravel-relation-joins/badge.svg?branch=master)](https://coveralls.io/github/tylernathanreed/laravel-relation-joins?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/reedware/laravel-relation-joins/v/stable)](https://packagist.org/packages/reedware/laravel-relation-joins)
 [![Total Downloads](https://poser.pugx.org/reedware/laravel-relation-joins/downloads)](https://packagist.org/packages/reedware/laravel-relation-joins)
 
