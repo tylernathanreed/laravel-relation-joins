@@ -38,4 +38,4 @@ jobs:
       - name: Upload coverage results to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: php-coveralls -v
+        run: vendor/bin/php-coveralls -v
