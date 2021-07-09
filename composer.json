@@ -17,6 +17,7 @@
     "require-dev": {
         "illuminate/container": "^6.0|^7.0|^8.0",
         "mockery/mockery": "^1.4.2",
+        "php-coveralls/php-coveralls": "^2.4",
         "phpunit/phpunit": "^8.5|^9.5",
         "squizlabs/php_codesniffer": "^3.6"
     },
