@@ -1,3 +1,5 @@
+.phpunit.coverage.json
+.phpunit.coverage.xml
 .phpunit.result.cache
 /vendor/
 composer.lock
