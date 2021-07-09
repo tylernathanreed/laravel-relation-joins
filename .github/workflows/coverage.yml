@@ -23,7 +23,7 @@ jobs:
           php-version: 8.0
           extensions: dom, curl, libxml, mbstring, zip, pdo, sqlite, pdo_sqlite, gd, xdebug
           tools: composer:v2
-          coverage: none
+          coverage: xdebug
 
       - name: Install dependencies
         uses: nick-invision/retry@v1
