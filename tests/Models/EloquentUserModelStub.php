@@ -2,6 +2,8 @@
 
 namespace Reedware\LaravelRelationJoins\Tests\Models;
 
+use Reedware\LaravelRelationJoins\Tests\CustomRelation;
+
 class EloquentUserModelStub extends EloquentRelationJoinModelStub
 {
     protected $table = 'users';
@@ -9,6 +11,11 @@ class EloquentUserModelStub extends EloquentRelationJoinModelStub
     public function scopeActive($query)
     {
         return $query->where('active', 1);
+    }
+
+    public function customRelation()
+    {
+        return new CustomRelation($this->newQuery(), $this);
     }
 
     public function phone()

@@ -47,16 +47,16 @@ class RelationJoinQuery
             return static::hasOneOrMany($relation, $query, $parentQuery, $type, $alias);
         }
 
+        else if ($relation instanceof HasOneThrough) {
+            return static::hasOneOrManyThrough($relation, $query, $parentQuery, $type, $alias);
+        }
+
         else if ($relation instanceof HasManyThrough) {
             return static::hasOneOrManyThrough($relation, $query, $parentQuery, $type, $alias);
         }
 
         else if ($relation instanceof HasOne) {
             return static::hasOneOrMany($relation, $query, $parentQuery, $type, $alias);
-        }
-
-        else if ($relation instanceof HasOneThrough) {
-            return static::hasOneOrManyThrough($relation, $query, $parentQuery, $type, $alias);
         }
 
         else if ($relation instanceof MorphMany) {
@@ -119,10 +119,6 @@ class RelationJoinQuery
 
         if (is_null($farAlias) && $parentQuery->getQuery()->from === $query->getQuery()->from) {
             $farAlias = $relation->getRelationCountHash();
-        }
-
-        if (is_null($pivotAlias) && $parentQuery->getQuery()->from === $relation->getTable()) {
-            $pivotAlias = $relation->getRelationCountHash();
         }
 
         if (! is_null($farAlias) && $farAlias != $relation->getRelated()->getTable()) {
@@ -291,10 +287,6 @@ class RelationJoinQuery
 
         if (is_null($farAlias) && $parentQuery->getQuery()->from === $query->getQuery()->from) {
             $farAlias = $relation->getRelationCountHash();
-        }
-
-        if (is_null($pivotAlias) && $parentQuery->getQuery()->from === $relation->getTable()) {
-            $pivotAlias = $relation->getRelationCountHash();
         }
 
         if (! is_null($farAlias) && $farAlias != $relation->getRelated()->getTable()) {

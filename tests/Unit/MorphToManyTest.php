@@ -25,12 +25,26 @@ class MorphToManyTest extends TestCase
      * @test
      * @dataProvider queryDataProvider
      */
-    public function alias(Closure $query, string $builderClass)
+    public function alias_far(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
-            ->joinRelation('tags');
+            ->joinRelation('tags as labels');
 
-        $this->assertEquals('select * from "posts" inner join "taggables" on "taggables"."taggable_id" = "posts"."id" and "taggables"."taggable_type" = ? inner join "tags" on "tags"."id" = "taggables"."tag_id"', $builder->toSql());
+        $this->assertEquals('select * from "posts" inner join "taggables" on "taggables"."taggable_id" = "posts"."id" and "taggables"."taggable_type" = ? inner join "tags" as "labels" on "labels"."id" = "taggables"."tag_id"', $builder->toSql());
+        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function alias_pivot(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentPostModelStub)
+            ->joinRelation('tags as labelables,labels');
+
+        $this->assertEquals('select * from "posts" inner join "taggables" as "labelables" on "labelables"."taggable_id" = "posts"."id" and "labelables"."taggable_type" = ? inner join "tags" as "labels" on "labels"."id" = "labelables"."tag_id"', $builder->toSql());
         $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
         $this->assertEquals($builderClass, get_class($builder));
     }

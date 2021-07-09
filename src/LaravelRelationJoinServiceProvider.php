@@ -17,8 +17,8 @@ class LaravelRelationJoinServiceProvider extends ServiceProvider
     public function boot()
     {
         Query::mixin(new Mixins\MergeJoins);
+        Query::mixin(new Mixins\JoinOperations);
         Eloquent::mixin(new Mixins\JoinsRelationships);
-        Eloquent::mixin(new Mixins\JoinOperations);
         Relation::mixin(new Mixins\RelationJoinQueries);
     }
 }

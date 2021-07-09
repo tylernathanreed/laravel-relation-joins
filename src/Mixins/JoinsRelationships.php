@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
+use LogicException;
 use Reedware\LaravelRelationJoins\EloquentJoinClause;
 use RuntimeException;
 
@@ -22,7 +23,7 @@ class JoinsRelationships
         /**
          * Add a relationship join condition to the query.
          *
-         * @param  string                                 $relation
+         * @param  string                                 $relationName
          * @param  \Closure|null                          $callback
          * @param  string                                 $type
          * @param  bool                                   $through
@@ -30,20 +31,24 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, Closure $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null) {
+        return function ($relationName, Closure $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null) {
 
-            if (strpos($relation, '.') !== false) {
-                return $this->joinNestedRelation($relation, $callback, $type, $through);
+            if (strpos($relationName, '.') !== false) {
+                return $this->joinNestedRelation($relationName, $callback, $type, $through);
             }
 
-            if (stripos($relation, ' as ') !== false) {
-                [$relation, $alias] = preg_split('/\s+as\s+/i', $relation);
+            if (stripos($relationName, ' as ') !== false) {
+                [$relationName, $alias] = preg_split('/\s+as\s+/i', $relationName);
             }
 
-            $relation = ($relatedQuery ?: $this)->getRelationWithoutConstraints($relation);
+            $relation = ($relatedQuery ?: $this)->getRelationWithoutConstraints($relationName);
 
             if ($relation instanceof MorphTo) {
                 throw new RuntimeException('joinRelation() does not support MorphTo relationships.');
+            }
+
+            if (! $relation instanceof Relation) {
+                throw new LogicException(sprintf('%s::%s must return a relationship instance.', get_class($this->getModel()), $relationName));
             }
 
             $joinQuery = $relation->getRelationJoinQuery(
@@ -224,9 +229,6 @@ class JoinsRelationships
             }
 
             $this->join($baseJoinQuery->from, function ($join) use ($baseJoinQuery) {
-                if (empty($baseJoinQuery->wheres)) {
-                    return;
-                }
 
                 // There's an issue with mixing query builder where clauses
                 // with join builder where clauses. To solve for this, we
@@ -235,6 +237,7 @@ class JoinsRelationships
                 $this->replaceWhereNestedQueryBuildersWithJoinBuilders($baseJoinQuery);
 
                 $join->mergeWheres($baseJoinQuery->wheres, $baseJoinQuery->bindings['where']);
+
             }, null, null, $type);
 
             return $this;

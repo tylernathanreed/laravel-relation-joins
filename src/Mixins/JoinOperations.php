@@ -2,6 +2,8 @@
 
 namespace Reedware\LaravelRelationJoins\Mixins;
 
+use Closure;
+
 class JoinOperations
 {
     /**
