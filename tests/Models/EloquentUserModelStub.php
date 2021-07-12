@@ -99,4 +99,14 @@ class EloquentUserModelStub extends EloquentRelationJoinModelStub
     {
         return $this->belongsToMany(static::class, 'messages', 'from_user_id', 'to_user_id');
     }
+
+    public function uploadedFiles()
+    {
+        return $this->hasMany(EloquentFileModelStub::class, 'uploaded_by_id');
+    }
+
+    public function uploadedImages()
+    {
+        return $this->hasMany(EloquentImageModelStub::class, 'uploaded_by_id');
+    }
 }

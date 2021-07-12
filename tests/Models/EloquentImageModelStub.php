@@ -15,4 +15,9 @@ class EloquentImageModelStub extends EloquentRelationJoinModelStub
     {
         return $this->belongsTo(EloquentPostModelStub::class, 'imageable_id')->where('imageable_type', '=', EloquentPostModelStub::class);
     }
+
+    public function uploadedBy()
+    {
+        return $this->belongsTo(EloquentUserModelStub::class, 'uploaded_by_id');
+    }
 }
