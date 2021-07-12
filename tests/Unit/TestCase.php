@@ -27,6 +27,13 @@ class TestCase extends TestBase
     protected $version;
 
     /**
+     * The mocked database connection.
+     *
+     * @var \Mockery\Mock
+     */
+    protected $connection;
+
+    /**
      * Prepares the test for execution.
      *
      * @return void
@@ -79,13 +86,30 @@ class TestCase extends TestBase
     {
         EloquentRelationJoinModelStub::setConnectionResolver($resolver = m::mock(ConnectionResolverInterface::class));
 
-        $resolver->shouldReceive('connection')->andReturn($mockConnection = m::mock(Connection::class));
+        $this->connection = m::mock(Connection::class);
 
-        $mockConnection->shouldReceive('getQueryGrammar')->andReturn($grammar = new Grammar);
-        $mockConnection->shouldReceive('getPostProcessor')->andReturn($mockProcessor = m::mock(Processor::class));
-        $mockConnection->shouldReceive('query')->andReturnUsing(function () use ($mockConnection, $grammar, $mockProcessor) {
-            return new BaseBuilder($mockConnection, $grammar, $mockProcessor);
-        });
+        $processor = m::mock(Processor::class)
+            ->makePartial();
+
+        $processor->shouldNotReceive('processInsertGetId');
+
+        $resolver
+            ->shouldReceive('connection')
+            ->andReturn($this->connection);
+
+        $this->connection
+            ->shouldReceive('getQueryGrammar')
+            ->andReturn($grammar = new Grammar);
+
+        $this->connection
+            ->shouldReceive('getPostProcessor')
+            ->andReturn($processor);
+
+        $this->connection
+            ->shouldReceive('query')
+            ->andReturnUsing(function () use ($grammar, $processor) {
+                return new BaseBuilder($this->connection, $grammar, $processor);
+            });
     }
 
     /**
