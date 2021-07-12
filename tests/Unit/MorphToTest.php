@@ -145,11 +145,11 @@ class MorphToTest extends TestCase
         $builder = $query(new EloquentUserModelStub)
             ->joinMorphRelation('uploadedFiles.link.imageable', [
                 EloquentImageModelStub::class,
-                EloquentUserModelStub::class
+                EloquentPostModelStub::class
             ]);
 
         $this->assertEquals('select * from "users" inner join "files" on "files"."uploaded_by_id" = "users"."id" inner join "images" on "images"."id" = "files"."link_id" and "files"."link_type" = ? inner join "users" on "users"."id" = "images"."imageable_id" and "images"."imageable_type" = ?', $builder->toSql());
-        $this->assertEquals([0 => EloquentImageModelStub::class, 1 => EloquentUserModelStub::class], $builder->getBindings());
+        $this->assertEquals([0 => EloquentImageModelStub::class, 1 => EloquentPostModelStub::class], $builder->getBindings());
         $this->assertEquals($builderClass, get_class($builder));
     }
 
