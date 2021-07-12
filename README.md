@@ -27,12 +27,19 @@ This package adds the ability to join on a relationship by name.
     - [6. Joining on circular relationships](#joining-circular)
     - [7. Aliasing joins](#joining-aliasing)
         - [Aliasing Pivot Tables](#joining-aliasing-pivot)
-    - [8. Everything else](#joining-miscellaneous)
+    - [8. Morph To Relations](#joining-morph-to)
+        - [Nested Relationships](#joining-morph-to-nested)
+    - [9. Anonymous Relations](#joining-anonymous)
+    - [10. Everything else](#joining-miscellaneous)
 
 <a name="introduction"></a>
 ## Introduction
 
+This package makes joining a breeze by leveraging the relationships you have already defined.
+
 Eloquent doesn't offer any tools for joining, so we've been stuck with the base query builder joins. While Eloquent does have the "has" concept for existence, there are still times where you want to return information about the related entities, or aggregate information together.
+
+Aside from relationships themselves, Eloquent's omission of relationship joins means that you can't leverage several powerful features of Eloquent, such as model scopes and soft deletes. This package aims to correct all of that.
 
 I've seen other packages out there that try to accompish a goal similar to this one. I tried to get on board with at least one of them, but they all fell short for a number of reasons. Let me first explain the features of this package, and you might see why this one is better (at least what for what I intend to use it for).
 
@@ -71,7 +78,7 @@ User::query()->joinRelation('posts');
 
 This will apply a join from the `User` model through the `posts` relation, leveraging any query scopes (such as soft deletes) automatically.
 
-You can perform joins over all relationship types (except MorphTo, which "has" doesn't support either), including the new "HasOneThrough" relationship. Additionally, you can perform the other types of joins, using a syntax similar to the base query builder:
+You can perform joins over all relationship types, including polymorphic relationships. Additionally, you can perform the other types of joins, using a syntax similar to the base query builder:
 
 ```php
 User::query()->leftJoinRelation('posts');
@@ -144,7 +151,7 @@ Country::query()->joinRelation('posts', function ($join, $through) {
 });
 ```
 
-This will tack on the specific constraints to the intermediate table.
+This will tack on the specific constraints to the intermediate table, as well as any constraints you provide to the far (`$join`) table.
 
 <a name="joining-constraints-pivot-scopes"></a>
 #### Query Scopes
@@ -254,10 +261,95 @@ User::query()->joinRelation('roles as users_roles,positions');
 // SQL: select * from "users" inner join "role_user" as "position_user" on "position_user"."user_id" = "users"."id" inner join "roles" as "positions" on "positions"."id" = "position_user"."role_id"
 ```
 
-<a name="joining-miscellaneous"></a>
-### 8. Everything else
+<a name="joining-morph-to"></a>
+### 8. Morph To Relations
 
-Everything else you would need for joins: aggregates, grouping, ordering, selecting, etc. all go through the already established query builder, where none of that was changed. Meaning I can easily do something like this:
+The `MorphTo` relation has the quirk of not knowing which table that needs to be joined into, as there could be several. Since only one table is supported, you'll have to provide which morph type you want to use:
+
+```php
+Image::query()->joinMorphRelation('imageable', Post::class);
+// SQL: select * from "images" inner join "posts" on "posts"."id" = "images"."imageable_id" and "images"."imageable_type" = ?
+```
+
+As before, other join types are also supported:
+
+```php
+Image::query()->leftJoinMorphRelation('imageable', Post::class);
+Image::query()->rightJoinMorphRelation('imageable', Post::class);
+Image::query()->crossJoinMorphRelation('imageable', Post::class);
+```
+
+After the morph type has been specified, the traditional parameters follow:
+
+```php
+// Constraints
+Image::query()->joinMorphRelation('imageable', Post::class, function ($join) {
+    $join->where('posts.created_at', '>=', '2019-01-01');
+});
+
+// Query Scopes
+Image::query()->joinMorphRelation('imageable', Post::class, function ($join) {
+    $join->active();
+});
+
+// Disabling soft deletes
+Image::query()->joinMorphRelation('imageable', Post::class, function ($join) {
+    $join->withTrashed();
+});
+```
+
+<a name="joining-morph-to-nested"></a>
+#### Nested Relationships
+
+When previously covering the `MorphTo` relation, the relation itself was singularly called out. However, in a nested scenario, the `MorphTo` relation could be anywhere. Fortunately, this still doesn't change the syntax:
+
+```php
+User::query()->joinMorphRelation('uploadedImages.imageable', Post::class);
+// SQL: select * from "users" inner join "images" on "images.uploaded_by_id" = "users.id" inner join "posts" on "posts"."id" = "images"."imageable_id" and "images"."imageable_type" = ?
+```
+
+Since multiple relationships could be specified, multiple `MorphTo` relations could be in play. When this happens, you'll need to provide the morph type for each relation:
+
+```php
+User::query()->joinMorphRelation('uploadedFiles.link.imageable', [Image::class, Post::class]);
+// SQL: select * from "users" inner join "files" on "files"."uploaded_by_id" = "users"."id" inner join "images" on "images"."id" = "files"."link_id" and "files"."link_type" = ? inner join "users" on "users"."id" = "images"."imageable_id" and "images"."imageable_type" = ?
+```
+
+In the scenario above, the morph types are used for the `MorphTo` relations in the order they appear.
+
+<a name="joining-anonymous"></a>
+### 9. Anonymous Joins
+
+In rare circumstances, you may find yourself in a situation where you don't want to define a relationship on a model, but you still want to join on it as if it existed. You can do this by passing in the relationship itself:
+
+```php
+$relation = Relation::noConstraints(function () {
+    return (new User)
+        ->belongsTo(Country::class, 'country_name', 'name');
+});
+
+User::query()->joinRelation($relation);
+// SQL: select * from "users" inner join "countries" on "countries"."name" = "users"."country_name"
+```
+
+#### Aliasing Anonymous Joins
+
+Since the relation is no longer a string, you instead have to provide your alias as an array:
+
+```php
+$relation = Relation::noConstraints(function () {
+    return (new User)
+        ->belongsTo(Country::class, 'kingdom_name', 'name');
+});
+
+User::query()->joinRelation([$relation, 'kingdoms');
+// SQL: select * from "users" inner join "countries" as "kingdoms" on "kingdoms"."name" = "users"."kingdom_name"
+```
+
+<a name="joining-miscellaneous"></a>
+### 10. Everything else
+
+Everything else you would need for joins: aggregates, grouping, ordering, selecting, etc. all go through the already established query builder, where none of that was changed. Meaning you could easily do something like this:
 
 ```php
 User::query()->joinRelation('licenses')->groupBy('users.id')->orderBy('users.id')->select('users.id')->selectRaw('sum(licenses.price) as revenue');
