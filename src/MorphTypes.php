@@ -9,7 +9,7 @@ class MorphTypes
      *
      * @var array
      */
-    public array $items;
+    public $items;
 
     /**
      * Creates a new morph types instance.
