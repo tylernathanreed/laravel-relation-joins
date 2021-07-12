@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
 use LogicException;
 use Reedware\LaravelRelationJoins\EloquentJoinClause;
+use Reedware\LaravelRelationJoins\MorphTypes;
 use RuntimeException;
 
 class JoinsRelationships
@@ -23,32 +24,47 @@ class JoinsRelationships
         /**
          * Add a relationship join condition to the query.
          *
-         * @param  string                                 $relationName
+         * @param  mixed                                  $relation
          * @param  \Closure|null                          $callback
          * @param  string                                 $type
          * @param  bool                                   $through
          * @param  \Illuminate\Database\Eloquent\Builder  $relatedQuery
+         * @param  mixed                                  $morphTypes
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relationName, Closure $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null) {
+        return function ($relation, Closure $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null, $morphTypes = ['*']) {
 
-            if (strpos($relationName, '.') !== false) {
-                return $this->joinNestedRelation($relationName, $callback, $type, $through);
+            if (!$morphTypes instanceof MorphTypes) {
+                $morphTypes = new MorphTypes($morphTypes);
             }
 
-            if (stripos($relationName, ' as ') !== false) {
-                [$relationName, $alias] = preg_split('/\s+as\s+/i', $relationName);
+            if (is_string($relation)) {
+
+                if (strpos($relation, '.') !== false) {
+                    return $this->joinNestedRelation($relation, $callback, $type, $through, $morphTypes);
+                }
+
+                if (stripos($relation, ' as ') !== false) {
+                    [$relationName, $alias] = preg_split('/\s+as\s+/i', $relation);
+                } else {
+                    $relationName = $relation;
+                }
+
+                $relation = ($relatedQuery ?: $this)->getRelationWithoutConstraints($relationName);
+
+                if (! $relation instanceof Relation) {
+                    throw new LogicException(sprintf('%s::%s must return a relationship instance.', get_class($this->getModel()), $relationName));
+                }
+
             }
 
-            $relation = ($relatedQuery ?: $this)->getRelationWithoutConstraints($relationName);
+            else if (is_array($relation)) {
+                [$relation, $alias] = $relation;
+            }
 
             if ($relation instanceof MorphTo) {
-                throw new RuntimeException('joinRelation() does not support MorphTo relationships.');
-            }
-
-            if (! $relation instanceof Relation) {
-                throw new LogicException(sprintf('%s::%s must return a relationship instance.', get_class($this->getModel()), $relationName));
+                $relation = $this->getBelongsToJoinRelation($relation, $morphTypes, $relatedQuery ?: $this);
             }
 
             $joinQuery = $relation->getRelationJoinQuery(
@@ -90,14 +106,15 @@ class JoinsRelationships
         /**
          * Add nested relationship join conditions to the query.
          *
-         * @param  string         $relations
-         * @param  \Closure|null  $callback
-         * @param  string         $type
-         * @param  bool           $through
+         * @param  string                                     $relations
+         * @param  \Closure|null                              $callback
+         * @param  string                                     $type
+         * @param  bool                                       $through
+         * @param  \Reedware\LaravelRelationJoins\MorphTypes  $morphTypes
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relations, Closure $callback = null, $type = 'inner', $through = false) {
+        return function ($relations, Closure $callback = null, $type = 'inner', $through = false, MorphTypes $morphTypes) {
 
             $relations = explode('.', $relations);
 
@@ -107,7 +124,7 @@ class JoinsRelationships
                 $closure = count($relations) > 1 ? null : $callback;
                 $useThrough = count($relations) > 1 && $through;
 
-                $relatedQuery = $this->joinRelation(array_shift($relations), $closure, $type, $useThrough, $relatedQuery);
+                $relatedQuery = $this->joinRelation(array_shift($relations), $closure, $type, $useThrough, $relatedQuery, $morphTypes);
             }
 
             return $this;
@@ -291,6 +308,63 @@ class JoinsRelationships
     }
 
     /**
+     * Defines the mixin for {@see $query->getBelongsToJoinRelation()}.
+     *
+     * @return \Closure
+     */
+    protected function getBelongsToJoinRelation()
+    {
+        /**
+         * Description.
+         *
+         * @param  \Illuminate\Database\Eloquent\Relations\MorphTo  $relation
+         * @param  \Reedware\LaravelRelationJoins\MorphTypes        $morphTypes
+         * @param  \Illuminate\Database\Eloquent\Builder            $relatedQuery
+         *
+         * @return array
+         */
+        return function (MorphTo $relation, MorphTypes $morphTypes, Builder $relatedQuery) {
+
+            // When it comes to joining across morph types, we can really only support
+            // a single type. However, when we're provided multiple types, we will
+            // instead use these one at a time and pass the information along.
+
+            if ($morphTypes->items === ['*']) {
+
+                $types = $relatedQuery->model->distinct()->pluck($relation->getMorphType())->filter()->all();
+
+                $types = array_unique(array_map(function ($morphType) {
+                    return Relation::getMorphedModel($morphType) ?? $morphType;
+                }, $types));
+
+                if (count($types) > 1) {
+                    throw new RuntimeException('joinMorphRelation() does not support multiple morph types.');
+                }
+
+                $morphTypes->items = $types;
+
+            }
+
+            // We're going to handle the morph type join as a belongs to relationship
+            // that has the type itself constrained. This allows us to join into a
+            // singular table, which bypasses the typical headache of morphs.
+
+            $morphType = array_shift($morphTypes->items);
+
+            $belongsTo = $relatedQuery->getBelongsToRelation($relation, $morphType);
+
+            $belongsTo->where(
+                $relatedQuery->qualifyColumn($relation->getMorphType()),
+                '=',
+                (new $morphType)->getMorphClass()
+            );
+
+            return $belongsTo;
+
+        };
+    }
+
+    /**
      * Defines the mixin for {@see $query->leftJoinRelation()}.
      *
      * @return \Closure
@@ -431,6 +505,30 @@ class JoinsRelationships
          */
         return function ($relation, Closure $callback = null) {
             return $this->joinRelation($relation, $callback, 'cross', true);
+        };
+    }
+
+    /**
+     * Defines the mixin for {@see $query->joinMorphRelation()}.
+     *
+     * @return \Closure
+     */
+    public function joinMorphRelation()
+    {
+        /**
+         * Add a relationship join condition to the query.
+         *
+         * @param  string|array                           $relation
+         * @param  string|array                           $morphTypes
+         * @param  \Closure|null                          $callback
+         * @param  string                                 $type
+         * @param  bool                                   $through
+         * @param  \Illuminate\Database\Eloquent\Builder  $relatedQuery
+         *
+         * @return \Illuminate\Database\Eloquent\Builder|static
+         */
+        return function ($relation, $morphTypes = ['*'], Closure $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null) {
+            return $this->joinRelation($relation, $callback, $type, $through, $relatedQuery, $morphTypes);
         };
     }
 }
