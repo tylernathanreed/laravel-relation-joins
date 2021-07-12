@@ -227,9 +227,137 @@ class MorphToTest extends TestCase
     public function nested_out(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
-            ->joinRelation('uploadedBy');
+            ->joinMorphRelation('imageable.comments', [
+                EloquentPostModelStub::class
+            ]);
 
-        $this->assertEquals('select * from "images" inner join "users" on "users"."id" = "images"."uploaded_by_id"', $builder->toSql());
+        $this->assertEquals('select * from "images" inner join "posts" on "posts"."id" = "images"."imageable_id" and "images"."imageable_type" = ? inner join "comments" on "comments"."post_id" = "posts"."id"', $builder->toSql());
+        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function leftJoin(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentImageModelStub)
+            ->leftJoinMorphRelation('imageable', EloquentUserModelStub::class);
+
+        $this->assertEquals('select * from "images" left join "users" on "users"."id" = "images"."imageable_id" and "images"."imageable_type" = ?', $builder->toSql());
+        $this->assertEquals([0 => EloquentUserModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function rightJoin(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentImageModelStub)
+            ->rightJoinMorphRelation('imageable', EloquentUserModelStub::class);
+
+        $this->assertEquals('select * from "images" right join "users" on "users"."id" = "images"."imageable_id" and "images"."imageable_type" = ?', $builder->toSql());
+        $this->assertEquals([0 => EloquentUserModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function crossJoin(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentImageModelStub)
+            ->crossJoinMorphRelation('imageable', EloquentUserModelStub::class);
+
+        $this->assertEquals('select * from "images" cross join "users" on "users"."id" = "images"."imageable_id" and "images"."imageable_type" = ?', $builder->toSql());
+        $this->assertEquals([0 => EloquentUserModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function joinThrough_in(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('uploadedImages')
+            ->joinThroughMorphRelation('uploadedImages.imageable', [
+                EloquentPostModelStub::class
+            ]);
+
+        $this->assertEquals('select * from "users" inner join "images" on "images"."uploaded_by_id" = "users"."id" inner join "posts" on "posts"."id" = "images"."imageable_id" and "images"."imageable_type" = ?', $builder->toSql());
+        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function joinThrough_out(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentImageModelStub)
+            ->joinMorphRelation('imageable', [EloquentPostModelStub::class])
+            ->joinThroughMorphRelation('imageable.comments', [EloquentPostModelStub::class]);
+
+        $this->assertEquals('select * from "images" inner join "posts" on "posts"."id" = "images"."imageable_id" and "images"."imageable_type" = ? inner join "comments" on "comments"."post_id" = "posts"."id"', $builder->toSql());
+        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function leftJoinThrough(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('uploadedImages')
+            ->leftJoinThroughMorphRelation('uploadedImages.imageable', [
+                EloquentPostModelStub::class
+            ]);
+
+        $this->assertEquals('select * from "users" inner join "images" on "images"."uploaded_by_id" = "users"."id" left join "posts" on "posts"."id" = "images"."imageable_id" and "images"."imageable_type" = ?', $builder->toSql());
+        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function rightJoinThrough(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('uploadedImages')
+            ->rightJoinThroughMorphRelation('uploadedImages.imageable', [
+                EloquentPostModelStub::class
+            ]);
+
+        $this->assertEquals('select * from "users" inner join "images" on "images"."uploaded_by_id" = "users"."id" right join "posts" on "posts"."id" = "images"."imageable_id" and "images"."imageable_type" = ?', $builder->toSql());
+        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function crossJoinThrough(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('uploadedImages')
+            ->crossJoinThroughMorphRelation('uploadedImages.imageable', [
+                EloquentPostModelStub::class
+            ]);
+
+        $this->assertEquals('select * from "users" inner join "images" on "images"."uploaded_by_id" = "users"."id" cross join "posts" on "posts"."id" = "images"."imageable_id" and "images"."imageable_type" = ?', $builder->toSql());
+        $this->assertEquals([0 => EloquentPostModelStub::class], $builder->getBindings());
         $this->assertEquals($builderClass, get_class($builder));
     }
 }
