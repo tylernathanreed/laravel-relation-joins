@@ -40,7 +40,6 @@ class JoinsRelationships
             }
 
             if (is_string($relation)) {
-
                 if (strpos($relation, '.') !== false) {
                     return $this->joinNestedRelation($relation, $callback, $type, $through, $morphTypes);
                 }
@@ -56,7 +55,6 @@ class JoinsRelationships
                 if (! $relation instanceof Relation) {
                     throw new LogicException(sprintf('%s::%s must return a relationship instance.', get_class($this->getModel()), $relationName));
                 }
-
             }
 
             else if (is_array($relation)) {
@@ -114,7 +112,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relations, Closure $callback = null, $type = 'inner', $through = false, MorphTypes $morphTypes) {
+        return function ($relations, ?Closure $callback, $type, $through, MorphTypes $morphTypes) {
 
             $relations = explode('.', $relations);
 
@@ -330,7 +328,6 @@ class JoinsRelationships
             // instead use these one at a time and pass the information along.
 
             if ($morphTypes->items === ['*']) {
-
                 $types = $relatedQuery->model->distinct()->pluck($relation->getMorphType())->filter()->all();
 
                 $types = array_unique(array_map(function ($morphType) {
@@ -342,7 +339,6 @@ class JoinsRelationships
                 }
 
                 $morphTypes->items = $types;
-
             }
 
             // We're going to handle the morph type join as a belongs to relationship

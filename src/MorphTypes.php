@@ -13,7 +13,7 @@ class MorphTypes
 
     /**
      * Creates a new morph types instance.
-     * 
+     *
      * @param  string|array  $items
      *
      * @return $this;
