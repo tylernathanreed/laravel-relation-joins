@@ -23,7 +23,9 @@ This package adds the ability to join on a relationship by name.
     - [4. Adding pivot constraints](#joining-constraints-pivot)
         - [Query Scopes](#joining-constraints-pivot-scopes)
         - [Soft Deletes](#joining-constraints-pivot-soft-deletes)
-    - [5. Joining through relationships](#joining-through)
+    - [5. Adding multiple constraints](#multiple-constraints)
+        - [Array-Syntax](#multiple-constraints-array)
+        - [Through-Syntax](#multiple-constraints-through)
     - [6. Joining on circular relationships](#joining-circular)
     - [7. Aliasing joins](#joining-aliasing)
         - [Aliasing Pivot Tables](#joining-aliasing-pivot)
@@ -179,17 +181,52 @@ Country::query()->joinRelation('posts', function ($join, $through) {
 
 When using a "Belongs/Morph to Many" relationship, a pivot model must be specified for soft deletes to be considered.
 
-<a name="joining-through"></a>
-### 5. Joining through relationships
+<a name="multiple-constraints"></a>
+### 5. Adding multiple constraints
 
-There are times where you want to tack on clauses for intermediate joins. This can get a bit tricky in some other packages (by trying to automatically deduce whether or not to apply a join, or by not handling this situation at all).
+There are times where you want to tack on clauses for intermediate joins. This can get a bit tricky in some other packages (by trying to automatically deduce whether or not to apply a join, or by not handling this situation at all). This package introduces two solutions, where both have value in different situations.
 
-This package introduces something I'm calling a "through" join. Essentially, a "through" join indicates "I want to apply only the final relation in the 'dot' notation to my query".
+<a name="multiple-constraints-array"></a>
+#### Array-Syntax
 
-Here's an example:
+The first approach to handling multiple constraints is using an array syntax. This approach allows you to define all of your nested joins and constraints together:
 
 ```php
-// Using a query scope on the "Post" model
+User::query()->joinRelation('posts.comments', [
+    function ($join) { $join->where('is_active', '=', 1); },
+    function ($join) { $join->where('comments.title', 'like', '%looking for something%'); }
+});
+```
+
+The array syntax supports both sequential and associative variants:
+
+```php
+// Sequential
+User::query()->joinRelation('posts.comments', [
+    null,
+    function ($join) { $join->where('comments.title', 'like', '%looking for something%'); }
+});
+
+// Associative
+User::query()->joinRelation('posts.comments', [
+    'comments' => function ($join) { $join->where('comments.title', 'like', '%looking for something%'); }
+});
+```
+
+If you're using aliases, the associate array syntax refers to the fully qualified relation:
+```php
+User::query()->joinRelation('posts as articles.comments as threads', [
+    'posts as articles' => function ($join) { $join->where('is_active', '=', 1); },
+    'comments as threads' => function ($join) { $join->where('threads.title', 'like', '%looking for something%'); }
+});
+```
+
+<a name="multiple-constraints-through"></a>
+#### Through-Syntax
+
+The second approach to handling multiple constraints is using a through syntax. This approach allows us to define your joins and constraints individually:
+
+```php
 User::query()->joinRelation('posts', function ($join) {
     $join->where('is_active', '=', 1);
 })->joinThroughRelation('posts.comments', function ($join) {
@@ -197,7 +234,7 @@ User::query()->joinRelation('posts', function ($join) {
 });
 ```
 
-The second part, `joinThroughRelation`, will only apply the `comments` relation join, but it will do so as if it came from the `Post` model.
+The "through" concept here allows you to define a nested join using "dot" syntax, where only the final relation is actually constrained, and the prior relations are assumed to already be handled. So in this case, the `joinThroughRelation` method will only apply the `comments` relation join, but it will do so as if it came from the `Post` model.
 
 <a name="joining-circular"></a>
 ### 6. Joining on circular relationships

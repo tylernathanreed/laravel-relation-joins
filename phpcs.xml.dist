@@ -79,4 +79,12 @@
         <exclude-pattern>*/tests/*</exclude-pattern>
     </rule>
 
+    <rule ref="Squiz.Functions.MultiLineFunctionDeclaration.ContentAfterBrace">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+
+    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+
 </ruleset>

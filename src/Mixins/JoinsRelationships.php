@@ -3,6 +3,7 @@
 namespace Reedware\LaravelRelationJoins\Mixins;
 
 use Closure;
+use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -25,7 +26,7 @@ class JoinsRelationships
          * Add a relationship join condition to the query.
          *
          * @param  mixed                                  $relation
-         * @param  \Closure|null                          $callback
+         * @param  \Closure|array|null                    $callback
          * @param  string                                 $type
          * @param  bool                                   $through
          * @param  \Illuminate\Database\Eloquent\Builder  $relatedQuery
@@ -33,9 +34,9 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, Closure $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null, $morphTypes = ['*']) {
+        return function ($relation, $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null, $morphTypes = ['*']) {
 
-            if (!$morphTypes instanceof MorphTypes) {
+            if (! $morphTypes instanceof MorphTypes) {
                 $morphTypes = new MorphTypes($morphTypes);
             }
 
@@ -79,6 +80,11 @@ class JoinsRelationships
             // Next we will call any given callback as an "anonymous" scope so they can get the
             // proper logical grouping of the where clauses if needed by this Eloquent query
             // builder. Then, we will be ready to finalize and return this query instance.
+
+            if (is_array($callback)) {
+                $callback = reset($callback);
+            }
+
             if ($callback) {
                 $this->callJoinScope($joinQuery, $callback);
             } else {
@@ -105,24 +111,33 @@ class JoinsRelationships
          * Add nested relationship join conditions to the query.
          *
          * @param  string                                     $relations
-         * @param  \Closure|null                              $callback
+         * @param  \Closure|array|null                        $callbacks
          * @param  string                                     $type
          * @param  bool                                       $through
          * @param  \Reedware\LaravelRelationJoins\MorphTypes  $morphTypes
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relations, ?Closure $callback, $type, $through, MorphTypes $morphTypes) {
+        return function ($relations, $callbacks, $type, $through, MorphTypes $morphTypes) {
 
             $relations = explode('.', $relations);
 
             $relatedQuery = $this;
 
-            while (count($relations) > 0) {
-                $closure = count($relations) > 1 ? null : $callback;
-                $useThrough = count($relations) > 1 && $through;
+            $callbacks = is_array($callbacks)
+                ? (
+                    Arr::isAssoc($callbacks)
+                        ? $callbacks
+                        : array_combine($relations, $callbacks)
+                )
+                : [end($relations) => $callbacks];
 
-                $relatedQuery = $this->joinRelation(array_shift($relations), $closure, $type, $useThrough, $relatedQuery, $morphTypes);
+            while (count($relations) > 0) {
+                $relation = array_shift($relations);
+                $callback = $callbacks[$relation] ?? null;
+                $useThrough = count($relations) > 0 && $through;
+
+                $relatedQuery = $this->joinRelation($relation, $callback, $type, $useThrough, $relatedQuery, $morphTypes);
             }
 
             return $this;
