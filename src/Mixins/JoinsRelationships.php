@@ -91,8 +91,10 @@ class JoinsRelationships
                 $this->applyJoinScopes($joinQuery);
             }
 
+            $joinType = $joinQuery->getJoinType();
+
             $this->addJoinRelationWhere(
-                $joinQuery, $relation, $type
+                $joinQuery, $relation, $joinType ?: $type
             );
 
             return ! is_null($relatedQuery) ? $joinQuery : $this;
@@ -229,6 +231,31 @@ class JoinsRelationships
                 $joinQuery->addBinding($query->getBindings(), 'join');
             }
 
+        };
+    }
+
+    /**
+     * Defines the mixin for {@see $query->getJoinType()}.
+     *
+     * @return \Closure
+     */
+    protected function getJoinType()
+    {
+        /**
+         * Returns the custom provided join type.
+         *
+         * @return string|null
+         */
+        return function () {
+            if (! property_exists($this, 'type')) {
+                return null;
+            }
+
+            try {
+                $type = $this->type;
+            } finally {
+                return $type;
+            }
         };
     }
 

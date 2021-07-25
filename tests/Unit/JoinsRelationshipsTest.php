@@ -194,4 +194,20 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals([true, 'thumbs-up'], $builder->getBindings());
         $this->assertEquals($builderClass, get_class($builder));
     }
+
+    /**
+     * @test
+     * @dataProvider queryDataProvider
+     */
+    public function multiconstraint_mix_type(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('posts.comments.likes', [
+                'posts' => function ($join) { $join->type = 'left'; },
+                'likes' => function ($join) { $join->type = 'right'; }
+            ]);
+
+        $this->assertEquals('select * from "users" left join "posts" on "posts"."user_id" = "users"."id" inner join "comments" on "comments"."post_id" = "posts"."id" right join "likes" on "likes"."comment_id" = "comments"."id"', $builder->toSql());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
 }
