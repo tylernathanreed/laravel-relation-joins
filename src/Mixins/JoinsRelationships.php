@@ -251,9 +251,21 @@ class JoinsRelationships
                 return null;
             }
 
+            // There's a weird quirk in PHP where if a dynamic property was added
+            // to a class, and the class has the magic "__get" method defined,
+            // accessing the property yields a value, but also throws too.
+
             try {
                 $type = $this->type;
-            } finally {
+            }
+
+            // There's a bug with code coverage that for whatever reason does not
+            // consider the "finally" line to be covered, but its contents are.
+            // While it looks weird, we are going to ignore coverage there.
+
+            // @codeCoverageIgnoreStart
+            finally {
+            // @codeCoverageIgnoreEnd
                 return $type;
             }
         };
