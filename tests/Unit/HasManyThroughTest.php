@@ -112,11 +112,7 @@ class HasManyThroughTest extends TestCase
         $builder = $query(new EloquentCountryModelStub)
             ->joinRelation('postsThroughSoftDeletingUser');
 
-        if ($this->isVersionAfter('7.10.0')) {
-            $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
-        } else {
-            $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id" and "users"."deleted_at" is null', $builder->toSql());
-        }
+        $this->assertEquals('select * from "countries" inner join "users" on "users"."country_id" = "countries"."id" and "users"."deleted_at" is null inner join "posts" on "posts"."user_id" = "users"."id"', $builder->toSql());
         $this->assertEquals($builderClass, get_class($builder));
     }
 
