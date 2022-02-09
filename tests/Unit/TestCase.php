@@ -9,23 +9,14 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as BaseBuilder;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Database\Query\Processors\Processor;
-use Illuminate\Support\Arr;
 use Mockery as m;
 use PHPUnit\Framework\TestCase as TestBase;
 use Reedware\LaravelRelationJoins\LaravelRelationJoinServiceProvider;
 use Reedware\LaravelRelationJoins\Tests\CustomBuilder;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentRelationJoinModelStub;
-use RuntimeException;
 
 class TestCase extends TestBase
 {
-    /**
-     * The current laravel version.
-     *
-     * @var string
-     */
-    protected $version;
-
     /**
      * The mocked database connection.
      *
@@ -42,39 +33,8 @@ class TestCase extends TestBase
     {
         parent::setUp();
 
-        $this->assignLaravelVersion();
         $this->setUpConnectionResolver();
         $this->registerServiceProvider();
-    }
-
-    /**
-     * Locally stores the current laravel version for later comparison.
-     *
-     * @return void
-     */
-    protected function assignLaravelVersion(): void
-    {
-        $this->version = static::getLaravelVersion();
-    }
-
-    /**
-     * Returns the current laravel version.
-     *
-     * @return string
-     *
-     * @throws \RuntimeException
-     */
-    public static function getLaravelVersion(): string
-    {
-        $composer = json_decode(file_get_contents(__DIR__ . '/../../composer.lock'));
-
-        if (is_null($composer)) {
-            throw new RuntimeException('Unable to determine Laravel Version.');
-        }
-
-        return substr(Arr::first($composer->packages, function ($package) {
-            return $package->name == 'illuminate/support';
-        })->version, 1);
     }
 
     /**
@@ -134,18 +94,6 @@ class TestCase extends TestBase
     protected function tearDown(): void
     {
         m::close();
-    }
-
-    /**
-     * Returns whether or not the specified version is after the current version.
-     *
-     * @param  string  $version
-     *
-     * @return bool
-     */
-    public function isVersionAfter(string $version): bool
-    {
-        return version_compare($this->version, $version) >= 0;
     }
 
     /**
