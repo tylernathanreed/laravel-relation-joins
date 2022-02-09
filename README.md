@@ -1,6 +1,6 @@
 # Laravel Relation Joins
 
-[![Laravel Version](https://img.shields.io/badge/Laravel-6.x%2F7.x%2F8.x-blue)](https://laravel.com/)
+[![Laravel Version](https://img.shields.io/badge/Laravel-7.x%2F8.x%2F9.x-blue)](https://laravel.com/)
 [![Build Status](https://github.com/tylernathanreed/laravel-relation-joins/workflows/tests/badge.svg)](https://github.com/tylernathanreed/laravel-relation-joins/actions)
 [![Style Status](https://github.com/tylernathanreed/laravel-relation-joins/workflows/style/badge.svg)](https://github.com/tylernathanreed/laravel-relation-joins/actions)
 [![Coverage Status](https://coveralls.io/repos/github/tylernathanreed/laravel-relation-joins/badge.svg?branch=master)](https://coveralls.io/github/tylernathanreed/laravel-relation-joins?branch=master)
