@@ -261,8 +261,14 @@ class RelationJoinQuery
      */
     protected static function morphOneOrMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
     {
+		$qualifiedMorphType = $relation->getQualifiedMorphType();
+		if ( $alias ){
+			$arr = explode('.', $qualifiedMorphType);
+			$qualifiedMorphType = $alias . '.' . $arr[1];
+		}
+
         return static::hasOneOrMany($relation, $query, $parentQuery, $type, $alias)->where(
-            $relation->getQualifiedMorphType(), '=', $relation->getMorphClass()
+            $qualifiedMorphType, '=', $relation->getMorphClass()
         );
     }
 
