@@ -62,7 +62,7 @@ Reedware\LaravelRelationJoins\LaravelRelationJoinServiceProvider::class
 <a name="versioning"></a>
 ### Versioning
 
-This package was built with the latest version of Laravel in mind, but support goes back to Laravel 7.x.
+This package was built with the latest version of Laravel in mind, but support goes back to Laravel 8.x.
 
 For Laravel 7.x, use version 3.x of this package.
 For Laravel 6.x, use version 2.x of this package.  
