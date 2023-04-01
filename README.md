@@ -1,6 +1,6 @@
 # Laravel Relation Joins
 
-[![Laravel Version](https://img.shields.io/badge/Laravel-7.x%2F8.x%2F9.x-blue)](https://laravel.com/)
+[![Laravel Version](https://img.shields.io/badge/Laravel-8.x%2F9.x%2F10.x-blue)](https://laravel.com/)
 [![Build Status](https://github.com/tylernathanreed/laravel-relation-joins/workflows/tests/badge.svg)](https://github.com/tylernathanreed/laravel-relation-joins/actions)
 [![Style Status](https://github.com/tylernathanreed/laravel-relation-joins/workflows/style/badge.svg)](https://github.com/tylernathanreed/laravel-relation-joins/actions)
 [![Coverage Status](https://coveralls.io/repos/github/tylernathanreed/laravel-relation-joins/badge.svg?branch=master)](https://coveralls.io/github/tylernathanreed/laravel-relation-joins?branch=master)
@@ -62,8 +62,9 @@ Reedware\LaravelRelationJoins\LaravelRelationJoinServiceProvider::class
 <a name="versioning"></a>
 ### Versioning
 
-This package was built with the latest version of Laravel in mind, but support goes back to Laravel 7.x.
+This package was built with the latest version of Laravel in mind, but support goes back to Laravel 8.x.
 
+For Laravel 7.x, use version 3.x of this package.
 For Laravel 6.x, use version 2.x of this package.  
 For Laravel 5.5, use version 1.x of this package.
 

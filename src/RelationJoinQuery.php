@@ -111,7 +111,7 @@ class RelationJoinQuery
      */
     protected static function belongsToMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
     {
-        if (strpos($alias, ',') !== false) {
+        if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
         } else {
             [$pivotAlias, $farAlias] = [null, $alias];
@@ -202,7 +202,7 @@ class RelationJoinQuery
      */
     protected static function hasOneOrManyThrough(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
     {
-        if (strpos($alias, ',') !== false) {
+        if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$throughAlias, $farAlias] = explode(',', $alias);
         } else {
             [$throughAlias, $farAlias] = [null, $alias];
@@ -279,7 +279,7 @@ class RelationJoinQuery
      */
     protected static function morphToMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
     {
-        if (strpos($alias, ',') !== false) {
+        if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
         } else {
             [$pivotAlias, $farAlias] = [null, $alias];
