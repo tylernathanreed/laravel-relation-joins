@@ -10,12 +10,12 @@
         }
     ],
     "require": {
-        "php": ">=7.2.5",
-        "illuminate/database": "^7.30.4|^8.23|^9.0",
-        "illuminate/support": "^7.30.4|^8.23|^9.0"
+        "php": ">=7.3",
+        "illuminate/database": "^8.23|^9.0|^10.0",
+        "illuminate/support": "^8.23|^9.0|^10.0"
     },
     "require-dev": {
-        "illuminate/container": "^7.30.4|^8.23|^9.0",
+        "illuminate/container": "^8.23|^9.0|^10.0",
         "mockery/mockery": "^1.4.3",
         "php-coveralls/php-coveralls": "^2.4",
         "phpunit/phpunit": "^8.5|^9.5",
