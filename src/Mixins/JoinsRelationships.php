@@ -27,8 +27,8 @@ class JoinsRelationships
          * Add a relationship join condition to the query.
          *
          * @param  Relation|string|array<Relation|string>  $relation
-         * @param  Closure|array<string,Closure>|null      $callback
-         * @param  MorphTypes|array<string>|string         $morphTypes
+         * @param  Closure|array<string,Closure>|null  $callback
+         * @param  MorphTypes|array<string>|string  $morphTypes
          */
         return function (
             Relation|string|array $relation,
@@ -469,8 +469,8 @@ class JoinsRelationships
          * Add a morph to relationship join condition to the query.
          *
          * @param  string|array<Relation|string>  $relation
-         * @param  array<string>|string           $morphTypes
-         * @param  Closure|array<Closure>|null    $callback
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
         return function (
             string|array $relation,
@@ -494,8 +494,8 @@ class JoinsRelationships
          * Add a morph to relationship left join condition to the query.
          *
          * @param  string|array<Relation|string>  $relation
-         * @param  array<string>|string           $morphTypes
-         * @param  Closure|array<Closure>|null    $callback
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
         return function (
             string|array $relation,
@@ -517,8 +517,8 @@ class JoinsRelationships
          * Add a morph to relationship right join condition to the query.
          *
          * @param  string|array<Relation|string>  $relation
-         * @param  array<string>|string           $morphTypes
-         * @param  Closure|array<Closure>|null    $callback
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
         return function (
             string|array $relation,
@@ -540,8 +540,8 @@ class JoinsRelationships
          * Add a morph to relationship cross join condition to the query.
          *
          * @param  string|array<Relation|string>  $relation
-         * @param  array<string>|string           $morphTypes
-         * @param  Closure|array<Closure>|null    $callback
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
         return function (
             string|array $relation,
@@ -563,8 +563,8 @@ class JoinsRelationships
          * Add a morph to relationship join condition through a related model to the query.
          *
          * @param  string|array<Relation|string>  $relation
-         * @param  array<string>|string           $morphTypes
-         * @param  Closure|array<Closure>|null    $callback
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
         return function (
             string|array $relation,
@@ -586,8 +586,8 @@ class JoinsRelationships
          * Add a morph to relationship left join condition through a related model to the query.
          *
          * @param  string|array<Relation|string>  $relation
-         * @param  array<string>|string           $morphTypes
-         * @param  Closure|array<Closure>|null    $callback
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
         return function (
             string|array $relation,
@@ -608,8 +608,8 @@ class JoinsRelationships
          * Add a morph to relationship right join condition through a related model to the query.
          *
          * @param  string|array<Relation|string>  $relation
-         * @param  array<string>|string           $morphTypes
-         * @param  Closure|array<Closure>|null    $callback
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
         return function (
             string|array $relation,
@@ -630,8 +630,8 @@ class JoinsRelationships
          * Add a morph to relationship cross join condition through a related model to the query.
          *
          * @param  string|array<Relation|string>  $relation
-         * @param  array<string>|string           $morphTypes
-         * @param  Closure|array<Closure>|null    $callback
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
         return function (
             string|array $relation,

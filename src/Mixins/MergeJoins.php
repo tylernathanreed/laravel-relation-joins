@@ -40,7 +40,7 @@ class MergeJoins
             $wheres = $query->wheres;
 
             $wheres = array_map(function ($where) {
-                if (!isset($where['query'])) {
+                if (! isset($where['query'])) {
                     return $where;
                 }
 
