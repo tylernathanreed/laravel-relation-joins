@@ -118,7 +118,7 @@ class RelationJoinQuery
     /**
      * Adds the constraints for a has one or has many relationship join.
      */
-    protected static function hasOneOrMany(HasOne|HasMany $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
+    protected static function hasOneOrMany(HasOne|HasMany|MorphOne|MorphMany $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
     {
         if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
             $alias = $relation->getRelationCountHash();
