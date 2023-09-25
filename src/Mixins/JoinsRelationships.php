@@ -312,47 +312,6 @@ class JoinsRelationships
     }
 
     /**
-     * Defines the mixin for {@see $query->replaceWhereNestedQueryBuildersWithJoinBuilders()}.
-     */
-    public function replaceWhereNestedQueryBuildersWithJoinBuilders(): Closure
-    {
-        /**
-         * Replaces the query builders in nested "where" clauses with join builders.
-         *
-         * @param  \Illuminate\Database\Query\Builder  $query
-         * @return void
-         */
-        return function ($query) {
-            /** @var Builder $this */
-            $wheres = $query->wheres;
-
-            $wheres = array_map(function ($where) {
-                if (! isset($where['query'])) {
-                    return $where;
-                }
-
-                if ($where['type'] == 'Exists' || $where['type'] == 'NotExists') {
-                    return $where;
-                }
-
-                $this->replaceWhereNestedQueryBuildersWithJoinBuilders($where['query']);
-
-                $joinClause = new JoinClause($where['query'], 'inner', $where['query']->from);
-
-                foreach (array_keys(get_object_vars($where['query'])) as $key) {
-                    $joinClause->{$key} = $where['query']->{$key};
-                }
-
-                $where['query'] = $joinClause;
-
-                return $where;
-            }, $wheres);
-
-            $query->wheres = $wheres;
-        };
-    }
-
-    /**
      * Defines the mixin for {@see $query->getBelongsToJoinRelation()}.
      */
     public function getBelongsToJoinRelation(): Closure

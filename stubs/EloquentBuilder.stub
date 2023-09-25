@@ -16,7 +16,6 @@ use Reedware\LaravelRelationJoins\MorphTypes;
  * @method void callJoinScope(Builder $joinQuery, Closure $callback)
  * @method ?string getJoinType()
  * @method Builder|static addJoinRelationWhere(Builder $joinQuery, Relation $relation, $type)
- * @method void replaceWhereNestedQueryBuildersWithJoinBuilders(Builder $query)
  * @method BelongsTo getBelongsToJoinRelation(MorphTo $relation, MorphTypes $morphTypes, Builder $relatedQuery)
  * @method Builder|static leftJoinRelation($relation, Closure $callback = null, $through = false)
  * @method Builder|static rightJoinRelation($relation, Closure $callback = null, $through = false)
