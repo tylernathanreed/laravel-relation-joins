@@ -286,8 +286,6 @@ class RelationJoinQuery
             $table = $on = $relation->getTable();
         }
 
-        $query = $query ?: $relation->getQuery();
-
         $query->join($table, function ($join) use ($relation, $on) {
             $join->on($on.'.'.$relation->getForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName());
 
