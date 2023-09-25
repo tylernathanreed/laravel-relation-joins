@@ -1,7 +1,13 @@
 {
     "name": "reedware/laravel-relation-joins",
     "description": "Adds the ability to join on a relationship by name.",
-    "keywords": ["laravel", "relation", "join", "eloquent", "query"],
+    "keywords": [
+        "laravel",
+        "relation",
+        "join",
+        "eloquent",
+        "query"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -10,16 +16,16 @@
         }
     ],
     "require": {
-        "php": ">=7.3",
-        "illuminate/contracts": "^8.83|^9.52|^10.0",
-        "illuminate/database": "^8.83|^9.52|^10.0",
-        "illuminate/support": "^8.83|^9.52|^10.0"
+        "php": ">=8.0",
+        "illuminate/contracts": "^9.52|^10.0",
+        "illuminate/database": "^9.52|^10.0",
+        "illuminate/support": "^9.52|^10.0"
     },
     "require-dev": {
-        "illuminate/container": "^8.83|^9.52|^10.0",
-        "mockery/mockery": "^1.5.1",
+        "illuminate/container": "^9.52|^10.0",
+        "mockery/mockery": "^1.6.6",
         "php-coveralls/php-coveralls": "^2.4",
-        "phpunit/phpunit": "^8.5.33|^9.5",
+        "phpunit/phpunit": "^9.5",
         "squizlabs/php_codesniffer": "^3.6"
     },
     "autoload": {
@@ -38,5 +44,13 @@
                 "Reedware\\LaravelRelationJoins\\LaravelRelationJoinServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "test:coverage": [
+            "@test:suite",
+            "vendor/bin/php-coveralls -v --dry-run"
+        ],
+        "test:style": "vendor/bin/phpcs",
+        "test:suite": "vendor/bin/phpunit --verbose"
     }
 }
