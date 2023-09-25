@@ -93,6 +93,28 @@ class JoinsRelationshipsTest extends TestCase
      *
      * @dataProvider queryDataProvider
      */
+    public function multiconstraint_leftJoinRelation(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->leftJoinRelation('posts.comments', [
+                function ($join) {
+                    $join->where('posts.active', '=', true);
+                },
+                function ($join) {
+                    $join->where('comments.likes', '>=', 10);
+                },
+            ]);
+
+        $this->assertEquals('select * from "users" left join "posts" on "posts"."user_id" = "users"."id" and "posts"."active" = ? left join "comments" on "comments"."post_id" = "posts"."id" and "comments"."likes" >= ?', $builder->toSql());
+        $this->assertEquals([true, 10], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider queryDataProvider
+     */
     public function multiconstraint_associative(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
