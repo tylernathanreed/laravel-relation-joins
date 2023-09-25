@@ -430,7 +430,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, Closure|array $callback = null, $through = false) {
+        return function ($relation, $callback = null, $through = false) {
             return $this->joinRelation($relation, $callback, 'left', $through);
         };
     }
@@ -451,7 +451,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, Closure|array $callback = null, $through = false) {
+        return function ($relation, $callback = null, $through = false) {
             return $this->joinRelation($relation, $callback, 'right', $through);
         };
     }
@@ -472,7 +472,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, Closure|array $callback = null, $through = false) {
+        return function ($relation, $callback = null, $through = false) {
             return $this->joinRelation($relation, $callback, 'cross', $through);
         };
     }
@@ -493,7 +493,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, Closure|array $callback = null, $type = 'inner') {
+        return function ($relation, $callback = null, $type = 'inner') {
             return $this->joinRelation($relation, $callback, $type, true);
         };
     }
@@ -513,7 +513,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, Closure|array $callback = null) {
+        return function ($relation, $callback = null) {
             return $this->joinRelation($relation, $callback, 'left', true);
         };
     }
@@ -533,7 +533,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, Closure|array $callback = null) {
+        return function ($relation, $callback = null) {
             return $this->joinRelation($relation, $callback, 'right', true);
         };
     }
@@ -553,7 +553,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, Closure|array $callback = null) {
+        return function ($relation, $callback = null) {
             return $this->joinRelation($relation, $callback, 'cross', true);
         };
     }
@@ -577,7 +577,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, $morphTypes = ['*'], Closure|array $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null) {
+        return function ($relation, $morphTypes = ['*'], $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null) {
             return $this->joinRelation($relation, $callback, $type, $through, $relatedQuery, $morphTypes);
         };
     }
@@ -599,7 +599,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, $morphTypes = ['*'], Closure|array $callback = null, $through = false) {
+        return function ($relation, $morphTypes = ['*'], $callback = null, $through = false) {
             return $this->joinRelation($relation, $callback, 'left', $through, null, $morphTypes);
         };
     }
@@ -621,7 +621,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, $morphTypes = ['*'], Closure|array $callback = null, $through = false) {
+        return function ($relation, $morphTypes = ['*'], $callback = null, $through = false) {
             return $this->joinRelation($relation, $callback, 'right', $through, null, $morphTypes);
         };
     }
@@ -643,7 +643,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, $morphTypes = ['*'], Closure|array $callback = null, $through = false) {
+        return function ($relation, $morphTypes = ['*'], $callback = null, $through = false) {
             return $this->joinRelation($relation, $callback, 'cross', $through, null, $morphTypes);
         };
     }
@@ -665,7 +665,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, $morphTypes = ['*'], Closure|array $callback = null, $type = 'inner') {
+        return function ($relation, $morphTypes = ['*'], $callback = null, $type = 'inner') {
             return $this->joinRelation($relation, $callback, $type, true, null, $morphTypes);
         };
     }
@@ -686,7 +686,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, $morphTypes = ['*'], Closure|array $callback = null) {
+        return function ($relation, $morphTypes = ['*'], $callback = null) {
             return $this->joinRelation($relation, $callback, 'left', true, null, $morphTypes);
         };
     }
@@ -707,7 +707,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, $morphTypes = ['*'], Closure|array $callback = null) {
+        return function ($relation, $morphTypes = ['*'], $callback = null) {
             return $this->joinRelation($relation, $callback, 'right', true, null, $morphTypes);
         };
     }
@@ -728,7 +728,7 @@ class JoinsRelationships
          *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, $morphTypes = ['*'], Closure|array $callback = null) {
+        return function ($relation, $morphTypes = ['*'], $callback = null) {
             return $this->joinRelation($relation, $callback, 'cross', true, null, $morphTypes);
         };
     }
