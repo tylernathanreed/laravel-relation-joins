@@ -23,10 +23,11 @@
     },
     "require-dev": {
         "illuminate/container": "^9.52|^10.0",
+        "laravel/pint": "^1.13",
         "mockery/mockery": "^1.6.6",
         "php-coveralls/php-coveralls": "^2.4",
-        "phpunit/phpunit": "^9.5",
-        "laravel/pint": "^1.13"
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^9.5"
     },
     "autoload": {
         "psr-4": {
@@ -45,13 +46,19 @@
             ]
         }
     },
+    "minimum-stability": "stable",
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist"
+    },
     "scripts": {
         "test:coverage": [
             "@test:suite",
-            "vendor/bin/php-coveralls -v --dry-run"
+            "php-coveralls -v --dry-run"
         ],
-        "test:style": "vendor/bin/pint --test",
-        "test:style-fix": "vendor/bin/pint",
-        "test:suite": "vendor/bin/phpunit --verbose"
+        "test:static": "phpstan",
+        "test:style": "pint --test",
+        "test:style-fix": "pint",
+        "test:suite": "phpunit --verbose"
     }
 }

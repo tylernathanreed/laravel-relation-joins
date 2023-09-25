@@ -13,14 +13,13 @@ use Reedware\LaravelRelationJoins\EloquentJoinClause;
 use Reedware\LaravelRelationJoins\MorphTypes;
 use RuntimeException;
 
+/** @mixin Builder */
 class JoinsRelationships
 {
     /**
      * Defines the mixin for {@see $query->joinRelation()}.
-     *
-     * @return \Closure
      */
-    public function joinRelation()
+    public function joinRelation(): Closure
     {
         /**
          * Add a relationship join condition to the query.
@@ -34,6 +33,7 @@ class JoinsRelationships
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null, $morphTypes = ['*']) {
+            /** @var Builder $this */
 
             if (! $morphTypes instanceof MorphTypes) {
                 $morphTypes = new MorphTypes($morphTypes);
@@ -101,10 +101,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->joinNestedRelation()}.
-     *
-     * @return \Closure
      */
-    protected function joinNestedRelation()
+    protected function joinNestedRelation(): Closure
     {
         /**
          * Add nested relationship join conditions to the query.
@@ -145,10 +143,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->applyJoinScopes()}.
-     *
-     * @return \Closure
      */
-    protected function applyJoinScopes()
+    protected function applyJoinScopes(): Closure
     {
         /**
          * Applies the eloquent scopes to the specified query.
@@ -173,10 +169,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->callJoinScope()}.
-     *
-     * @return \Closure
      */
-    protected function callJoinScope()
+    protected function callJoinScope(): Closure
     {
         /**
          * Calls the provided callback on the join query.
@@ -230,10 +224,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->getJoinType()}.
-     *
-     * @return \Closure
      */
-    protected function getJoinType()
+    protected function getJoinType(): Closure
     {
         /**
          * Returns the custom provided join type.
@@ -267,10 +259,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->addJoinRelationWhere()}.
-     *
-     * @return \Closure
      */
-    protected function addJoinRelationWhere()
+    protected function addJoinRelationWhere(): Closure
     {
         /**
          * Add the "join relation" condition where clause to the query.
@@ -281,6 +271,7 @@ class JoinsRelationships
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function (Builder $joinQuery, Relation $relation, $type) {
+            /** @var Builder $this */
 
             $joinQuery->mergeConstraintsFrom($relation->getQuery());
 
@@ -309,10 +300,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->replaceWhereNestedQueryBuildersWithJoinBuilders()}.
-     *
-     * @return \Closure
      */
-    protected function replaceWhereNestedQueryBuildersWithJoinBuilders()
+    protected function replaceWhereNestedQueryBuildersWithJoinBuilders(): Closure
     {
         /**
          * Replaces the query builders in nested "where" clauses with join builders.
@@ -353,10 +342,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->getBelongsToJoinRelation()}.
-     *
-     * @return \Closure
      */
-    protected function getBelongsToJoinRelation()
+    protected function getBelongsToJoinRelation(): Closure
     {
         /**
          * Description.
@@ -407,10 +394,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->leftJoinRelation()}.
-     *
-     * @return \Closure
      */
-    public function leftJoinRelation()
+    public function leftJoinRelation(): Closure
     {
         /**
          * Add a relationship left join condition to the query.
@@ -427,10 +412,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->rightJoinRelation()}.
-     *
-     * @return \Closure
      */
-    public function rightJoinRelation()
+    public function rightJoinRelation(): Closure
     {
         /**
          * Add a relationship right join condition to the query.
@@ -447,10 +430,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->crossJoinRelation()}.
-     *
-     * @return \Closure
      */
-    public function crossJoinRelation()
+    public function crossJoinRelation(): Closure
     {
         /**
          * Add a relationship cross join condition to the query.
@@ -467,10 +448,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->joinThroughRelation()}.
-     *
-     * @return \Closure
      */
-    public function joinThroughRelation()
+    public function joinThroughRelation(): Closure
     {
         /**
          * Add a relationship join condition through a related model to the query.
@@ -487,10 +466,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->leftJoinThroughRelation()}.
-     *
-     * @return \Closure
      */
-    public function leftJoinThroughRelation()
+    public function leftJoinThroughRelation(): Closure
     {
         /**
          * Add a relationship left join condition through a related model to the query.
@@ -506,10 +483,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->rightJoinThroughRelation()}.
-     *
-     * @return \Closure
      */
-    public function rightJoinThroughRelation()
+    public function rightJoinThroughRelation(): Closure
     {
         /**
          * Add a relationship right join condition through a related model to the query.
@@ -525,10 +500,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->crossJoinThroughRelation()}.
-     *
-     * @return \Closure
      */
-    public function crossJoinThroughRelation()
+    public function crossJoinThroughRelation(): Closure
     {
         /**
          * Add a relationship cross join condition through a related model to the query.
@@ -544,10 +517,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->joinMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function joinMorphRelation()
+    public function joinMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship join condition to the query.
@@ -567,10 +538,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->leftJoinMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function leftJoinMorphRelation()
+    public function leftJoinMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship left join condition to the query.
@@ -588,10 +557,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->rightJoinMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function rightJoinMorphRelation()
+    public function rightJoinMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship right join condition to the query.
@@ -609,10 +576,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->crossJoinMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function crossJoinMorphRelation()
+    public function crossJoinMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship cross join condition to the query.
@@ -630,10 +595,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->joinThroughMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function joinThroughMorphRelation()
+    public function joinThroughMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship join condition through a related model to the query.
@@ -651,10 +614,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->leftJoinThroughMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function leftJoinThroughMorphRelation()
+    public function leftJoinThroughMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship left join condition through a related model to the query.
@@ -671,10 +632,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->rightJoinThroughMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function rightJoinThroughMorphRelation()
+    public function rightJoinThroughMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship right join condition through a related model to the query.
@@ -691,10 +650,8 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->crossJoinThroughMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function crossJoinThroughMorphRelation()
+    public function crossJoinThroughMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship cross join condition through a related model to the query.

@@ -3,15 +3,15 @@
 namespace Reedware\LaravelRelationJoins\Mixins;
 
 use Closure;
+use Illuminate\Database\Query\Builder;
 
+/** @mixin Builder */
 class JoinOperations
 {
     /**
      * Defines the mixin for {@see $query->on()}.
-     *
-     * @return \Closure
      */
-    public function on()
+    public function on(): Closure
     {
         /**
          * Add an "on" clause to the join.
@@ -23,22 +23,20 @@ class JoinOperations
          * @return $this
          */
         return function ($first, $operator = null, $second = null, $boolean = 'and') {
+            /** @var Builder $this */
 
             if ($first instanceof Closure) {
                 return $this->whereNested($first, $boolean);
             }
 
             return $this->whereColumn($first, $operator, $second, $boolean);
-
         };
     }
 
     /**
      * Defines the mixin for {@see $query->orOn()}.
-     *
-     * @return \Closure
      */
-    public function orOn()
+    public function orOn(): Closure
     {
         /**
          * Add an "or on" clause to the join.
