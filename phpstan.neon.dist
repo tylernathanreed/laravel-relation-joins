@@ -1,5 +1,5 @@
 parameters:
-    level: 1
+    level: 2
     paths:
         - src
     excludePaths:
@@ -7,6 +7,14 @@ parameters:
     stubFiles:
         - stubs/EloquentBuilder.stub
         - stubs/QueryBuilder.stub
+        - stubs/Relation.stub
+    ignoreErrors:
+        -
+            message: '#Call to protected method \w+\(\) of class Illuminate\\Database\\Eloquent\\Builder.#'
+            path: src/Mixins/JoinsRelationships.php
+        -
+            message: '#Access to protected property Illuminate\\Database\\Eloquent\\Builder::\$\w+.#'
+            path: src/Mixins/JoinsRelationships.php
 
 
 

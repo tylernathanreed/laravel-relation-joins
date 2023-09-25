@@ -4,9 +4,10 @@ namespace Reedware\LaravelRelationJoins\Mixins;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Reedware\LaravelRelationJoins\RelationJoinQuery;
 
-/** @mixin Builder */
+/** @mixin Relation */
 class RelationJoinQueries
 {
     /**
@@ -24,6 +25,7 @@ class RelationJoinQueries
          * @return \Illuminate\Database\Eloquent\Builder
          */
         return function (Builder $query, Builder $parentQuery, $type = 'inner', $alias = null) {
+            /** @var Relation $this */
             return RelationJoinQuery::get($this, $query, $parentQuery, $type, $alias);
         };
     }

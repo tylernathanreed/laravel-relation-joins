@@ -102,7 +102,7 @@ class JoinsRelationships
     /**
      * Defines the mixin for {@see $query->joinNestedRelation()}.
      */
-    protected function joinNestedRelation(): Closure
+    public function joinNestedRelation(): Closure
     {
         /**
          * Add nested relationship join conditions to the query.
@@ -144,7 +144,7 @@ class JoinsRelationships
     /**
      * Defines the mixin for {@see $query->applyJoinScopes()}.
      */
-    protected function applyJoinScopes(): Closure
+    public function applyJoinScopes(): Closure
     {
         /**
          * Applies the eloquent scopes to the specified query.
@@ -170,7 +170,7 @@ class JoinsRelationships
     /**
      * Defines the mixin for {@see $query->callJoinScope()}.
      */
-    protected function callJoinScope(): Closure
+    public function callJoinScope(): Closure
     {
         /**
          * Calls the provided callback on the join query.
@@ -225,7 +225,7 @@ class JoinsRelationships
     /**
      * Defines the mixin for {@see $query->getJoinType()}.
      */
-    protected function getJoinType(): Closure
+    public function getJoinType(): Closure
     {
         /**
          * Returns the custom provided join type.
@@ -262,7 +262,7 @@ class JoinsRelationships
     /**
      * Defines the mixin for {@see $query->addJoinRelationWhere()}.
      */
-    protected function addJoinRelationWhere(): Closure
+    public function addJoinRelationWhere(): Closure
     {
         /**
          * Add the "join relation" condition where clause to the query.
@@ -302,7 +302,7 @@ class JoinsRelationships
     /**
      * Defines the mixin for {@see $query->replaceWhereNestedQueryBuildersWithJoinBuilders()}.
      */
-    protected function replaceWhereNestedQueryBuildersWithJoinBuilders(): Closure
+    public function replaceWhereNestedQueryBuildersWithJoinBuilders(): Closure
     {
         /**
          * Replaces the query builders in nested "where" clauses with join builders.
@@ -344,7 +344,7 @@ class JoinsRelationships
     /**
      * Defines the mixin for {@see $query->getBelongsToJoinRelation()}.
      */
-    protected function getBelongsToJoinRelation(): Closure
+    public function getBelongsToJoinRelation(): Closure
     {
         /**
          * Description.
@@ -362,7 +362,7 @@ class JoinsRelationships
             // instead use these one at a time and pass the information along.
 
             if ($morphTypes->items === ['*']) {
-                $types = $relatedQuery->model->distinct()->pluck($relation->getMorphType())->filter()->all();
+                $types = $relatedQuery->model->newQuery()->distinct()->pluck($relation->getMorphType())->filter()->all();
 
                 $types = array_unique(array_map(function ($morphType) {
                     return Relation::getMorphedModel($morphType) ?? $morphType;

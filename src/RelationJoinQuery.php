@@ -20,11 +20,8 @@ class RelationJoinQuery
 {
     /**
      * Adds the constraints for a relationship join.
-     *
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public static function get(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
+    public static function get(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
     {
         if ($relation instanceof BelongsTo) {
             return static::belongsTo($relation, $query, $parentQuery, $type, $alias);
@@ -51,11 +48,8 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a belongs to relationship join.
-     *
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function belongsTo(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
+    protected static function belongsTo(BelongsTo $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
     {
         if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
             $alias = $relation->getRelationCountHash();
@@ -74,11 +68,8 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a belongs to many relationship join.
-     *
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function belongsToMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
+    protected static function belongsToMany(BelongsToMany $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
     {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
@@ -126,11 +117,8 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a has one or has many relationship join.
-     *
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function hasOneOrMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
+    protected static function hasOneOrMany(HasOne|HasMany $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
     {
         if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
             $alias = $relation->getRelationCountHash();
@@ -155,10 +143,8 @@ class RelationJoinQuery
      * is nearing EoL, and 7.x is already EoL, we'll let it slide for now.
      *
      * @see https://github.com/laravel/framework/commit/de4c42f04d609b119a4e0a7e6223c37bfe54cb87
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function hasOneOrManyThrough(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
+    protected static function hasOneOrManyThrough(HasOne|HasManyThrough $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
     {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$throughAlias, $farAlias] = explode(',', $alias);
@@ -208,11 +194,8 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a morph one or morph many relationship join.
-     *
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function morphOneOrMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
+    protected static function morphOneOrMany(MorphOne|MorphMany $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
     {
         if (! is_null($alias) && $alias != $relation->getRelated()->getTable()) {
             $query->from($relation->getRelated()->getTable().' as '.$alias);
@@ -227,11 +210,8 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a morph to many relationship join.
-     *
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function morphToMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
+    protected static function morphToMany(MorphToMany $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
     {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
