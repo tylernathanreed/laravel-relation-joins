@@ -47,6 +47,7 @@ class JoinOperations
          * @return $this
          */
         return function ($first, $operator = null, $second = null) {
+            /** @var Builder $this */
             return $this->on($first, $operator, $second, 'or');
         };
     }
