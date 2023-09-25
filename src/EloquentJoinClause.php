@@ -134,7 +134,7 @@ class EloquentJoinClause extends JoinClause
      * @phpcs:disable Squiz.Commenting.FunctionComment
      *
      * @param  string  $method
-     * @param  array  $parameters
+     * @param  array<mixed>  $parameters
      * @return mixed
      */
     public function __call($method, $parameters)
