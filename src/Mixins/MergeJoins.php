@@ -22,7 +22,6 @@ class MergeJoins
          */
         return function ($joins, $bindings) {
             /** @var Builder $this */
-
             $this->joins = array_merge($this->joins ?: [], (array) $joins);
 
             $this->bindings['join'] = array_values(

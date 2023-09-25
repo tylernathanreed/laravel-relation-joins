@@ -34,7 +34,6 @@ class JoinsRelationships
          */
         return function ($relation, $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null, $morphTypes = ['*']) {
             /** @var Builder $this */
-
             if (! $morphTypes instanceof MorphTypes) {
                 $morphTypes = new MorphTypes($morphTypes);
             }
@@ -116,7 +115,6 @@ class JoinsRelationships
          */
         return function ($relations, $callbacks, $type, $through, MorphTypes $morphTypes) {
             /** @var Builder $this */
-
             $relations = explode('.', $relations);
 
             $relatedQuery = $this;
@@ -154,7 +152,6 @@ class JoinsRelationships
          */
         return function (Builder $joinQuery) {
             /** @var Builder $this */
-
             $joins = $joinQuery->getQuery()->joins ?: [];
 
             foreach ($joins as $join) {
@@ -181,7 +178,6 @@ class JoinsRelationships
          */
         return function (Builder $joinQuery, Closure $callback) {
             /** @var Builder $this */
-
             $joins = $joinQuery->getQuery()->joins ?: [];
 
             array_unshift($joins, $joinQuery);
@@ -234,7 +230,6 @@ class JoinsRelationships
          */
         return function () {
             /** @var Builder $this */
-
             if (! property_exists($this, 'type')) {
                 return null;
             }
@@ -274,7 +269,6 @@ class JoinsRelationships
          */
         return function (Builder $joinQuery, Relation $relation, $type) {
             /** @var Builder $this */
-
             $joinQuery->mergeConstraintsFrom($relation->getQuery());
 
             $baseJoinQuery = $joinQuery->toBase();
@@ -312,7 +306,6 @@ class JoinsRelationships
          */
         return function ($query) {
             /** @var Builder $this */
-
             $wheres = $query->wheres;
 
             $wheres = array_map(function ($where) {

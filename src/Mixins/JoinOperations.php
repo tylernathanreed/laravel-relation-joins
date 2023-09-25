@@ -24,7 +24,6 @@ class JoinOperations
          */
         return function ($first, $operator = null, $second = null, $boolean = 'and') {
             /** @var Builder $this */
-
             if ($first instanceof Closure) {
                 return $this->whereNested($first, $boolean);
             }
