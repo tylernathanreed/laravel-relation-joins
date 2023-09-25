@@ -61,9 +61,11 @@ class RelationJoinQuery
             $query->getModel()->setTable($alias);
         }
 
-        return $query->whereColumn(
+        $query->whereColumn(
             $relation->getQualifiedOwnerKeyName(), '=', $relation->getQualifiedForeignKeyName()
         );
+
+        return $query;
     }
 
     /**
@@ -110,9 +112,11 @@ class RelationJoinQuery
             );
         }
 
-        return $query->whereColumn(
+        $query->whereColumn(
             $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on.'.'.$relation->getRelatedPivotKeyName()
         );
+
+        return $query;
     }
 
     /**
@@ -130,9 +134,11 @@ class RelationJoinQuery
             $query->getModel()->setTable($alias);
         }
 
-        return $query->whereColumn(
+        $query->whereColumn(
             $query->qualifyColumn($relation->getForeignKeyName()), '=', $relation->getQualifiedParentKeyName()
         );
+
+        return $query;
     }
 
     /**
@@ -187,9 +193,11 @@ class RelationJoinQuery
             $relation->getParent()->newInstance()->setTable($on)
         );
 
-        return $query->whereColumn(
+        $query->whereColumn(
             $relation->getQualifiedForeignKeyName(), '=', $on.'.'.$relation->getSecondLocalKeyName()
         );
+
+        return $query;
     }
 
     /**
@@ -256,8 +264,10 @@ class RelationJoinQuery
             );
         }
 
-        return $query->whereColumn(
+        $query->whereColumn(
             $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on.'.'.$relation->getRelatedPivotKeyName()
         );
+
+        return $query;
     }
 }
