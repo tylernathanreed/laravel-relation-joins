@@ -2,17 +2,17 @@
 
 namespace Reedware\LaravelRelationJoins\Mixins;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Reedware\LaravelRelationJoins\RelationJoinQuery;
 
+/** @mixin Builder */
 class RelationJoinQueries
 {
     /**
      * Defines the mixin for {@see $relation->getRelationJoinQuery()}.
-     *
-     * @return \Closure
      */
-    public function getRelationJoinQuery()
+    public function getRelationJoinQuery(): Closure
     {
         /**
          * Adds the constraints for a relationship join.

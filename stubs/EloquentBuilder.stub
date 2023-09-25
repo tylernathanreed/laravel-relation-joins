@@ -1,0 +1,40 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+use Closure;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Reedware\LaravelRelationJoins\MorphTypes;
+
+/**
+ * @method Builder getRelationJoinQuery(Builder $query, Builder $parentQuery, string $type, ?string $alias)
+ * @method Builder|static joinRelation($relation, $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null, $morphTypes = ['*'])
+ * @method Builder|static joinNestedRelation($relations, $callbacks, $type, $through, MorphTypes $morphTypes)
+ * @method Builder applyJoinScopes(Builder $joinQuery)
+ * @method void callJoinScope(Builder $joinQuery, Closure $callback)
+ * @method ?string getJoinType()
+ * @method Builder|static addJoinRelationWhere(Builder $joinQuery, Relation $relation, $type)
+ * @method void replaceWhereNestedQueryBuildersWithJoinBuilders(Builder $query)
+ * @method BelongsTo getBelongsToJoinRelation(MorphTo $relation, MorphTypes $morphTypes, Builder $relatedQuery)
+ * @method Builder|static leftJoinRelation($relation, Closure $callback = null, $through = false)
+ * @method Builder|static rightJoinRelation($relation, Closure $callback = null, $through = false)
+ * @method Builder|static crossJoinRelation($relation, Closure $callback = null, $through = false)
+ * @method Builder|static joinThroughRelation($relation, Closure $callback = null, $type = 'inner')
+ * @method Builder|static leftJoinThroughRelation($relation, Closure $callback = null)
+ * @method Builder|static crossJoinThroughRelation($relation, Closure $callback = null)
+ * @method Builder|static joinMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null)
+ * @method Builder|static leftJoinMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null, $through = false)
+ * @method Builder|static rightJoinMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null, $through = false)
+ * @method Builder|static crossJoinMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null, $through = false)
+ * @method Builder|static joinThroughMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null, $type = 'inner')
+ * @method Builder|static leftJoinThroughMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null)
+ * @method Builder|static rightJoinThroughMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null)
+ * @method Builder|static crossJoinThroughMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null)
+ *
+ * @mixin \Illuminate\Database\Query\Builder
+ */
+class Builder
+{
+}

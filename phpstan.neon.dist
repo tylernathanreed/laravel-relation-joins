@@ -4,43 +4,9 @@ parameters:
         - src
     excludePaths:
         - tests/*
-    ignoreErrors:
-        - '#Call to an undefined method Illuminate\\Database\\Query\\Builder::on\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Query\\Builder::orOn\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Query\\Builder::mergeJoins\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::mergeJoins\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::getRelationJoinQuery\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::joinRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::leftJoinRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::rightJoinRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::crossJoinRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::joinThroughRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::leftJoinThroughRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::rightJoinThroughRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::crossJoinThroughRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::joinMorphRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::leftJoinMorphRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::rightJoinMorphRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::crossJoinMorphRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::joinThroughMorphRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::leftJoinThroughMorphRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::rightJoinThroughMorphRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::crossJoinThroughMorphRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::joinNestedRelation\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::applyJoinScopes\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::callJoinScope\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::getJoinType\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::addJoinRelationWhere\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::replaceWhereNestedQueryBuildersWithJoinBuilders\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::getBelongsToJoinRelation\(\)#'
-
-
-
-
-
-
-
-    reportUnmatchedIgnoredErrors: false
+    stubFiles:
+        - stubs/EloquentBuilder.stub
+        - stubs/QueryBuilder.stub
 
 
 

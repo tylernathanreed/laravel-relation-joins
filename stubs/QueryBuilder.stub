@@ -1,0 +1,15 @@
+<?php
+
+namespace Illuminate\Database\Query;
+
+use Closure;
+
+/**
+ * @method self on(Closure|string $first, ?string $operator, ?string $second, bool $boolean)
+ * @method self orOn(Closure|string $first, ?string $operator, ?string $second)
+ * @method void mergeJoins($joins, $bindings)
+ */
+class Builder
+{
+    //
+}
