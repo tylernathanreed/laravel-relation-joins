@@ -13,6 +13,7 @@ class HasOneTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function basic(Closure $query, string $builderClass)
@@ -26,6 +27,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function inverse(Closure $query, string $builderClass)
@@ -39,6 +41,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function inverse_alias(Closure $query, string $builderClass)
@@ -52,6 +55,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function asMorph(Closure $query, string $builderClass)
@@ -66,6 +70,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias_child(Closure $query, string $builderClass)
@@ -79,6 +84,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes_parent(Closure $query, string $builderClass)
@@ -92,6 +98,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes_parent_withTrashed(Closure $query, string $builderClass)
@@ -106,6 +113,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes_parent_inverse(Closure $query, string $builderClass)
@@ -119,6 +127,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes_child(Closure $query, string $builderClass)
@@ -132,6 +141,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes_child_withTrashed(Closure $query, string $builderClass)
@@ -147,6 +157,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes_child_inverse(Closure $query, string $builderClass)
@@ -160,6 +171,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes(Closure $query, string $builderClass)
@@ -173,6 +185,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes_withParentTrashed(Closure $query, string $builderClass)
@@ -187,6 +200,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes_withChildTrashed(Closure $query, string $builderClass)
@@ -202,6 +216,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes_withTrashed(Closure $query, string $builderClass)
@@ -218,6 +233,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin(Closure $query, string $builderClass)
@@ -231,6 +247,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin_inverse(Closure $query, string $builderClass)
@@ -244,6 +261,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function rightJoin(Closure $query, string $builderClass)
@@ -257,6 +275,7 @@ class HasOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function crossJoin(Closure $query, string $builderClass)

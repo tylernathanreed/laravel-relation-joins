@@ -13,7 +13,7 @@ class RelationJoinQueryTest extends TestCase
     public function nonRelation()
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage(EloquentUserModelStub::class . '::active must return a relationship instance.');
+        $this->expectExceptionMessage(EloquentUserModelStub::class.'::active must return a relationship instance.');
 
         $builder = (new EloquentUserModelStub)
             ->useCustomBuilder(false)
@@ -24,7 +24,7 @@ class RelationJoinQueryTest extends TestCase
     public function unsupportedRelation()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unsupported relation type [' . CustomRelation::class . '].');
+        $this->expectExceptionMessage('Unsupported relation type ['.CustomRelation::class.'].');
 
         $builder = (new EloquentUserModelStub)
             ->useCustomBuilder(false)

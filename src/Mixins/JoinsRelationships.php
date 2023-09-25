@@ -3,11 +3,11 @@
 namespace Reedware\LaravelRelationJoins\Mixins;
 
 use Closure;
-use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Arr;
 use LogicException;
 use Reedware\LaravelRelationJoins\EloquentJoinClause;
 use Reedware\LaravelRelationJoins\MorphTypes;
@@ -25,13 +25,12 @@ class JoinsRelationships
         /**
          * Add a relationship join condition to the query.
          *
-         * @param  mixed                                  $relation
-         * @param  \Closure|array|null                    $callback
-         * @param  string                                 $type
-         * @param  bool                                   $through
+         * @param  mixed  $relation
+         * @param  \Closure|array|null  $callback
+         * @param  string  $type
+         * @param  bool  $through
          * @param  \Illuminate\Database\Eloquent\Builder  $relatedQuery
-         * @param  mixed                                  $morphTypes
-         *
+         * @param  mixed  $morphTypes
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null, $morphTypes = ['*']) {
@@ -56,9 +55,7 @@ class JoinsRelationships
                 if (! $relation instanceof Relation) {
                     throw new LogicException(sprintf('%s::%s must return a relationship instance.', get_class($this->getModel()), $relationName));
                 }
-            }
-
-            else if (is_array($relation)) {
+            } elseif (is_array($relation)) {
                 [$relation, $alias] = $relation;
             }
 
@@ -112,12 +109,11 @@ class JoinsRelationships
         /**
          * Add nested relationship join conditions to the query.
          *
-         * @param  string                                     $relations
-         * @param  \Closure|array|null                        $callbacks
-         * @param  string                                     $type
-         * @param  bool                                       $through
+         * @param  string  $relations
+         * @param  \Closure|array|null  $callbacks
+         * @param  string  $type
+         * @param  bool  $through
          * @param  \Reedware\LaravelRelationJoins\MorphTypes  $morphTypes
-         *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relations, $callbacks, $type, $through, MorphTypes $morphTypes) {
@@ -158,7 +154,6 @@ class JoinsRelationships
          * Applies the eloquent scopes to the specified query.
          *
          * @param  \Illuminate\Database\Query\Builder  $joinQuery
-         *
          * @return \Illuminate\Database\Query\Builder
          */
         return function (Builder $joinQuery) {
@@ -187,8 +182,7 @@ class JoinsRelationships
          * Calls the provided callback on the join query.
          *
          * @param  \Illuminate\Database\Query\Builder  $joinQuery
-         * @param  \Closure                            $callback
-         *
+         * @param  \Closure  $callback
          * @return void
          */
         return function (Builder $joinQuery, Closure $callback) {
@@ -265,7 +259,7 @@ class JoinsRelationships
 
             // @codeCoverageIgnoreStart
             finally {
-            // @codeCoverageIgnoreEnd
+                // @codeCoverageIgnoreEnd
                 return $type;
             }
         };
@@ -281,10 +275,9 @@ class JoinsRelationships
         /**
          * Add the "join relation" condition where clause to the query.
          *
-         * @param  \Illuminate\Database\Eloquent\Builder             $joinQuery
+         * @param  \Illuminate\Database\Eloquent\Builder  $joinQuery
          * @param  \Illuminate\Database\Eloquent\Relations\Relation  $relation
-         * @param  string                                            $type
-         *
+         * @param  string  $type
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function (Builder $joinQuery, Relation $relation, $type) {
@@ -325,7 +318,6 @@ class JoinsRelationships
          * Replaces the query builders in nested "where" clauses with join builders.
          *
          * @param  \Illuminate\Database\Query\Builder  $query
-         *
          * @return void
          */
         return function ($query) {
@@ -370,9 +362,8 @@ class JoinsRelationships
          * Description.
          *
          * @param  \Illuminate\Database\Eloquent\Relations\MorphTo  $relation
-         * @param  \Reedware\LaravelRelationJoins\MorphTypes        $morphTypes
-         * @param  \Illuminate\Database\Eloquent\Builder            $relatedQuery
-         *
+         * @param  \Reedware\LaravelRelationJoins\MorphTypes  $morphTypes
+         * @param  \Illuminate\Database\Eloquent\Builder  $relatedQuery
          * @return array
          */
         return function (MorphTo $relation, MorphTypes $morphTypes, Builder $relatedQuery) {
@@ -424,10 +415,9 @@ class JoinsRelationships
         /**
          * Add a relationship left join condition to the query.
          *
-         * @param  string         $relation
+         * @param  string  $relation
          * @param  \Closure|null  $callback
-         * @param  bool           $through
-         *
+         * @param  bool  $through
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, Closure $callback = null, $through = false) {
@@ -445,10 +435,9 @@ class JoinsRelationships
         /**
          * Add a relationship right join condition to the query.
          *
-         * @param  string         $relation
+         * @param  string  $relation
          * @param  \Closure|null  $callback
-         * @param  bool           $through
-         *
+         * @param  bool  $through
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, Closure $callback = null, $through = false) {
@@ -466,10 +455,9 @@ class JoinsRelationships
         /**
          * Add a relationship cross join condition to the query.
          *
-         * @param  string         $relation
+         * @param  string  $relation
          * @param  \Closure|null  $callback
-         * @param  bool           $through
-         *
+         * @param  bool  $through
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, Closure $callback = null, $through = false) {
@@ -487,10 +475,9 @@ class JoinsRelationships
         /**
          * Add a relationship join condition through a related model to the query.
          *
-         * @param  string         $relation
+         * @param  string  $relation
          * @param  \Closure|null  $callback
-         * @param  string         $type
-         *
+         * @param  string  $type
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, Closure $callback = null, $type = 'inner') {
@@ -508,9 +495,8 @@ class JoinsRelationships
         /**
          * Add a relationship left join condition through a related model to the query.
          *
-         * @param  string         $relation
+         * @param  string  $relation
          * @param  \Closure|null  $callback
-         *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, Closure $callback = null) {
@@ -528,9 +514,8 @@ class JoinsRelationships
         /**
          * Add a relationship right join condition through a related model to the query.
          *
-         * @param  string         $relation
+         * @param  string  $relation
          * @param  \Closure|null  $callback
-         *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, Closure $callback = null) {
@@ -548,9 +533,8 @@ class JoinsRelationships
         /**
          * Add a relationship cross join condition through a related model to the query.
          *
-         * @param  string         $relation
+         * @param  string  $relation
          * @param  \Closure|null  $callback
-         *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, Closure $callback = null) {
@@ -568,13 +552,12 @@ class JoinsRelationships
         /**
          * Add a morph to relationship join condition to the query.
          *
-         * @param  string|array                           $relation
-         * @param  string|array                           $morphTypes
-         * @param  \Closure|null                          $callback
-         * @param  string                                 $type
-         * @param  bool                                   $through
+         * @param  string|array  $relation
+         * @param  string|array  $morphTypes
+         * @param  \Closure|null  $callback
+         * @param  string  $type
+         * @param  bool  $through
          * @param  \Illuminate\Database\Eloquent\Builder  $relatedQuery
-         *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, $morphTypes = ['*'], Closure $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null) {
@@ -592,11 +575,10 @@ class JoinsRelationships
         /**
          * Add a morph to relationship left join condition to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
+         * @param  string  $relation
+         * @param  string|array  $morphTypes
          * @param  \Closure|null  $callback
-         * @param  bool           $through
-         *
+         * @param  bool  $through
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, $morphTypes = ['*'], Closure $callback = null, $through = false) {
@@ -614,11 +596,10 @@ class JoinsRelationships
         /**
          * Add a morph to relationship right join condition to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
+         * @param  string  $relation
+         * @param  string|array  $morphTypes
          * @param  \Closure|null  $callback
-         * @param  bool           $through
-         *
+         * @param  bool  $through
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, $morphTypes = ['*'], Closure $callback = null, $through = false) {
@@ -636,11 +617,10 @@ class JoinsRelationships
         /**
          * Add a morph to relationship cross join condition to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
+         * @param  string  $relation
+         * @param  string|array  $morphTypes
          * @param  \Closure|null  $callback
-         * @param  bool           $through
-         *
+         * @param  bool  $through
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, $morphTypes = ['*'], Closure $callback = null, $through = false) {
@@ -658,11 +638,10 @@ class JoinsRelationships
         /**
          * Add a morph to relationship join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
+         * @param  string  $relation
+         * @param  string|array  $morphTypes
          * @param  \Closure|null  $callback
-         * @param  string         $type
-         *
+         * @param  string  $type
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, $morphTypes = ['*'], Closure $callback = null, $type = 'inner') {
@@ -680,10 +659,9 @@ class JoinsRelationships
         /**
          * Add a morph to relationship left join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
+         * @param  string  $relation
+         * @param  string|array  $morphTypes
          * @param  \Closure|null  $callback
-         *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, $morphTypes = ['*'], Closure $callback = null) {
@@ -701,10 +679,9 @@ class JoinsRelationships
         /**
          * Add a morph to relationship right join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
+         * @param  string  $relation
+         * @param  string|array  $morphTypes
          * @param  \Closure|null  $callback
-         *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, $morphTypes = ['*'], Closure $callback = null) {
@@ -722,10 +699,9 @@ class JoinsRelationships
         /**
          * Add a morph to relationship cross join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
+         * @param  string  $relation
+         * @param  string|array  $morphTypes
          * @param  \Closure|null  $callback
-         *
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
         return function ($relation, $morphTypes = ['*'], Closure $callback = null) {

@@ -16,7 +16,6 @@ class MergeJoins
          *
          * @param  array  $joins
          * @param  array  $bindings
-         *
          * @return void
          */
         return function ($joins, $bindings) {

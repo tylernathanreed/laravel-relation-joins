@@ -9,6 +9,7 @@ class MorphManyTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function basic(Closure $query, string $builderClass)
@@ -23,6 +24,7 @@ class MorphManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias(Closure $query, string $builderClass)
@@ -37,6 +39,7 @@ class MorphManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin(Closure $query, string $builderClass)

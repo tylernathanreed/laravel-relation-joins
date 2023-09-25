@@ -17,10 +17,9 @@ class JoinOperations
          * Add an "on" clause to the join.
          *
          * @param  \Closure|string  $first
-         * @param  string|null      $operator
-         * @param  string|null      $second
-         * @param  string           $boolean
-         *
+         * @param  string|null  $operator
+         * @param  string|null  $second
+         * @param  string  $boolean
          * @return $this
          */
         return function ($first, $operator = null, $second = null, $boolean = 'and') {
@@ -45,9 +44,8 @@ class JoinOperations
          * Add an "or on" clause to the join.
          *
          * @param  \Closure|string  $first
-         * @param  string|null      $operator
-         * @param  string|null      $second
-         *
+         * @param  string|null  $operator
+         * @param  string|null  $second
          * @return $this
          */
         return function ($first, $operator = null, $second = null) {

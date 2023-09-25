@@ -9,6 +9,7 @@ class MorphOneTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function basic(Closure $query, string $builderClass)
@@ -23,6 +24,7 @@ class MorphOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias_not_nested(Closure $query, string $builderClass)
@@ -37,6 +39,7 @@ class MorphOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias_nested(Closure $query, string $builderClass)
@@ -51,6 +54,7 @@ class MorphOneTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin(Closure $query, string $builderClass)

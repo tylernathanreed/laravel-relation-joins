@@ -13,6 +13,7 @@ class HasManyTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function basic(Closure $query, string $builderClass)
@@ -26,6 +27,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function inverse(Closure $query, string $builderClass)
@@ -39,6 +41,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function inverse_alias(Closure $query, string $builderClass)
@@ -52,6 +55,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function asMorph(Closure $query, string $builderClass)
@@ -66,6 +70,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function childAlias(Closure $query, string $builderClass)
@@ -79,6 +84,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function circular(Closure $query, string $builderClass)
@@ -92,6 +98,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function circular_alias_child(Closure $query, string $builderClass)
@@ -105,6 +112,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function through(Closure $query, string $builderClass)
@@ -124,6 +132,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function through_leftJoin(Closure $query, string $builderClass)
@@ -143,6 +152,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function through_rightJoin(Closure $query, string $builderClass)
@@ -162,6 +172,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function through_crossJoin(Closure $query, string $builderClass)
@@ -181,6 +192,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin(Closure $query, string $builderClass)
@@ -194,6 +206,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin_inverse(Closure $query, string $builderClass)
@@ -207,6 +220,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function nested(Closure $query, string $builderClass)
@@ -220,6 +234,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function nested_alias_near(Closure $query, string $builderClass)
@@ -233,6 +248,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function nested_alias_far(Closure $query, string $builderClass)
@@ -246,6 +262,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function nested_alias_multiple(Closure $query, string $builderClass)
@@ -259,6 +276,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function localScope(Closure $query, string $builderClass)
@@ -275,6 +293,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function has(Closure $query, string $builderClass)
@@ -290,6 +309,7 @@ class HasManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function doesntHave(Closure $query, string $builderClass)

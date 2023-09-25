@@ -10,6 +10,7 @@ class MorphedByManyTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function basic(Closure $query, string $builderClass)
@@ -24,6 +25,7 @@ class MorphedByManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias(Closure $query, string $builderClass)
@@ -38,6 +40,7 @@ class MorphedByManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function circular(Closure $query, string $builderClass)
@@ -52,6 +55,7 @@ class MorphedByManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin(Closure $query, string $builderClass)

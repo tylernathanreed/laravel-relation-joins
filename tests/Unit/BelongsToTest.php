@@ -10,6 +10,7 @@ class BelongsToTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function circular(Closure $query, string $builderClass)
@@ -23,6 +24,7 @@ class BelongsToTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function circular_alias(Closure $query, string $builderClass)
@@ -36,6 +38,7 @@ class BelongsToTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function nested_alias_multiple(Closure $query, string $builderClass)
@@ -49,6 +52,7 @@ class BelongsToTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function nested_constraints(Closure $query, string $builderClass)
@@ -67,6 +71,7 @@ class BelongsToTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function nested_constraints_nested(Closure $query, string $builderClass)

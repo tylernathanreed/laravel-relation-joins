@@ -27,15 +27,13 @@ class EloquentJoinClause extends JoinClause
     /**
      * Whether or not a method call is being forwarded through eloquent.
      *
-     * @var boolean
+     * @var bool
      */
     protected $forwardingCall = false;
 
     /**
      * Create a new join clause instance.
      *
-     * @param  \Illuminate\Database\Query\JoinClause  $parentJoin
-     * @param  \Illuminate\Database\Eloquent\Model    $model
      *
      * @return $this
      */
@@ -56,7 +54,6 @@ class EloquentJoinClause extends JoinClause
     /**
      * Merges the properties of the parent join into this join.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      *
      * @return void
      */
@@ -137,8 +134,7 @@ class EloquentJoinClause extends JoinClause
      * @phpcs:disable Squiz.Commenting.FunctionComment
      *
      * @param  string  $method
-     * @param  array   $parameters
-     *
+     * @param  array  $parameters
      * @return mixed
      */
     public function __call($method, $parameters)
