@@ -32,7 +32,14 @@ class JoinsRelationships
          * @param  mixed  $morphTypes
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null, $morphTypes = ['*']) {
+        return function (
+            $relation,
+            $callback = null,
+            $type = 'inner',
+            $through = false,
+            Builder $relatedQuery = null,
+            $morphTypes = ['*']
+        ) {
             /** @var Builder $this */
             if (! $morphTypes instanceof MorphTypes) {
                 $morphTypes = new MorphTypes($morphTypes);
@@ -52,7 +59,11 @@ class JoinsRelationships
                 $relation = ($relatedQuery ?: $this)->getRelationWithoutConstraints($relationName);
 
                 if (! $relation instanceof Relation) {
-                    throw new LogicException(sprintf('%s::%s must return a relationship instance.', get_class($this->getModel()), $relationName));
+                    throw new LogicException(sprintf(
+                        '%s::%s must return a relationship instance.',
+                        get_class($this->getModel()),
+                        $relationName)
+                    );
                 }
             } elseif (is_array($relation)) {
                 [$relation, $alias] = $relation;
@@ -132,7 +143,14 @@ class JoinsRelationships
                 $callback = $callbacks[$relation] ?? null;
                 $useThrough = count($relations) > 0 && $through;
 
-                $relatedQuery = $this->joinRelation($relation, $callback, $type, $useThrough, $relatedQuery, $morphTypes);
+                $relatedQuery = $this->joinRelation(
+                    $relation,
+                    $callback,
+                    $type,
+                    $useThrough,
+                    $relatedQuery,
+                    $morphTypes
+                );
             }
 
             return $this;
@@ -355,7 +373,12 @@ class JoinsRelationships
             // instead use these one at a time and pass the information along.
 
             if ($morphTypes->items === ['*']) {
-                $types = $relatedQuery->model->newQuery()->distinct()->pluck($relation->getMorphType())->filter()->all();
+                $types = $relatedQuery->model
+                    ->newQuery()
+                    ->distinct()
+                    ->pluck($relation->getMorphType())
+                    ->filter()
+                    ->all();
 
                 $types = array_unique(array_map(function ($morphType) {
                     return Relation::getMorphedModel($morphType) ?? $morphType;
@@ -532,7 +555,14 @@ class JoinsRelationships
          * @param  \Illuminate\Database\Eloquent\Builder  $relatedQuery
          * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function ($relation, $morphTypes = ['*'], Closure $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null) {
+        return function (
+            $relation,
+            $morphTypes = ['*'],
+            Closure $callback = null,
+            $type = 'inner',
+            $through = false,
+            Builder $relatedQuery = null
+        ) {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, $type, $through, $relatedQuery, $morphTypes);
         };

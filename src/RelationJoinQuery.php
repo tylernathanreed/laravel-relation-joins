@@ -21,8 +21,13 @@ class RelationJoinQuery
     /**
      * Adds the constraints for a relationship join.
      */
-    public static function get(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
-    {
+    public static function get(
+        Relation $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if ($relation instanceof BelongsTo) {
             return static::belongsTo($relation, $query, $parentQuery, $type, $alias);
         } elseif ($relation instanceof MorphToMany) {
@@ -49,8 +54,13 @@ class RelationJoinQuery
     /**
      * Adds the constraints for a belongs to relationship join.
      */
-    protected static function belongsTo(BelongsTo $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
-    {
+    protected static function belongsTo(
+        BelongsTo $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
             $alias = $relation->getRelationCountHash();
         }
@@ -71,8 +81,13 @@ class RelationJoinQuery
     /**
      * Adds the constraints for a belongs to many relationship join.
      */
-    protected static function belongsToMany(BelongsToMany $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
-    {
+    protected static function belongsToMany(
+        BelongsToMany $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
         } else {
@@ -113,7 +128,9 @@ class RelationJoinQuery
         }
 
         $query->whereColumn(
-            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on.'.'.$relation->getRelatedPivotKeyName()
+            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()),
+            '=',
+            $on.'.'.$relation->getRelatedPivotKeyName()
         );
 
         return $query;
@@ -122,8 +139,13 @@ class RelationJoinQuery
     /**
      * Adds the constraints for a has one or has many relationship join.
      */
-    protected static function hasOneOrMany(HasOne|HasMany|MorphOne|MorphMany $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
-    {
+    protected static function hasOneOrMany(
+        HasOne|HasMany|MorphOne|MorphMany $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
             $alias = $relation->getRelationCountHash();
         }
@@ -150,8 +172,13 @@ class RelationJoinQuery
      *
      * @see https://github.com/laravel/framework/commit/de4c42f04d609b119a4e0a7e6223c37bfe54cb87
      */
-    protected static function hasOneOrManyThrough(HasOne|HasManyThrough $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
-    {
+    protected static function hasOneOrManyThrough(
+        HasOne|HasManyThrough $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$throughAlias, $farAlias] = explode(',', $alias);
         } else {
@@ -181,7 +208,11 @@ class RelationJoinQuery
         }
 
         $query->join($table, function ($join) use ($relation, $parentQuery, $on) {
-            $join->on($on.'.'.$relation->getFirstKeyName(), '=', $parentQuery->qualifyColumn($relation->getLocalKeyName()));
+            $join->on(
+                $on.'.'.$relation->getFirstKeyName(),
+                '=',
+                $parentQuery->qualifyColumn($relation->getLocalKeyName())
+            );
         }, null, null, $type);
 
         // The has one/many through relations use an eloquent model to define the step
@@ -203,8 +234,13 @@ class RelationJoinQuery
     /**
      * Adds the constraints for a morph one or morph many relationship join.
      */
-    protected static function morphOneOrMany(MorphOne|MorphMany $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
-    {
+    protected static function morphOneOrMany(
+        MorphOne|MorphMany $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (! is_null($alias) && $alias != $relation->getRelated()->getTable()) {
             $query->from($relation->getRelated()->getTable().' as '.$alias);
 
@@ -219,8 +255,13 @@ class RelationJoinQuery
     /**
      * Adds the constraints for a morph to many relationship join.
      */
-    protected static function morphToMany(MorphToMany $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder
-    {
+    protected static function morphToMany(
+        MorphToMany $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
         } else {
@@ -265,7 +306,9 @@ class RelationJoinQuery
         }
 
         $query->whereColumn(
-            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on.'.'.$relation->getRelatedPivotKeyName()
+            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()),
+            '=',
+            $on.'.'.$relation->getRelatedPivotKeyName()
         );
 
         return $query;
