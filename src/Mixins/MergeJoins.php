@@ -16,12 +16,8 @@ class MergeJoins
     {
         /**
          * Merges an array of join clauses and bindings.
-         *
-         * @param  array  $joins
-         * @param  array  $bindings
-         * @return void
          */
-        return function ($joins, $bindings) {
+        return function (array $joins, array $bindings): void {
             /** @var Builder $this */
             $this->joins = array_merge($this->joins ?: [], (array) $joins);
 
@@ -38,11 +34,8 @@ class MergeJoins
     {
         /**
          * Replaces the query builders in nested "where" clauses with join builders.
-         *
-         * @param  \Illuminate\Database\Query\Builder  $query
-         * @return void
          */
-        return function ($query) {
+        return function (Builder $query): void {
             /** @var Builder $this */
             $wheres = $query->wheres;
 

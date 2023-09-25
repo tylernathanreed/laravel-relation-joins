@@ -15,14 +15,13 @@ class JoinOperations
     {
         /**
          * Add an "on" clause to the join.
-         *
-         * @param  \Closure|string  $first
-         * @param  string|null  $operator
-         * @param  string|null  $second
-         * @param  string  $boolean
-         * @return $this
          */
-        return function ($first, $operator = null, $second = null, $boolean = 'and') {
+        return function (
+            Closure|string $first,
+            ?string $operator = null,
+            ?string $second = null,
+            string $boolean = 'and'
+        ): Builder {
             /** @var Builder $this */
             if ($first instanceof Closure) {
                 return $this->whereNested($first, $boolean);
@@ -39,13 +38,8 @@ class JoinOperations
     {
         /**
          * Add an "or on" clause to the join.
-         *
-         * @param  \Closure|string  $first
-         * @param  string|null  $operator
-         * @param  string|null  $second
-         * @return $this
          */
-        return function ($first, $operator = null, $second = null) {
+        return function (Closure|string $first, ?string $operator = null, ?string $second = null): Builder {
             /** @var Builder $this */
             return $this->on($first, $operator, $second, 'or');
         };

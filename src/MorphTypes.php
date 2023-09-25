@@ -15,7 +15,6 @@ class MorphTypes
      * Creates a new morph types instance.
      *
      * @param  string|array<string>  $items
-     * @return $this
      */
     public function __construct($items)
     {
