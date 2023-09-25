@@ -11,6 +11,7 @@ class HasOneThroughTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function basic(Closure $query, string $builderClass)
@@ -24,6 +25,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function inverse(Closure $query, string $builderClass)
@@ -37,6 +39,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias_far(Closure $query, string $builderClass)
@@ -50,6 +53,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias_through(Closure $query, string $builderClass)
@@ -63,6 +67,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias_multiple(Closure $query, string $builderClass)
@@ -76,6 +81,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function inverse_alias_far(Closure $query, string $builderClass)
@@ -89,6 +95,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function inverse_alias_through(Closure $query, string $builderClass)
@@ -102,6 +109,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function inverse_alias_multiple(Closure $query, string $builderClass)
@@ -115,6 +123,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin(Closure $query, string $builderClass)
@@ -128,6 +137,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin_inverse(Closure $query, string $builderClass)
@@ -141,6 +151,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints(Closure $query, string $builderClass)
@@ -157,6 +168,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot(Closure $query, string $builderClass)
@@ -173,6 +185,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_scope(Closure $query, string $builderClass)
@@ -189,6 +202,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_softDeletes(Closure $query, string $builderClass)
@@ -205,6 +219,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_softDeletes_withTrashed(Closure $query, string $builderClass)
@@ -220,6 +235,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_softDeletes_alias(Closure $query, string $builderClass)
@@ -233,6 +249,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_softDeletes_withTrashed_alias(Closure $query, string $builderClass)
@@ -248,6 +265,7 @@ class HasOneThroughTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_missingMethod(Closure $query, string $builderClass)

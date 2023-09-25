@@ -9,6 +9,7 @@ class MorphToManyTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function basic(Closure $query, string $builderClass)
@@ -23,6 +24,7 @@ class MorphToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias_far(Closure $query, string $builderClass)
@@ -37,6 +39,7 @@ class MorphToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias_pivot(Closure $query, string $builderClass)
@@ -51,6 +54,7 @@ class MorphToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin(Closure $query, string $builderClass)
@@ -65,6 +69,7 @@ class MorphToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints(Closure $query, string $builderClass)
@@ -81,6 +86,7 @@ class MorphToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot(Closure $query, string $builderClass)
@@ -97,6 +103,7 @@ class MorphToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_model(Closure $query, string $builderClass)
@@ -113,6 +120,7 @@ class MorphToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_model_scope(Closure $query, string $builderClass)
@@ -129,6 +137,7 @@ class MorphToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_model_softDeletes(Closure $query, string $builderClass)
@@ -143,6 +152,7 @@ class MorphToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_model_softDeletes_withTrashed(Closure $query, string $builderClass)

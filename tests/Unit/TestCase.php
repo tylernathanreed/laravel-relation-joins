@@ -26,8 +26,6 @@ class TestCase extends TestBase
 
     /**
      * Prepares the test for execution.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
@@ -39,8 +37,6 @@ class TestCase extends TestBase
 
     /**
      * Mocks the connection resolver for testing.
-     *
-     * @return void
      */
     protected function setUpConnectionResolver(): void
     {
@@ -74,8 +70,6 @@ class TestCase extends TestBase
 
     /**
      * Registers the package service provider.
-     *
-     * @return void
      */
     protected function registerServiceProvider(): void
     {
@@ -88,8 +82,6 @@ class TestCase extends TestBase
 
     /**
      * Cleans up after the test has been exected.
-     *
-     * @return void
      */
     protected function tearDown(): void
     {
@@ -113,7 +105,7 @@ class TestCase extends TestBase
 
         return [
             'Eloquent Builder' => [$newQuery, EloquentBuilder::class],
-            'Custom Builder' => [$customQuery, CustomBuilder::class]
+            'Custom Builder' => [$customQuery, CustomBuilder::class],
         ];
     }
 }

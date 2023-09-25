@@ -12,6 +12,7 @@ class BelongsToManyTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function basic(Closure $query, string $builderClass)
@@ -25,6 +26,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function inverse(Closure $query, string $builderClass)
@@ -38,6 +40,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function asMorph(Closure $query, string $builderClass)
@@ -52,6 +55,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias_child(Closure $query, string $builderClass)
@@ -65,6 +69,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias_pivot(Closure $query, string $builderClass)
@@ -78,6 +83,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function alias_multiple(Closure $query, string $builderClass)
@@ -91,6 +97,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes_parent(Closure $query, string $builderClass)
@@ -104,6 +111,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function softDeletes_child(Closure $query, string $builderClass)
@@ -117,6 +125,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function circular(Closure $query, string $builderClass)
@@ -130,6 +139,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function circular_childAlias(Closure $query, string $builderClass)
@@ -143,6 +153,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin(Closure $query, string $builderClass)
@@ -156,6 +167,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function leftJoin_inverse(Closure $query, string $builderClass)
@@ -169,6 +181,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints(Closure $query, string $builderClass)
@@ -185,6 +198,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot(Closure $query, string $builderClass)
@@ -201,6 +215,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_nested(Closure $query, string $builderClass)
@@ -221,6 +236,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_model(Closure $query, string $builderClass)
@@ -237,6 +253,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_model_nested(Closure $query, string $builderClass)
@@ -257,6 +274,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_model_scope(Closure $query, string $builderClass)
@@ -273,6 +291,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_model_softDeletes(Closure $query, string $builderClass)
@@ -286,6 +305,7 @@ class BelongsToManyTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function constraints_pivot_model_softDeletes_withTrashed(Closure $query, string $builderClass)

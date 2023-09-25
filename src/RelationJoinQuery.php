@@ -20,97 +20,74 @@ class RelationJoinQuery
 {
     /**
      * Adds the constraints for a relationship join.
-     *
-     * @param  \Illuminate\Database\Eloquent\Relations\Relation  $relation
-     * @param  \Illuminate\Database\Eloquent\Builder             $query
-     * @param  \Illuminate\Database\Eloquent\Builder             $parentQuery
-     * @param  string                                            $type
-     * @param  string|null                                       $alias
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public static function get(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
-    {
+    public static function get(
+        Relation $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if ($relation instanceof BelongsTo) {
             return static::belongsTo($relation, $query, $parentQuery, $type, $alias);
-        }
-
-        else if ($relation instanceof MorphToMany) {
+        } elseif ($relation instanceof MorphToMany) {
             return static::morphToMany($relation, $query, $parentQuery, $type, $alias);
-        }
-
-        else if ($relation instanceof BelongsToMany) {
+        } elseif ($relation instanceof BelongsToMany) {
             return static::belongsToMany($relation, $query, $parentQuery, $type, $alias);
-        }
-
-        else if ($relation instanceof HasMany) {
+        } elseif ($relation instanceof HasMany) {
             return static::hasOneOrMany($relation, $query, $parentQuery, $type, $alias);
-        }
-
-        else if ($relation instanceof HasOneThrough) {
+        } elseif ($relation instanceof HasOneThrough) {
             return static::hasOneOrManyThrough($relation, $query, $parentQuery, $type, $alias);
-        }
-
-        else if ($relation instanceof HasManyThrough) {
+        } elseif ($relation instanceof HasManyThrough) {
             return static::hasOneOrManyThrough($relation, $query, $parentQuery, $type, $alias);
-        }
-
-        else if ($relation instanceof HasOne) {
+        } elseif ($relation instanceof HasOne) {
             return static::hasOneOrMany($relation, $query, $parentQuery, $type, $alias);
-        }
-
-        else if ($relation instanceof MorphMany) {
+        } elseif ($relation instanceof MorphMany) {
+            return static::morphOneOrMany($relation, $query, $parentQuery, $type, $alias);
+        } elseif ($relation instanceof MorphOne) {
             return static::morphOneOrMany($relation, $query, $parentQuery, $type, $alias);
         }
 
-        else if ($relation instanceof MorphOne) {
-            return static::morphOneOrMany($relation, $query, $parentQuery, $type, $alias);
-        }
-
-        throw new InvalidArgumentException('Unsupported relation type [' . get_class($relation) . '].');
+        throw new InvalidArgumentException('Unsupported relation type ['.get_class($relation).'].');
     }
 
     /**
      * Adds the constraints for a belongs to relationship join.
-     *
-     * @param  \Illuminate\Database\Eloquent\Relations\Relation  $relation
-     * @param  \Illuminate\Database\Eloquent\Builder             $query
-     * @param  \Illuminate\Database\Eloquent\Builder             $parentQuery
-     * @param  string                                            $type
-     * @param  string|null                                       $alias
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function belongsTo(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
-    {
+    protected static function belongsTo(
+        BelongsTo $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
             $alias = $relation->getRelationCountHash();
         }
 
         if (! is_null($alias) && $alias != $query->getModel()->getTable()) {
-            $query->from($query->getModel()->getTable() . ' as ' . $alias);
+            $query->from($query->getModel()->getTable().' as '.$alias);
 
             $query->getModel()->setTable($alias);
         }
 
-        return $query->whereColumn(
+        $query->whereColumn(
             $relation->getQualifiedOwnerKeyName(), '=', $relation->getQualifiedForeignKeyName()
         );
+
+        return $query;
     }
 
     /**
      * Adds the constraints for a belongs to many relationship join.
-     *
-     * @param  \Illuminate\Database\Eloquent\Relations\Relation  $relation
-     * @param  \Illuminate\Database\Eloquent\Builder             $query
-     * @param  \Illuminate\Database\Eloquent\Builder             $parentQuery
-     * @param  string                                            $type
-     * @param  string|null                                       $alias
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function belongsToMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
-    {
+    protected static function belongsToMany(
+        BelongsToMany $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
         } else {
@@ -122,13 +99,13 @@ class RelationJoinQuery
         }
 
         if (! is_null($farAlias) && $farAlias != $relation->getRelated()->getTable()) {
-            $query->from($relation->getRelated()->getTable() . ' as ' . $farAlias);
+            $query->from($relation->getRelated()->getTable().' as '.$farAlias);
 
             $relation->getRelated()->setTable($farAlias);
         }
 
         if (! is_null($pivotAlias) && $pivotAlias != $relation->getTable()) {
-            $table = $relation->getTable() . ' as ' . $pivotAlias;
+            $table = $relation->getTable().' as '.$pivotAlias;
 
             $on = $pivotAlias;
         } else {
@@ -136,7 +113,7 @@ class RelationJoinQuery
         }
 
         $query->join($table, function ($join) use ($relation, $on) {
-            $join->on($on . '.' . $relation->getForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName());
+            $join->on($on.'.'.$relation->getForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName());
         }, null, null, $type);
 
         // When a belongs to many relation uses an eloquent model to define the pivot
@@ -150,37 +127,40 @@ class RelationJoinQuery
             );
         }
 
-        return $query->whereColumn(
-            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on . '.' . $relation->getRelatedPivotKeyName()
+        $query->whereColumn(
+            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()),
+            '=',
+            $on.'.'.$relation->getRelatedPivotKeyName()
         );
+
+        return $query;
     }
 
     /**
      * Adds the constraints for a has one or has many relationship join.
-     *
-     * @param  \Illuminate\Database\Eloquent\Relations\Relation  $relation
-     * @param  \Illuminate\Database\Eloquent\Builder             $query
-     * @param  \Illuminate\Database\Eloquent\Builder             $parentQuery
-     * @param  string                                            $type
-     * @param  string|null                                       $alias
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function hasOneOrMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
-    {
+    protected static function hasOneOrMany(
+        HasOne|HasMany|MorphOne|MorphMany $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
             $alias = $relation->getRelationCountHash();
         }
 
         if (! is_null($alias) && $alias != $query->getModel()->getTable()) {
-            $query->from($query->getModel()->getTable() . ' as ' . $alias);
+            $query->from($query->getModel()->getTable().' as '.$alias);
 
             $query->getModel()->setTable($alias);
         }
 
-        return $query->whereColumn(
+        $query->whereColumn(
             $query->qualifyColumn($relation->getForeignKeyName()), '=', $relation->getQualifiedParentKeyName()
         );
+
+        return $query;
     }
 
     /**
@@ -191,17 +171,14 @@ class RelationJoinQuery
      * is nearing EoL, and 7.x is already EoL, we'll let it slide for now.
      *
      * @see https://github.com/laravel/framework/commit/de4c42f04d609b119a4e0a7e6223c37bfe54cb87
-     *
-     * @param  \Illuminate\Database\Eloquent\Relations\Relation  $relation
-     * @param  \Illuminate\Database\Eloquent\Builder             $query
-     * @param  \Illuminate\Database\Eloquent\Builder             $parentQuery
-     * @param  string                                            $type
-     * @param  string|null                                       $alias
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function hasOneOrManyThrough(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
-    {
+    protected static function hasOneOrManyThrough(
+        HasOne|HasManyThrough $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$throughAlias, $farAlias] = explode(',', $alias);
         } else {
@@ -217,13 +194,13 @@ class RelationJoinQuery
         }
 
         if (! is_null($farAlias) && $farAlias != $query->getModel()->getTable()) {
-            $query->from($query->getModel()->getTable() . ' as ' . $farAlias);
+            $query->from($query->getModel()->getTable().' as '.$farAlias);
 
             $query->getModel()->setTable($farAlias);
         }
 
         if (! is_null($throughAlias) && $throughAlias != $relation->getParent()->getTable()) {
-            $table = $relation->getParent()->getTable() . ' as ' . $throughAlias;
+            $table = $relation->getParent()->getTable().' as '.$throughAlias;
 
             $on = $throughAlias;
         } else {
@@ -231,7 +208,11 @@ class RelationJoinQuery
         }
 
         $query->join($table, function ($join) use ($relation, $parentQuery, $on) {
-            $join->on($on . '.' . $relation->getFirstKeyName(), '=', $parentQuery->qualifyColumn($relation->getLocalKeyName()));
+            $join->on(
+                $on.'.'.$relation->getFirstKeyName(),
+                '=',
+                $parentQuery->qualifyColumn($relation->getLocalKeyName())
+            );
         }, null, null, $type);
 
         // The has one/many through relations use an eloquent model to define the step
@@ -243,26 +224,25 @@ class RelationJoinQuery
             $relation->getParent()->newInstance()->setTable($on)
         );
 
-        return $query->whereColumn(
-            $relation->getQualifiedForeignKeyName(), '=', $on . '.' . $relation->getSecondLocalKeyName()
+        $query->whereColumn(
+            $relation->getQualifiedForeignKeyName(), '=', $on.'.'.$relation->getSecondLocalKeyName()
         );
+
+        return $query;
     }
 
     /**
      * Adds the constraints for a morph one or morph many relationship join.
-     *
-     * @param  \Illuminate\Database\Eloquent\Relations\Relation  $relation
-     * @param  \Illuminate\Database\Eloquent\Builder             $query
-     * @param  \Illuminate\Database\Eloquent\Builder             $parentQuery
-     * @param  string                                            $type
-     * @param  string|null                                       $alias
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function morphOneOrMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
-    {
+    protected static function morphOneOrMany(
+        MorphOne|MorphMany $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (! is_null($alias) && $alias != $relation->getRelated()->getTable()) {
-            $query->from($relation->getRelated()->getTable() . ' as ' . $alias);
+            $query->from($relation->getRelated()->getTable().' as '.$alias);
 
             $relation->getRelated()->setTable($alias);
         }
@@ -274,17 +254,14 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a morph to many relationship join.
-     *
-     * @param  \Illuminate\Database\Eloquent\Relations\Relation  $relation
-     * @param  \Illuminate\Database\Eloquent\Builder             $query
-     * @param  \Illuminate\Database\Eloquent\Builder             $parentQuery
-     * @param  string                                            $type
-     * @param  string|null                                       $alias
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected static function morphToMany(Relation $relation, Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null)
-    {
+    protected static function morphToMany(
+        MorphToMany $relation,
+        Builder $query,
+        Builder $parentQuery,
+        string $type = 'inner',
+        string $alias = null
+    ): Builder {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
         } else {
@@ -296,25 +273,23 @@ class RelationJoinQuery
         }
 
         if (! is_null($farAlias) && $farAlias != $relation->getRelated()->getTable()) {
-            $query->from($relation->getRelated()->getTable() . ' as ' . $farAlias);
+            $query->from($relation->getRelated()->getTable().' as '.$farAlias);
 
             $relation->getRelated()->setTable($farAlias);
         }
 
         if (! is_null($pivotAlias) && $pivotAlias != $relation->getTable()) {
-            $table = $relation->getTable() . ' as ' . $pivotAlias;
+            $table = $relation->getTable().' as '.$pivotAlias;
 
             $on = $pivotAlias;
         } else {
             $table = $on = $relation->getTable();
         }
 
-        $query = $query ?: $relation->getQuery();
-
         $query->join($table, function ($join) use ($relation, $on) {
-            $join->on($on . '.' . $relation->getForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName());
+            $join->on($on.'.'.$relation->getForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName());
 
-            $join->where($on . '.' . $relation->getMorphType(), '=', $relation->getMorphClass());
+            $join->where($on.'.'.$relation->getMorphType(), '=', $relation->getMorphClass());
         }, null, null, $type);
 
         // When a belongs to many relation uses an eloquent model to define the pivot
@@ -328,8 +303,12 @@ class RelationJoinQuery
             );
         }
 
-        return $query->whereColumn(
-            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()), '=', $on . '.' . $relation->getRelatedPivotKeyName()
+        $query->whereColumn(
+            $relation->getRelated()->qualifyColumn($relation->getRelatedKeyName()),
+            '=',
+            $on.'.'.$relation->getRelatedPivotKeyName()
         );
+
+        return $query;
     }
 }

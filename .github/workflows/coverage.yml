@@ -1,4 +1,4 @@
-name: coverage
+name: Coverage
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   linux_tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: true
@@ -20,7 +20,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: 8.2
           extensions: dom, curl, libxml, mbstring, zip, pdo, sqlite, pdo_sqlite, gd, xdebug
           tools: composer:v2
           coverage: xdebug

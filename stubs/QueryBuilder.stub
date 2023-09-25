@@ -1,0 +1,16 @@
+<?php
+
+namespace Illuminate\Database\Query;
+
+use Closure;
+
+/**
+ * @method self on(Closure|string $first, ?string $operator, ?string $second, string $boolean)
+ * @method self orOn(Closure|string $first, ?string $operator, ?string $second)
+ * @method void mergeJoins($joins, $bindings)
+ * @method void replaceWhereNestedQueryBuildersWithJoinBuilders(Builder $query)
+ */
+class Builder
+{
+    //
+}

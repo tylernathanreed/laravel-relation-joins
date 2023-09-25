@@ -7,16 +7,14 @@ class MorphTypes
     /**
      * The underlying morph types.
      *
-     * @var array
+     * @var array<string>
      */
-    public $items;
+    public array $items;
 
     /**
      * Creates a new morph types instance.
      *
-     * @param  string|array  $items
-     *
-     * @return $this;
+     * @param  string|array<string>  $items
      */
     public function __construct($items)
     {

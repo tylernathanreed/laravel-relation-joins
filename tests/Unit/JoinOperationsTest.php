@@ -9,6 +9,7 @@ class JoinOperationsTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function on(Closure $query, string $builderClass)
@@ -23,6 +24,7 @@ class JoinOperationsTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function orOn(Closure $query, string $builderClass)
@@ -38,6 +40,7 @@ class JoinOperationsTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider queryDataProvider
      */
     public function nested(Closure $query, string $builderClass)

@@ -1,4 +1,4 @@
-name: tests
+name: Tests
 
 on:
   push:
@@ -6,12 +6,12 @@ on:
 
 jobs:
   linux_tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: true
       matrix:
-        php: ['7.3', '7.4', '8.0', '8.1']
+        php: ['8.0', '8.1', '8.2']
         stability: [prefer-lowest, prefer-stable]
 
     name: PHP ${{ matrix.php }} - ${{ matrix.stability }}
@@ -33,7 +33,7 @@ jobs:
         with:
           timeout_minutes: 5
           max_attempts: 2
-          command: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress ${{ matrix.flags }}
+          command: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose

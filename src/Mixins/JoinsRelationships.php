@@ -3,39 +3,42 @@
 namespace Reedware\LaravelRelationJoins\Mixins;
 
 use Closure;
-use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder as Query;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Arr;
 use LogicException;
 use Reedware\LaravelRelationJoins\EloquentJoinClause;
 use Reedware\LaravelRelationJoins\MorphTypes;
 use RuntimeException;
 
+/** @mixin Builder */
 class JoinsRelationships
 {
     /**
      * Defines the mixin for {@see $query->joinRelation()}.
-     *
-     * @return \Closure
      */
-    public function joinRelation()
+    public function joinRelation(): Closure
     {
         /**
          * Add a relationship join condition to the query.
          *
-         * @param  mixed                                  $relation
-         * @param  \Closure|array|null                    $callback
-         * @param  string                                 $type
-         * @param  bool                                   $through
-         * @param  \Illuminate\Database\Eloquent\Builder  $relatedQuery
-         * @param  mixed                                  $morphTypes
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  Relation|string|array<Relation|string>  $relation
+         * @param  Closure|array<string,Closure>|null  $callback
+         * @param  MorphTypes|array<string>|string  $morphTypes
          */
-        return function ($relation, $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null, $morphTypes = ['*']) {
-
+        return function (
+            Relation|string|array $relation,
+            Closure|array $callback = null,
+            string $type = 'inner',
+            bool $through = false,
+            Builder $relatedQuery = null,
+            MorphTypes|array|string $morphTypes = ['*']
+        ): Builder {
+            /** @var Builder $this */
             if (! $morphTypes instanceof MorphTypes) {
                 $morphTypes = new MorphTypes($morphTypes);
             }
@@ -54,11 +57,13 @@ class JoinsRelationships
                 $relation = ($relatedQuery ?: $this)->getRelationWithoutConstraints($relationName);
 
                 if (! $relation instanceof Relation) {
-                    throw new LogicException(sprintf('%s::%s must return a relationship instance.', get_class($this->getModel()), $relationName));
+                    throw new LogicException(sprintf(
+                        '%s::%s must return a relationship instance.',
+                        get_class($this->getModel()),
+                        $relationName)
+                    );
                 }
-            }
-
-            else if (is_array($relation)) {
+            } elseif (is_array($relation)) {
                 [$relation, $alias] = $relation;
             }
 
@@ -104,24 +109,22 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->joinNestedRelation()}.
-     *
-     * @return \Closure
      */
-    protected function joinNestedRelation()
+    public function joinNestedRelation(): Closure
     {
         /**
          * Add nested relationship join conditions to the query.
          *
-         * @param  string                                     $relations
-         * @param  \Closure|array|null                        $callbacks
-         * @param  string                                     $type
-         * @param  bool                                       $through
-         * @param  \Reedware\LaravelRelationJoins\MorphTypes  $morphTypes
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  Closure|array<string,Closure>|null  $callbacks
          */
-        return function ($relations, $callbacks, $type, $through, MorphTypes $morphTypes) {
-
+        return function (
+            string $relations,
+            Closure|array|null $callbacks,
+            string $type,
+            bool $through,
+            MorphTypes $morphTypes
+        ): Builder {
+            /** @var Builder $this */
             $relations = explode('.', $relations);
 
             $relatedQuery = $this;
@@ -139,30 +142,30 @@ class JoinsRelationships
                 $callback = $callbacks[$relation] ?? null;
                 $useThrough = count($relations) > 0 && $through;
 
-                $relatedQuery = $this->joinRelation($relation, $callback, $type, $useThrough, $relatedQuery, $morphTypes);
+                $relatedQuery = $this->joinRelation(
+                    $relation,
+                    $callback,
+                    $type,
+                    $useThrough,
+                    $relatedQuery,
+                    $morphTypes
+                );
             }
 
             return $this;
-
         };
     }
 
     /**
      * Defines the mixin for {@see $query->applyJoinScopes()}.
-     *
-     * @return \Closure
      */
-    protected function applyJoinScopes()
+    public function applyJoinScopes(): Closure
     {
         /**
          * Applies the eloquent scopes to the specified query.
-         *
-         * @param  \Illuminate\Database\Query\Builder  $joinQuery
-         *
-         * @return \Illuminate\Database\Query\Builder
          */
-        return function (Builder $joinQuery) {
-
+        return function (Builder $joinQuery): Builder {
+            /** @var Builder $this */
             $joins = $joinQuery->getQuery()->joins ?: [];
 
             foreach ($joins as $join) {
@@ -172,27 +175,19 @@ class JoinsRelationships
             }
 
             return $joinQuery;
-
         };
     }
 
     /**
      * Defines the mixin for {@see $query->callJoinScope()}.
-     *
-     * @return \Closure
      */
-    protected function callJoinScope()
+    public function callJoinScope(): Closure
     {
         /**
          * Calls the provided callback on the join query.
-         *
-         * @param  \Illuminate\Database\Query\Builder  $joinQuery
-         * @param  \Closure                            $callback
-         *
-         * @return void
          */
-        return function (Builder $joinQuery, Closure $callback) {
-
+        return function (Builder $joinQuery, Closure $callback): void {
+            /** @var Builder $this */
             $joins = $joinQuery->getQuery()->joins ?: [];
 
             array_unshift($joins, $joinQuery);
@@ -230,23 +225,19 @@ class JoinsRelationships
             foreach ($queries as $query) {
                 $joinQuery->addBinding($query->getBindings(), 'join');
             }
-
         };
     }
 
     /**
      * Defines the mixin for {@see $query->getJoinType()}.
-     *
-     * @return \Closure
      */
-    protected function getJoinType()
+    public function getJoinType(): Closure
     {
         /**
          * Returns the custom provided join type.
-         *
-         * @return string|null
          */
-        return function () {
+        return function (): ?string {
+            /** @var Builder $this */
             if (! property_exists($this, 'type')) {
                 return null;
             }
@@ -265,7 +256,7 @@ class JoinsRelationships
 
             // @codeCoverageIgnoreStart
             finally {
-            // @codeCoverageIgnoreEnd
+                // @codeCoverageIgnoreEnd
                 return $type;
             }
         };
@@ -273,22 +264,14 @@ class JoinsRelationships
 
     /**
      * Defines the mixin for {@see $query->addJoinRelationWhere()}.
-     *
-     * @return \Closure
      */
-    protected function addJoinRelationWhere()
+    public function addJoinRelationWhere(): Closure
     {
         /**
          * Add the "join relation" condition where clause to the query.
-         *
-         * @param  \Illuminate\Database\Eloquent\Builder             $joinQuery
-         * @param  \Illuminate\Database\Eloquent\Relations\Relation  $relation
-         * @param  string                                            $type
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
          */
-        return function (Builder $joinQuery, Relation $relation, $type) {
-
+        return function (Builder $joinQuery, Relation $relation, string $type): Builder {
+            /** @var Builder $this */
             $joinQuery->mergeConstraintsFrom($relation->getQuery());
 
             $baseJoinQuery = $joinQuery->toBase();
@@ -310,79 +293,31 @@ class JoinsRelationships
             }, null, null, $type);
 
             return $this;
-
-        };
-    }
-
-    /**
-     * Defines the mixin for {@see $query->replaceWhereNestedQueryBuildersWithJoinBuilders()}.
-     *
-     * @return \Closure
-     */
-    protected function replaceWhereNestedQueryBuildersWithJoinBuilders()
-    {
-        /**
-         * Replaces the query builders in nested "where" clauses with join builders.
-         *
-         * @param  \Illuminate\Database\Query\Builder  $query
-         *
-         * @return void
-         */
-        return function ($query) {
-
-            $wheres = $query->wheres;
-
-            $wheres = array_map(function ($where) {
-                if (! isset($where['query'])) {
-                    return $where;
-                }
-
-                if ($where['type'] == 'Exists' || $where['type'] == 'NotExists') {
-                    return $where;
-                }
-
-                $this->replaceWhereNestedQueryBuildersWithJoinBuilders($where['query']);
-
-                $joinClause = new JoinClause($where['query'], 'inner', $where['query']->from);
-
-                foreach (array_keys(get_object_vars($where['query'])) as $key) {
-                    $joinClause->{$key} = $where['query']->{$key};
-                }
-
-                $where['query'] = $joinClause;
-
-                return $where;
-            }, $wheres);
-
-            $query->wheres = $wheres;
-
         };
     }
 
     /**
      * Defines the mixin for {@see $query->getBelongsToJoinRelation()}.
-     *
-     * @return \Closure
      */
-    protected function getBelongsToJoinRelation()
+    public function getBelongsToJoinRelation(): Closure
     {
         /**
-         * Description.
-         *
-         * @param  \Illuminate\Database\Eloquent\Relations\MorphTo  $relation
-         * @param  \Reedware\LaravelRelationJoins\MorphTypes        $morphTypes
-         * @param  \Illuminate\Database\Eloquent\Builder            $relatedQuery
-         *
-         * @return array
+         * Returns the belongs to relation for the next morph.
          */
-        return function (MorphTo $relation, MorphTypes $morphTypes, Builder $relatedQuery) {
+        return function (MorphTo $relation, MorphTypes $morphTypes, Builder $relatedQuery): BelongsTo {
+            /** @var Builder $this */
 
             // When it comes to joining across morph types, we can really only support
             // a single type. However, when we're provided multiple types, we will
             // instead use these one at a time and pass the information along.
 
             if ($morphTypes->items === ['*']) {
-                $types = $relatedQuery->model->distinct()->pluck($relation->getMorphType())->filter()->all();
+                $types = $relatedQuery->model
+                    ->newQuery()
+                    ->distinct()
+                    ->pluck($relation->getMorphType())
+                    ->filter()
+                    ->all();
 
                 $types = array_unique(array_map(function ($morphType) {
                     return Relation::getMorphedModel($morphType) ?? $morphType;
@@ -410,325 +345,300 @@ class JoinsRelationships
             );
 
             return $belongsTo;
-
         };
     }
 
     /**
      * Defines the mixin for {@see $query->leftJoinRelation()}.
-     *
-     * @return \Closure
      */
-    public function leftJoinRelation()
+    public function leftJoinRelation(): Closure
     {
         /**
          * Add a relationship left join condition to the query.
          *
-         * @param  string         $relation
-         * @param  \Closure|array|null  $callback
-         * @param  bool           $through
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function ($relation, $callback = null, $through = false) {
+        return function (string $relation, Closure|array $callback = null, bool $through = false): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'left', $through);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->rightJoinRelation()}.
-     *
-     * @return \Closure
      */
-    public function rightJoinRelation()
+    public function rightJoinRelation(): Closure
     {
         /**
          * Add a relationship right join condition to the query.
          *
-         * @param  string         $relation
-         * @param  \Closure|array|null  $callback
-         * @param  bool           $through
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function ($relation, $callback = null, $through = false) {
+        return function (string $relation, Closure|array $callback = null, bool $through = false): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'right', $through);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->crossJoinRelation()}.
-     *
-     * @return \Closure
      */
-    public function crossJoinRelation()
+    public function crossJoinRelation(): Closure
     {
         /**
          * Add a relationship cross join condition to the query.
          *
-         * @param  string         $relation
-         * @param  \Closure|array|null  $callback
-         * @param  bool           $through
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function ($relation, $callback = null, $through = false) {
+        return function (string $relation, Closure|array $callback = null, bool $through = false): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'cross', $through);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->joinThroughRelation()}.
-     *
-     * @return \Closure
      */
-    public function joinThroughRelation()
+    public function joinThroughRelation(): Closure
     {
         /**
          * Add a relationship join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  \Closure|array|null  $callback
-         * @param  string         $type
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function ($relation, $callback = null, $type = 'inner') {
+        return function (string $relation, Closure|array $callback = null, string $type = 'inner'): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, $type, true);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->leftJoinThroughRelation()}.
-     *
-     * @return \Closure
      */
-    public function leftJoinThroughRelation()
+    public function leftJoinThroughRelation(): Closure
     {
         /**
          * Add a relationship left join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  \Closure|array|null  $callback
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function ($relation, $callback = null) {
+        return function (string $relation, Closure|array $callback = null): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'left', true);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->rightJoinThroughRelation()}.
-     *
-     * @return \Closure
      */
-    public function rightJoinThroughRelation()
+    public function rightJoinThroughRelation(): Closure
     {
         /**
          * Add a relationship right join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  \Closure|array|null  $callback
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function ($relation, $callback = null) {
+        return function (string $relation, Closure|array $callback = null): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'right', true);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->crossJoinThroughRelation()}.
-     *
-     * @return \Closure
      */
-    public function crossJoinThroughRelation()
+    public function crossJoinThroughRelation(): Closure
     {
         /**
          * Add a relationship cross join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  \Closure|array|null  $callback
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function ($relation, $callback = null) {
+        return function (string $relation, Closure|array $callback = null): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'cross', true);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->joinMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function joinMorphRelation()
+    public function joinMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship join condition to the query.
          *
-         * @param  string|array                           $relation
-         * @param  string|array                           $morphTypes
-         * @param  \Closure|array|null                    $callback
-         * @param  string                                 $type
-         * @param  bool                                   $through
-         * @param  \Illuminate\Database\Eloquent\Builder  $relatedQuery
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  string|array<Relation|string>  $relation
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
-        return function ($relation, $morphTypes = ['*'], $callback = null, $type = 'inner', $through = false, Builder $relatedQuery = null) {
+        return function (
+            string|array $relation,
+            array|string $morphTypes = ['*'],
+            Closure|array $callback = null,
+            string $type = 'inner',
+            bool $through = false,
+            Builder $relatedQuery = null
+        ): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, $type, $through, $relatedQuery, $morphTypes);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->leftJoinMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function leftJoinMorphRelation()
+    public function leftJoinMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship left join condition to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
-         * @param  \Closure|array|null  $callback
-         * @param  bool           $through
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  string|array<Relation|string>  $relation
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
-        return function ($relation, $morphTypes = ['*'], $callback = null, $through = false) {
+        return function (
+            string|array $relation,
+            array|string $morphTypes = ['*'],
+            Closure|array $callback = null,
+            bool $through = false
+        ): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'left', $through, null, $morphTypes);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->rightJoinMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function rightJoinMorphRelation()
+    public function rightJoinMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship right join condition to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
-         * @param  \Closure|array|null  $callback
-         * @param  bool           $through
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  string|array<Relation|string>  $relation
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
-        return function ($relation, $morphTypes = ['*'], $callback = null, $through = false) {
+        return function (
+            string|array $relation,
+            array|string $morphTypes = ['*'],
+            Closure|array $callback = null,
+            bool $through = false
+        ): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'right', $through, null, $morphTypes);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->crossJoinMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function crossJoinMorphRelation()
+    public function crossJoinMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship cross join condition to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
-         * @param  \Closure|array|null  $callback
-         * @param  bool           $through
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  string|array<Relation|string>  $relation
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
-        return function ($relation, $morphTypes = ['*'], $callback = null, $through = false) {
+        return function (
+            string|array $relation,
+            array|string $morphTypes = ['*'],
+            Closure|array $callback = null,
+            bool $through = false
+        ): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'cross', $through, null, $morphTypes);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->joinThroughMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function joinThroughMorphRelation()
+    public function joinThroughMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
-         * @param  \Closure|array|null  $callback
-         * @param  string         $type
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  string|array<Relation|string>  $relation
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
-        return function ($relation, $morphTypes = ['*'], $callback = null, $type = 'inner') {
+        return function (
+            string|array $relation,
+            array|string $morphTypes = ['*'],
+            Closure|array $callback = null,
+            string $type = 'inner'
+        ): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, $type, true, null, $morphTypes);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->leftJoinThroughMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function leftJoinThroughMorphRelation()
+    public function leftJoinThroughMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship left join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
-         * @param  \Closure|array|null  $callback
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  string|array<Relation|string>  $relation
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
-        return function ($relation, $morphTypes = ['*'], $callback = null) {
+        return function (
+            string|array $relation,
+            array|string $morphTypes = ['*'],
+            Closure|array $callback = null
+        ): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'left', true, null, $morphTypes);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->rightJoinThroughMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function rightJoinThroughMorphRelation()
+    public function rightJoinThroughMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship right join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
-         * @param  \Closure|array|null  $callback
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  string|array<Relation|string>  $relation
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
-        return function ($relation, $morphTypes = ['*'], $callback = null) {
+        return function (
+            string|array $relation,
+            array|string $morphTypes = ['*'],
+            Closure|array $callback = null
+        ): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'right', true, null, $morphTypes);
         };
     }
 
     /**
      * Defines the mixin for {@see $query->crossJoinThroughMorphRelation()}.
-     *
-     * @return \Closure
      */
-    public function crossJoinThroughMorphRelation()
+    public function crossJoinThroughMorphRelation(): Closure
     {
         /**
          * Add a morph to relationship cross join condition through a related model to the query.
          *
-         * @param  string         $relation
-         * @param  string|array   $morphTypes
-         * @param  \Closure|array|null  $callback
-         *
-         * @return \Illuminate\Database\Eloquent\Builder|static
+         * @param  string|array<Relation|string>  $relation
+         * @param  array<string>|string  $morphTypes
+         * @param  Closure|array<Closure>|null  $callback
          */
-        return function ($relation, $morphTypes = ['*'], $callback = null) {
+        return function (
+            string|array $relation,
+            array|string $morphTypes = ['*'],
+            Closure|array $callback = null
+        ): Builder {
+            /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'cross', true, null, $morphTypes);
         };
     }
