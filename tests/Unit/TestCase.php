@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as BaseBuilder;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Database\Query\Processors\Processor;
-use Mockery as m;
+use Mockery;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as TestBase;
 use Reedware\LaravelRelationJoins\LaravelRelationJoinServiceProvider;
 use Reedware\LaravelRelationJoins\Tests\CustomBuilder;
@@ -19,10 +20,13 @@ class TestCase extends TestBase
 {
     /**
      * The mocked database connection.
-     *
-     * @var \Mockery\Mock
      */
-    protected $connection;
+    protected Connection&MockInterface $connection;
+
+    /**
+     * The mocked query results processor.
+     */
+    protected Processor&MockInterface $processor;
 
     /**
      * Prepares the test for execution.
@@ -40,14 +44,16 @@ class TestCase extends TestBase
      */
     protected function setUpConnectionResolver(): void
     {
-        EloquentRelationJoinModelStub::setConnectionResolver($resolver = m::mock(ConnectionResolverInterface::class));
+        EloquentRelationJoinModelStub::setConnectionResolver(
+            $resolver = Mockery::mock(ConnectionResolverInterface::class)
+        );
 
-        $this->connection = m::mock(Connection::class);
+        $this->connection = Mockery::mock(Connection::class);
 
-        $processor = m::mock(Processor::class)
+        $this->processor = Mockery::mock(Processor::class)
             ->makePartial();
 
-        $processor->shouldNotReceive('processInsertGetId');
+        $this->processor->shouldNotReceive('processInsertGetId');
 
         $resolver
             ->shouldReceive('connection')
@@ -59,12 +65,12 @@ class TestCase extends TestBase
 
         $this->connection
             ->shouldReceive('getPostProcessor')
-            ->andReturn($processor);
+            ->andReturn($this->processor);
 
         $this->connection
             ->shouldReceive('query')
-            ->andReturnUsing(function () use ($grammar, $processor) {
-                return new BaseBuilder($this->connection, $grammar, $processor);
+            ->andReturnUsing(function () use ($grammar) {
+                return new BaseBuilder($this->connection, $grammar, $this->processor);
             });
     }
 
@@ -85,15 +91,15 @@ class TestCase extends TestBase
      */
     protected function tearDown(): void
     {
-        m::close();
+        Mockery::close();
     }
 
     /**
      * Returns the query resolvers for each test.
      *
-     * @return array
+     * @return array<string,array<mixed>>
      */
-    public static function queryDataProvider()
+    public static function queryDataProvider(): array
     {
         $newQuery = function ($model) {
             return $model->useCustomBuilder(false)->newQuery();
