@@ -26,7 +26,7 @@ class RelationJoinQuery
         Builder $query,
         Builder $parentQuery,
         string $type = 'inner',
-        string $alias = null
+        ?string $alias = null
     ): Builder {
         if ($relation instanceof BelongsTo) {
             return static::belongsTo($relation, $query, $parentQuery, $type, $alias);
@@ -59,7 +59,7 @@ class RelationJoinQuery
         Builder $query,
         Builder $parentQuery,
         string $type = 'inner',
-        string $alias = null
+        ?string $alias = null
     ): Builder {
         if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
             $alias = $relation->getRelationCountHash();
@@ -86,7 +86,7 @@ class RelationJoinQuery
         Builder $query,
         Builder $parentQuery,
         string $type = 'inner',
-        string $alias = null
+        ?string $alias = null
     ): Builder {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
@@ -144,7 +144,7 @@ class RelationJoinQuery
         Builder $query,
         Builder $parentQuery,
         string $type = 'inner',
-        string $alias = null
+        ?string $alias = null
     ): Builder {
         if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
             $alias = $relation->getRelationCountHash();
@@ -177,7 +177,7 @@ class RelationJoinQuery
         Builder $query,
         Builder $parentQuery,
         string $type = 'inner',
-        string $alias = null
+        ?string $alias = null
     ): Builder {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$throughAlias, $farAlias] = explode(',', $alias);
@@ -239,7 +239,7 @@ class RelationJoinQuery
         Builder $query,
         Builder $parentQuery,
         string $type = 'inner',
-        string $alias = null
+        ?string $alias = null
     ): Builder {
         if (! is_null($alias) && $alias != $relation->getRelated()->getTable()) {
             $query->from($relation->getRelated()->getTable().' as '.$alias);
@@ -260,7 +260,7 @@ class RelationJoinQuery
         Builder $query,
         Builder $parentQuery,
         string $type = 'inner',
-        string $alias = null
+        ?string $alias = null
     ): Builder {
         if (! is_null($alias) && strpos($alias, ',') !== false) {
             [$pivotAlias, $farAlias] = explode(',', $alias);
