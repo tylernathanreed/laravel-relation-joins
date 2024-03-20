@@ -1,6 +1,6 @@
 # Laravel Relation Joins
 
-[![Laravel Version](https://img.shields.io/badge/Laravel-9.x%2F10.x%2F11.x-blue)](https://laravel.com/)
+[![Laravel Version](https://img.shields.io/badge/Laravel-10.x%2F11.x-blue)](https://laravel.com/)
 [![Tests](https://github.com/tylernathanreed/laravel-relation-joins/actions/workflows/tests.yml/badge.svg)](https://github.com/tylernathanreed/laravel-relation-joins/actions/workflows/tests.yml)
 [![Lint](https://github.com/tylernathanreed/laravel-relation-joins/actions/workflows/coding-standards.yml/badge.svg)](https://github.com/tylernathanreed/laravel-relation-joins/actions/workflows/coding-standards.yml)
 [![Code Coverage](https://coveralls.io/repos/github/tylernathanreed/laravel-relation-joins/badge.svg?branch=master)](https://coveralls.io/github/tylernathanreed/laravel-relation-joins?branch=master)
@@ -64,13 +64,14 @@ Reedware\LaravelRelationJoins\LaravelRelationJoinServiceProvider::class
 
 This package is maintained with the latest version of Laravel in mind, but support follows Laravel's [Support Policy](https://laravel.com/docs/master/releases#support-policy).
 
-| Package | Laravel    | PHP        |
-| :-----: | :--------: | :--------: |
-|     5.x | 9.x - 11.x | 8.0 - 8.2+ |
-|     4.x | 8.x - 10.x | 7.3 - 8.0+ |
-|     3.x | 7.x - 9.x | 7.2 - 8.0+ |
-|     2.x | 6.x - 8.x | 7.2 - 8.0+ |
-|     1.x | 5.5 - 8.x | 7.1 - 8.0+ |
+| Package | Laravel     | PHP        |
+| :-----: | :---------: | :--------: |
+|     6.x | 10.x - 11.x | 8.1 - 8.2+ |
+|     5.x |  9.x - 10.x | 8.0 - 8.2+ |
+|     4.x |  8.x - 10.x | 7.3 - 8.0+ |
+|     3.x |  7.x -  9.x | 7.2 - 8.0+ |
+|     2.x |  6.x -  8.x | 7.2 - 8.0+ |
+|     1.x |  5.5 -  8.x | 7.1 - 8.0+ |
 
 <a name="usage"></a>
 ## Usage

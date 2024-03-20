@@ -93,7 +93,7 @@ class TestCase extends TestBase
      *
      * @return array
      */
-    public function queryDataProvider()
+    public static function queryDataProvider()
     {
         $newQuery = function ($model) {
             return $model->useCustomBuilder(false)->newQuery();
