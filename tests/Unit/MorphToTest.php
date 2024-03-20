@@ -31,7 +31,7 @@ class MorphToTest extends TestCase
      *
      * @return void
      */
-    protected function mockMorphSelect(string $model, string $relation, array $results, string $where = null, array $bindings = [])
+    protected function mockMorphSelect(string $model, string $relation, array $results, ?string $where = null, array $bindings = [])
     {
         $model = new $model;
         $table = $model->getTable();

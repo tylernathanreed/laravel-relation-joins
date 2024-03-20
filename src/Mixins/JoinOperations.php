@@ -18,8 +18,8 @@ class JoinOperations
          */
         return function (
             Closure|string $first,
-            string $operator = null,
-            string $second = null,
+            ?string $operator = null,
+            ?string $second = null,
             string $boolean = 'and'
         ): Builder {
             /** @var Builder $this */
@@ -39,7 +39,7 @@ class JoinOperations
         /**
          * Add an "or on" clause to the join.
          */
-        return function (Closure|string $first, string $operator = null, string $second = null): Builder {
+        return function (Closure|string $first, ?string $operator = null, ?string $second = null): Builder {
             /** @var Builder $this */
             return $this->on($first, $operator, $second, 'or');
         };

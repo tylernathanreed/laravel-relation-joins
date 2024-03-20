@@ -18,7 +18,7 @@ class RelationJoinQueries
         /**
          * Adds the constraints for a relationship join.
          */
-        return function (Builder $query, Builder $parentQuery, string $type = 'inner', string $alias = null): Builder {
+        return function (Builder $query, Builder $parentQuery, string $type = 'inner', ?string $alias = null): Builder {
             /** @var Relation $this */
             return RelationJoinQuery::get($this, $query, $parentQuery, $type, $alias);
         };

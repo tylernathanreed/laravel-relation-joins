@@ -31,10 +31,10 @@ class JoinsRelationships
          */
         return function (
             Relation|string|array $relation,
-            Closure|array $callback = null,
+            Closure|array|null $callback = null,
             string $type = 'inner',
             bool $through = false,
-            Builder $relatedQuery = null,
+            ?Builder $relatedQuery = null,
             MorphTypes|array|string $morphTypes = ['*']
         ): Builder {
             /** @var Builder $this */
@@ -357,7 +357,7 @@ class JoinsRelationships
          *
          * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function (string $relation, Closure|array $callback = null, bool $through = false): Builder {
+        return function (string $relation, Closure|array|null $callback = null, bool $through = false): Builder {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'left', $through);
         };
@@ -373,7 +373,7 @@ class JoinsRelationships
          *
          * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function (string $relation, Closure|array $callback = null, bool $through = false): Builder {
+        return function (string $relation, Closure|array|null $callback = null, bool $through = false): Builder {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'right', $through);
         };
@@ -389,7 +389,7 @@ class JoinsRelationships
          *
          * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function (string $relation, Closure|array $callback = null, bool $through = false): Builder {
+        return function (string $relation, Closure|array|null $callback = null, bool $through = false): Builder {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'cross', $through);
         };
@@ -405,7 +405,7 @@ class JoinsRelationships
          *
          * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function (string $relation, Closure|array $callback = null, string $type = 'inner'): Builder {
+        return function (string $relation, Closure|array|null $callback = null, string $type = 'inner'): Builder {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, $type, true);
         };
@@ -421,7 +421,7 @@ class JoinsRelationships
          *
          * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function (string $relation, Closure|array $callback = null): Builder {
+        return function (string $relation, Closure|array|null $callback = null): Builder {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'left', true);
         };
@@ -437,7 +437,7 @@ class JoinsRelationships
          *
          * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function (string $relation, Closure|array $callback = null): Builder {
+        return function (string $relation, Closure|array|null $callback = null): Builder {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'right', true);
         };
@@ -453,7 +453,7 @@ class JoinsRelationships
          *
          * @param  Closure|array<string,Closure>|null  $callback
          */
-        return function (string $relation, Closure|array $callback = null): Builder {
+        return function (string $relation, Closure|array|null $callback = null): Builder {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'cross', true);
         };
@@ -474,10 +474,10 @@ class JoinsRelationships
         return function (
             string|array $relation,
             array|string $morphTypes = ['*'],
-            Closure|array $callback = null,
+            Closure|array|null $callback = null,
             string $type = 'inner',
             bool $through = false,
-            Builder $relatedQuery = null
+            ?Builder $relatedQuery = null
         ): Builder {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, $type, $through, $relatedQuery, $morphTypes);
@@ -499,7 +499,7 @@ class JoinsRelationships
         return function (
             string|array $relation,
             array|string $morphTypes = ['*'],
-            Closure|array $callback = null,
+            Closure|array|null $callback = null,
             bool $through = false
         ): Builder {
             /** @var Builder $this */
@@ -522,7 +522,7 @@ class JoinsRelationships
         return function (
             string|array $relation,
             array|string $morphTypes = ['*'],
-            Closure|array $callback = null,
+            Closure|array|null $callback = null,
             bool $through = false
         ): Builder {
             /** @var Builder $this */
@@ -545,7 +545,7 @@ class JoinsRelationships
         return function (
             string|array $relation,
             array|string $morphTypes = ['*'],
-            Closure|array $callback = null,
+            Closure|array|null $callback = null,
             bool $through = false
         ): Builder {
             /** @var Builder $this */
@@ -568,7 +568,7 @@ class JoinsRelationships
         return function (
             string|array $relation,
             array|string $morphTypes = ['*'],
-            Closure|array $callback = null,
+            Closure|array|null $callback = null,
             string $type = 'inner'
         ): Builder {
             /** @var Builder $this */
@@ -591,7 +591,7 @@ class JoinsRelationships
         return function (
             string|array $relation,
             array|string $morphTypes = ['*'],
-            Closure|array $callback = null
+            Closure|array|null $callback = null
         ): Builder {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'left', true, null, $morphTypes);
@@ -613,7 +613,7 @@ class JoinsRelationships
         return function (
             string|array $relation,
             array|string $morphTypes = ['*'],
-            Closure|array $callback = null
+            Closure|array|null $callback = null
         ): Builder {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'right', true, null, $morphTypes);
@@ -635,7 +635,7 @@ class JoinsRelationships
         return function (
             string|array $relation,
             array|string $morphTypes = ['*'],
-            Closure|array $callback = null
+            Closure|array|null $callback = null
         ): Builder {
             /** @var Builder $this */
             return $this->joinRelation($relation, $callback, 'cross', true, null, $morphTypes);
