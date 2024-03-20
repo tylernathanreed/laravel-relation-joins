@@ -3,6 +3,7 @@
 namespace Illuminate\Database\Eloquent;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -31,6 +32,7 @@ use Reedware\LaravelRelationJoins\MorphTypes;
  * @method Builder|static leftJoinThroughMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null)
  * @method Builder|static rightJoinThroughMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null)
  * @method Builder|static crossJoinThroughMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null)
+ * @method Model getModel()
  *
  * @mixin \Illuminate\Database\Query\Builder
  */

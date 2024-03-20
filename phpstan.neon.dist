@@ -1,10 +1,11 @@
 parameters:
-    level: 6
+    level: 7
     paths:
         - src
     excludePaths:
         - tests/*
     stubFiles:
+        - stubs/BelongsToMany.stub
         - stubs/EloquentBuilder.stub
         - stubs/QueryBuilder.stub
         - stubs/Relation.stub

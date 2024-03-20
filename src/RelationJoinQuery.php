@@ -173,7 +173,7 @@ class RelationJoinQuery
      * @see https://github.com/laravel/framework/commit/de4c42f04d609b119a4e0a7e6223c37bfe54cb87
      */
     protected static function hasOneOrManyThrough(
-        HasOne|HasManyThrough $relation,
+        HasOneThrough|HasManyThrough $relation,
         Builder $query,
         Builder $parentQuery,
         string $type = 'inner',

@@ -4,6 +4,7 @@ namespace Reedware\LaravelRelationJoins\Mixins;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -27,7 +28,7 @@ class JoinsRelationships
          *
          * @param  Relation|string|array<Relation|string>  $relation
          * @param  Closure|array<string,Closure>|null  $callback
-         * @param  MorphTypes|array<string>|string  $morphTypes
+         * @param  MorphTypes|array<class-string<Model>>|class-string<Model>|true  $morphTypes
          */
         return function (
             Relation|string|array $relation,
@@ -35,11 +36,11 @@ class JoinsRelationships
             string $type = 'inner',
             bool $through = false,
             ?Builder $relatedQuery = null,
-            MorphTypes|array|string $morphTypes = ['*']
+            MorphTypes|array|string|true $morphTypes = true
         ): Builder {
             /** @var Builder $this */
             if (! $morphTypes instanceof MorphTypes) {
-                $morphTypes = new MorphTypes($morphTypes);
+                $morphTypes = new MorphTypes($morphTypes); // @phpstan-ignore-line
             }
 
             if (is_string($relation)) {
@@ -47,8 +48,8 @@ class JoinsRelationships
                     return $this->joinNestedRelation($relation, $callback, $type, $through, $morphTypes);
                 }
 
-                if (stripos($relation, ' as ') !== false) {
-                    [$relationName, $alias] = preg_split('/\s+as\s+/i', $relation);
+                if (! empty($parts = preg_split('/\s+as\s+/i', $relation))) {
+                    [$relationName, $alias] = $parts;
                 } else {
                     $relationName = $relation;
                 }
@@ -310,7 +311,7 @@ class JoinsRelationships
             // a single type. However, when we're provided multiple types, we will
             // instead use these one at a time and pass the information along.
 
-            if ($morphTypes->items === ['*']) {
+            if ($morphTypes->all) {
                 $types = $relatedQuery->model
                     ->newQuery()
                     ->distinct()

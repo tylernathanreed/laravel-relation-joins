@@ -1,0 +1,12 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Relations;
+
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @method class-string<Model> getPivotClass()
+ */
+class BelongsToMany
+{
+}
