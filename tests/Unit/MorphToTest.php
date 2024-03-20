@@ -3,6 +3,8 @@
 namespace Reedware\LaravelRelationJoins\Tests\Unit;
 
 use Closure;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentFileModelStub;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentImageModelStub;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
@@ -13,11 +15,8 @@ class MorphToTest extends TestCase
 {
     /**
      * Mocks the specified select query.
-     *
-     *
-     * @return void
      */
-    protected function mockSelect(string $sql, array $bindings, array $results)
+    protected function mockSelect(string $sql, array $bindings, array $results): void
     {
         $this->connection
             ->shouldReceive('select')
@@ -27,12 +26,14 @@ class MorphToTest extends TestCase
 
     /**
      * Mocks the morph selection used by {@see $query->joinMorphRelation()}.
-     *
-     *
-     * @return void
      */
-    protected function mockMorphSelect(string $model, string $relation, array $results, ?string $where = null, array $bindings = [])
-    {
+    protected function mockMorphSelect(
+        string $model,
+        string $relation,
+        array $results,
+        ?string $where = null,
+        array $bindings = []
+    ): void {
         $model = new $model;
         $table = $model->getTable();
         $column = $model->{$relation}()->getMorphType();
@@ -46,11 +47,8 @@ class MorphToTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function basic(Closure $query, string $builderClass)
     {
         $this->mockMorphSelect(EloquentImageModelStub::class, 'imageable', [
@@ -65,11 +63,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function basic_alias(Closure $query, string $builderClass)
     {
         $this->mockMorphSelect(EloquentImageModelStub::class, 'imageable', [
@@ -84,11 +79,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function withMorphType(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
@@ -99,11 +91,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function withMorphType_alias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
@@ -114,11 +103,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function withMorphTypes(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentFileModelStub)
@@ -132,11 +118,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function withMorphTypes_normal_in(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -150,11 +133,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function withMorphTypes_normal_between(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentFileModelStub)
@@ -168,11 +148,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function asBelongsTo(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
@@ -183,11 +160,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function multitype(Closure $query, string $builderClass)
     {
         $this->expectException(RuntimeException::class);
@@ -202,11 +176,8 @@ class MorphToTest extends TestCase
             ->joinRelation('imageable');
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function nested_in(Closure $query, string $builderClass)
     {
         $this->mockMorphSelect(EloquentImageModelStub::class, 'imageable', [
@@ -221,11 +192,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function nested_out(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
@@ -238,11 +206,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function leftJoin(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
@@ -253,11 +218,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function rightJoin(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
@@ -268,11 +230,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function crossJoin(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
@@ -283,11 +242,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function joinThrough_in(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -301,11 +257,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function joinThrough_out(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
@@ -317,11 +270,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function leftJoinThrough(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -335,11 +285,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function rightJoinThrough(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -353,11 +300,8 @@ class MorphToTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function crossJoinThrough(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)

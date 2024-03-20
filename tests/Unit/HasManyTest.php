@@ -3,6 +3,8 @@
 namespace Reedware\LaravelRelationJoins\Tests\Unit;
 
 use Closure;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentCommentModelStub;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentCountryModelStub;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
@@ -11,11 +13,8 @@ use Reedware\LaravelRelationJoins\Tests\Models\EloquentVideoModelStub;
 
 class HasManyTest extends TestCase
 {
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function basic(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
@@ -25,11 +24,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCommentModelStub)
@@ -39,11 +35,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function inverse_alias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCommentModelStub)
@@ -53,11 +46,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function asMorph(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentVideoModelStub)
@@ -68,11 +58,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function childAlias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
@@ -82,11 +69,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function circular(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -96,11 +80,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function circular_alias_child(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -110,11 +91,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function through(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -130,11 +108,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function through_leftJoin(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -150,11 +125,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function through_rightJoin(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -170,11 +142,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function through_crossJoin(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -190,11 +159,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function leftJoin(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
@@ -204,11 +170,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function leftJoin_inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCommentModelStub)
@@ -218,11 +181,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function nested(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -232,11 +192,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function nested_alias_near(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -246,11 +203,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function nested_alias_far(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -260,11 +214,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function nested_alias_multiple(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -274,11 +225,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function localScope(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCountryModelStub)
@@ -291,11 +239,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function has(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -307,11 +252,8 @@ class HasManyTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function doesntHave(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)

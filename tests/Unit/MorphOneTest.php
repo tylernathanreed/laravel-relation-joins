@@ -3,15 +3,14 @@
 namespace Reedware\LaravelRelationJoins\Tests\Unit;
 
 use Closure;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
 
 class MorphOneTest extends TestCase
 {
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function basic(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
@@ -22,11 +21,8 @@ class MorphOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function alias_not_nested(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
@@ -37,11 +33,8 @@ class MorphOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function alias_nested(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
@@ -52,11 +45,8 @@ class MorphOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function leftJoin(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)

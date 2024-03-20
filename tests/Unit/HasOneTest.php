@@ -3,6 +3,8 @@
 namespace Reedware\LaravelRelationJoins\Tests\Unit;
 
 use Closure;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentPhoneModelStub;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentSoftDeletingPhoneModelStub;
@@ -11,11 +13,8 @@ use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
 
 class HasOneTest extends TestCase
 {
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function basic(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -25,11 +24,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPhoneModelStub)
@@ -39,11 +35,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function inverse_alias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPhoneModelStub)
@@ -53,11 +46,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function asMorph(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
@@ -68,11 +58,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function alias_child(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -82,11 +69,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function softDeletes_parent(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
@@ -96,11 +80,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function softDeletes_parent_withTrashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
@@ -111,11 +92,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function softDeletes_parent_inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPhoneModelStub)
@@ -125,11 +103,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function softDeletes_child(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -139,11 +114,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function softDeletes_child_withTrashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -155,11 +127,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function softDeletes_child_inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingPhoneModelStub)
@@ -169,11 +138,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function softDeletes(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
@@ -183,11 +149,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function softDeletes_withParentTrashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
@@ -198,11 +161,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function softDeletes_withChildTrashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
@@ -214,11 +174,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function softDeletes_withTrashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
@@ -231,11 +188,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function leftJoin(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -245,11 +199,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function leftJoin_inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPhoneModelStub)
@@ -259,11 +210,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function rightJoin(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -273,11 +221,8 @@ class HasOneTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function crossJoin(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)

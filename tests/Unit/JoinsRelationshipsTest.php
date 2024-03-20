@@ -4,17 +4,16 @@ namespace Reedware\LaravelRelationJoins\Tests\Unit;
 
 use Closure;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentCountryModelStub;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentPolymorphicCommentModelStub;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
 
 class JoinsRelationshipsTest extends TestCase
 {
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function anonymousRelation(Closure $query, string $builderClass)
     {
         $relation = Relation::noConstraints(function () {
@@ -29,11 +28,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function anonymousRelation_alias(Closure $query, string $builderClass)
     {
         $relation = Relation::noConstraints(function () {
@@ -48,11 +44,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function singleconstraint_array(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -67,11 +60,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function multiconstraint_sequential(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -89,11 +79,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function multiconstraint_leftJoinRelation(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -111,11 +98,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function multiconstraint_associative(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -133,11 +117,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function multiconstraint_alias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -155,11 +136,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function multiconstraint_single_first(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -174,11 +152,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function multiconstraint_single_last(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -193,11 +168,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function multiconstraint_single_middle(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -212,11 +184,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function multiconstraint_skip_middle_sequential(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -235,11 +204,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function multiconstraint_skip_middle_associative(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -257,11 +223,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function multiconstraint_mix_type(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
@@ -278,11 +241,8 @@ class JoinsRelationshipsTest extends TestCase
         $this->assertEquals($builderClass, get_class($builder));
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider queryDataProvider
-     */
+    #[Test]
+    #[DataProvider('queryDataProvider')]
     public function throwsOnEmptyMorphTypesArray(Closure $query, string $builderClass)
     {
         $this->expectExceptionMessage('joinMorphRelation() requires at least one morph type.');
