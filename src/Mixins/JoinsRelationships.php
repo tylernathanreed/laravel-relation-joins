@@ -36,7 +36,7 @@ class JoinsRelationships
             string $type = 'inner',
             bool $through = false,
             ?Builder $relatedQuery = null,
-            MorphTypes|array|string|true $morphTypes = true
+            MorphTypes|array|string|bool $morphTypes = true
         ): Builder {
             /** @var Builder $this */
             if (! $morphTypes instanceof MorphTypes) {
