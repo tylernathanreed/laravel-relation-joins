@@ -28,7 +28,7 @@
         "php-coveralls/php-coveralls": "^2.4",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.5",
-        "symfony/var-dumper": "^7.0"
+        "symfony/var-dumper": "^6.4.4|^7.0"
     },
     "autoload": {
         "psr-4": {
