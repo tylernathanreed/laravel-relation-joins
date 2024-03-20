@@ -478,7 +478,7 @@ class JoinsRelationships
          */
         return function (
             string|array $relation,
-            array|string|true $morphTypes = true,
+            array|string|bool $morphTypes = true,
             Closure|array|null $callback = null,
             string $type = 'inner',
             bool $through = false,
