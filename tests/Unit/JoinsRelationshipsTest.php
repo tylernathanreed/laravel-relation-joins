@@ -5,6 +5,7 @@ namespace Reedware\LaravelRelationJoins\Tests\Unit;
 use Closure;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentCountryModelStub;
+use Reedware\LaravelRelationJoins\Tests\Models\EloquentPolymorphicCommentModelStub;
 use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
 
 class JoinsRelationshipsTest extends TestCase
@@ -275,5 +276,17 @@ class JoinsRelationshipsTest extends TestCase
 
         $this->assertEquals('select * from "users" left join "posts" on "posts"."user_id" = "users"."id" inner join "comments" on "comments"."post_id" = "posts"."id" right join "likes" on "likes"."comment_id" = "comments"."id"', $builder->toSql());
         $this->assertEquals($builderClass, get_class($builder));
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider queryDataProvider
+     */
+    public function throwsOnEmptyMorphTypesArray(Closure $query, string $builderClass)
+    {
+        $this->expectExceptionMessage('joinMorphRelation() requires at least one morph type.');
+
+        $query(new EloquentPolymorphicCommentModelStub)->joinMorphRelation('commentable', []);
     }
 }

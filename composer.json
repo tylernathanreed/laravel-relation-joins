@@ -60,6 +60,12 @@
         "test:static": "phpstan",
         "test:style": "pint --test",
         "test:style-fix": "pint",
-        "test:suite": "phpunit"
+        "test:suite": "phpunit",
+        "test": [
+            "@test:style",
+            "@test:static",
+            "@test:suite",
+            "@test:coverage"
+        ]
     }
 }

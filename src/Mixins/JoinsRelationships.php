@@ -48,7 +48,7 @@ class JoinsRelationships
                     return $this->joinNestedRelation($relation, $callback, $type, $through, $morphTypes);
                 }
 
-                if (! empty($parts = preg_split('/\s+as\s+/i', $relation))) {
+                if (($parts = preg_split('/\s+as\s+/i', $relation)) && count($parts) >= 2) {
                     [$relationName, $alias] = $parts;
                 } else {
                     $relationName = $relation;
@@ -334,6 +334,10 @@ class JoinsRelationships
             // that has the type itself constrained. This allows us to join into a
             // singular table, which bypasses the typical headache of morphs.
 
+            if (count($morphTypes->items) == 0) {
+                throw new RuntimeException('joinMorphRelation() requires at least one morph type.');
+            }
+
             $morphType = array_shift($morphTypes->items);
 
             $belongsTo = $relatedQuery->getBelongsToRelation($relation, $morphType);
@@ -469,12 +473,12 @@ class JoinsRelationships
          * Add a morph to relationship join condition to the query.
          *
          * @param  string|array<Relation|string>  $relation
-         * @param  array<string>|string  $morphTypes
+         * @param  array<class-string<Model>>|class-string<Model>|true  $morphTypes
          * @param  Closure|array<Closure>|null  $callback
          */
         return function (
             string|array $relation,
-            array|string $morphTypes = ['*'],
+            array|string|true $morphTypes = true,
             Closure|array|null $callback = null,
             string $type = 'inner',
             bool $through = false,
