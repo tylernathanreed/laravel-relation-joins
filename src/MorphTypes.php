@@ -20,7 +20,7 @@ class MorphTypes
      *
      * @param  class-string<Model>|array<class-string<Model>>|true  $items
      */
-    public function __construct(array|string|true $items)
+    public function __construct(array|string|bool $items)
     {
         if ($items === true) {
             $this->all = true;
