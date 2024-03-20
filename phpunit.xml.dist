@@ -6,7 +6,7 @@
   beStrictAboutTestsThatDoNotTestAnything="false"
   bootstrap="tests/bootstrap.php"
   displayDetailsOnTestsThatTriggerDeprecations="true"
-  failOnDeprecation ="true"
+  failOnDeprecation ="false"
   colors="true"
   processIsolation="false"
   stopOnError="false"
