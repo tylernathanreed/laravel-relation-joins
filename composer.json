@@ -1,5 +1,5 @@
 {
-    "name": "reedware/laravel-relation-joins",
+    "name": "webregulate/laravel-relation-joins",
     "description": "Adds the ability to join on a relationship by name.",
     "keywords": [
         "laravel",
@@ -13,6 +13,10 @@
         {
             "name": "Tyler Reed",
             "email": "tylernathanreed@gmail.com"
+        },
+        {
+            "name": "Craig Dennis",
+            "email": "craig.dennis@webregulate.co.uk"
         }
     ],
     "require": {
