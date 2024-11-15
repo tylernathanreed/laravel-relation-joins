@@ -3,17 +3,17 @@
 namespace Reedware\LaravelRelationJoins\Mixins;
 
 use Closure;
-use Illuminate\Database\Eloquent\Builder;
+use LogicException;
+use RuntimeException;
+use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
+use Reedware\LaravelRelationJoins\MorphTypes;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Arr;
-use LogicException;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Reedware\LaravelRelationJoins\EloquentJoinClause;
-use Reedware\LaravelRelationJoins\MorphTypes;
-use RuntimeException;
 
 /** @mixin Builder */
 class JoinsRelationships
@@ -71,8 +71,10 @@ class JoinsRelationships
                 $relation = $this->getBelongsToJoinRelation($relation, $morphTypes, $relatedQuery ?: $this);
             }
 
+            $relatedConnection = $relation->getRelated()->getConnectionName();
+
             $joinQuery = $relation->getRelationJoinQuery(
-                $relation->getRelated()->newQuery(), $relatedQuery ?: $this, $type, $alias ?? null
+                $relation->getRelated()->from($relatedConnection.'.'.$relation->getRelated()->getTable()), $relatedQuery ?: $this, $type, $alias ?? null
             );
 
             // If we're simply passing through a relation, then we want to advance the relation

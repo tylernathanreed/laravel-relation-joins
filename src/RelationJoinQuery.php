@@ -66,13 +66,17 @@ class RelationJoinQuery
         }
 
         if (! is_null($alias) && $alias != $query->getModel()->getTable()) {
-            $query->from($query->getModel()->getTable().' as '.$alias);
+            $modelDatabase = $query->getConnection()->getDatabaseName();
+            $query->from($modelDatabase.'.'.$query->getModel()->getTable().' as '.$alias);
 
             $query->getModel()->setTable($alias);
         }
 
+        $relatedDatabase = $relation->getRelated()->getConnection()->getDatabaseName();
+        $parentDatabase = $parentQuery->getConnection()->getDatabaseName();
+
         $query->whereColumn(
-            $relation->getQualifiedOwnerKeyName(), '=', $relation->getQualifiedForeignKeyName()
+            $relatedDatabase.'.'.$relation->getQualifiedOwnerKeyName(), '=', $parentDatabase.'.'.$relation->getQualifiedForeignKeyName()
         );
 
         return $query;
