@@ -71,8 +71,10 @@ class JoinsRelationships
                 $relation = $this->getBelongsToJoinRelation($relation, $morphTypes, $relatedQuery ?: $this);
             }
 
+            $relatedConnection = $relation->getRelated()->getConnectionName();
+
             $joinQuery = $relation->getRelationJoinQuery(
-                $relation->getRelated()->newQuery(), $relatedQuery ?: $this, $type, $alias ?? null
+                $relation->getRelated()->from($relatedConnection.'.'.$relation->getRelated()->getTable()), $relatedQuery ?: $this, $type, $alias ?? null
             );
 
             // If we're simply passing through a relation, then we want to advance the relation
