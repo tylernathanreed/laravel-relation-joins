@@ -393,7 +393,7 @@ $relation = Relation::noConstraints(function () {
         ->belongsTo(Country::class, 'kingdom_name', 'name');
 });
 
-User::query()->joinRelation([$relation, 'kingdoms');
+User::query()->joinRelation([$relation, 'kingdoms']);
 // SQL: select * from "users" inner join "countries" as "kingdoms" on "kingdoms"."name" = "users"."kingdom_name"
 ```
 
