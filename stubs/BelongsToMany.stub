@@ -13,6 +13,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  *
  * @method class-string<Model> getPivotClass()
  */
-class BelongsToMany
+class BelongsToMany extends Relation
 {
 }
