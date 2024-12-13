@@ -3,6 +3,7 @@
 namespace Reedware\LaravelRelationJoins;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,10 +17,32 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use InvalidArgumentException;
 
+/**
+ * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
+ * @template TIntermediateModel of Model
+ * @template TResult
+ *
+ * @phpstan-type TRelation Relation<TRelatedModel,TDeclaringModel,TResult>
+ * @phpstan-type TBelongsTo BelongsTo<TRelatedModel,TDeclaringModel>
+ * @phpstan-type TBelongsToMany BelongsToMany<TRelatedModel,TDeclaringModel>
+ * @phpstan-type THasOne HasOne<TRelatedModel,TDeclaringModel>
+ * @phpstan-type THasMany HasMany<TRelatedModel,TDeclaringModel>
+ * @phpstan-type TMorphOne MorphOne<TRelatedModel,TDeclaringModel>
+ * @phpstan-type TMorphMany MorphMany<TRelatedModel,TDeclaringModel>
+ * @phpstan-type THasOneThrough HasOneThrough<TRelatedModel,TIntermediateModel,TDeclaringModel>
+ * @phpstan-type THasManyThrough HasManyThrough<TRelatedModel,TIntermediateModel,TDeclaringModel>
+ * @phpstan-type TMorphToMany MorphToMany<TRelatedModel,TDeclaringModel>
+ */
 class RelationJoinQuery
 {
     /**
      * Adds the constraints for a relationship join.
+     *
+     * @param  TRelation  $relation
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TDeclaringModel>  $parentQuery
+     * @return Builder<TRelatedModel>
      */
     public static function get(
         Relation $relation,
@@ -53,6 +76,11 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a belongs to relationship join.
+     *
+     * @param  TBelongsTo  $relation
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TDeclaringModel>  $parentQuery
+     * @return Builder<TRelatedModel>
      */
     protected static function belongsTo(
         BelongsTo $relation,
@@ -80,6 +108,11 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a belongs to many relationship join.
+     *
+     * @param  TBelongsToMany  $relation
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TDeclaringModel>  $parentQuery
+     * @return Builder<TRelatedModel>
      */
     protected static function belongsToMany(
         BelongsToMany $relation,
@@ -122,7 +155,7 @@ class RelationJoinQuery
 
         if (($using = $relation->getPivotClass()) != Pivot::class) {
             $query->getQuery()->joins[0] = new EloquentJoinClause(
-                $query->getQuery()->joins[0],
+                $query->getQuery()->joins[0], // @phpstan-ignore offsetAccess.notFound (Join is added above)
                 (new $using)->setTable($on)
             );
         }
@@ -138,6 +171,11 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a has one or has many relationship join.
+     *
+     * @param  THasOne|THasMany|TMorphOne|TMorphMany  $relation
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TDeclaringModel>  $parentQuery
+     * @return Builder<TRelatedModel>
      */
     protected static function hasOneOrMany(
         HasOne|HasMany|MorphOne|MorphMany $relation,
@@ -166,11 +204,10 @@ class RelationJoinQuery
     /**
      * Adds the constraints for a has one through or has many through relationship join.
      *
-     * Soft deletes on the parent model are not handled correctly until 7.10.0.
-     * Most of the functionality works as expected otherwise. Given that 6.x
-     * is nearing EoL, and 7.x is already EoL, we'll let it slide for now.
-     *
-     * @see https://github.com/laravel/framework/commit/de4c42f04d609b119a4e0a7e6223c37bfe54cb87
+     * @param  THasOneThrough|THasManyThrough  $relation
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TDeclaringModel>  $parentQuery
+     * @return Builder<TRelatedModel>
      */
     protected static function hasOneOrManyThrough(
         HasOneThrough|HasManyThrough $relation,
@@ -220,7 +257,7 @@ class RelationJoinQuery
         // scopes, we are going to define the query through eloquent instead.
 
         $query->getQuery()->joins[0] = new EloquentJoinClause(
-            $query->getQuery()->joins[0],
+            $query->getQuery()->joins[0], // @phpstan-ignore offsetAccess.notFound (Join added above)
             $relation->getParent()->newInstance()->setTable($on)
         );
 
@@ -233,6 +270,11 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a morph one or morph many relationship join.
+     *
+     * @param  TMorphOne|TMorphMany  $relation
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TDeclaringModel>  $parentQuery
+     * @return Builder<TRelatedModel>
      */
     protected static function morphOneOrMany(
         MorphOne|MorphMany $relation,
@@ -254,6 +296,11 @@ class RelationJoinQuery
 
     /**
      * Adds the constraints for a morph to many relationship join.
+     *
+     * @param  TMorphToMany  $relation
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TDeclaringModel>  $parentQuery
+     * @return Builder<TRelatedModel>
      */
     protected static function morphToMany(
         MorphToMany $relation,
@@ -298,7 +345,7 @@ class RelationJoinQuery
 
         if (($using = $relation->getPivotClass()) != Pivot::class) {
             $query->getQuery()->joins[0] = new EloquentJoinClause(
-                $query->getQuery()->joins[0],
+                $query->getQuery()->joins[0], // @phpstan-ignore offsetAccess.notFound (Join added above)
                 (new $using)->setTable($on)
             );
         }
