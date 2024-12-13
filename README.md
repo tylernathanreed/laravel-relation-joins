@@ -229,13 +229,6 @@ User::query()->joinRelation('posts as articles.comments as threads', [
 });
 ```
 
-The join type can also be mixed:
-```php
-User::query()->joinRelation('posts.comments', [
-    'comments' => function ($join) { $join->type = 'left'; }
-});
-```
-
 <a name="multiple-constraints-through"></a>
 #### Through-Syntax
 
