@@ -7,6 +7,8 @@ parameters:
     stubFiles:
         - stubs/BelongsToMany.stub
         - stubs/EloquentBuilder.stub
+        - stubs/EloquentCollection.stub
+        - stubs/Model.stub
         - stubs/QueryBuilder.stub
         - stubs/Relation.stub
     ignoreErrors:
@@ -16,19 +18,3 @@ parameters:
         -
             message: '#Access to protected property Illuminate\\Database\\Eloquent\\Builder::\$\w+.#'
             path: src/Mixins/JoinsRelationships.php
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
