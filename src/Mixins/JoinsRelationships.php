@@ -15,7 +15,7 @@ use Reedware\LaravelRelationJoins\EloquentJoinClause;
 use Reedware\LaravelRelationJoins\MorphTypes;
 use RuntimeException;
 
-/** @mixin Builder */
+/** @template TModel of Model */
 class JoinsRelationships
 {
     /**
@@ -38,7 +38,7 @@ class JoinsRelationships
             ?Builder $relatedQuery = null,
             MorphTypes|array|string|bool $morphTypes = true
         ): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             if (! $morphTypes instanceof MorphTypes) {
                 $morphTypes = new MorphTypes($morphTypes); // @phpstan-ignore-line
             }
@@ -96,10 +96,8 @@ class JoinsRelationships
                 $this->applyJoinScopes($joinQuery);
             }
 
-            $joinType = $joinQuery->getJoinType();
-
             $this->addJoinRelationWhere(
-                $joinQuery, $relation, $joinType ?: $type
+                $joinQuery, $relation, $type
             );
 
             return ! is_null($relatedQuery) ? $joinQuery : $this;
@@ -124,7 +122,7 @@ class JoinsRelationships
             bool $through,
             MorphTypes $morphTypes
         ): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             $relations = explode('.', $relations);
 
             $relatedQuery = $this;
@@ -165,7 +163,7 @@ class JoinsRelationships
          * Applies the eloquent scopes to the specified query.
          */
         return function (Builder $joinQuery): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             $joins = $joinQuery->getQuery()->joins ?: [];
 
             foreach ($joins as $join) {
@@ -187,7 +185,7 @@ class JoinsRelationships
          * Calls the provided callback on the join query.
          */
         return function (Builder $joinQuery, Closure $callback): void {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             $joins = $joinQuery->getQuery()->joins ?: [];
 
             array_unshift($joins, $joinQuery);
@@ -229,40 +227,6 @@ class JoinsRelationships
     }
 
     /**
-     * Defines the mixin for {@see $query->getJoinType()}.
-     */
-    public function getJoinType(): Closure
-    {
-        /**
-         * Returns the custom provided join type.
-         */
-        return function (): ?string {
-            /** @var Builder $this */
-            if (! property_exists($this, 'type')) {
-                return null;
-            }
-
-            // There's a weird quirk in PHP where if a dynamic property was added
-            // to a class, and the class has the magic "__get" method defined,
-            // accessing the property yields a value, but also throws too.
-
-            try {
-                $type = $this->type;
-            }
-
-            // There's a bug with code coverage that for whatever reason does not
-            // consider the "finally" line to be covered, but its contents are.
-            // While it looks weird, we are going to ignore coverage there.
-
-            // @codeCoverageIgnoreStart
-            finally {
-                // @codeCoverageIgnoreEnd
-                return $type;
-            }
-        };
-    }
-
-    /**
      * Defines the mixin for {@see $query->addJoinRelationWhere()}.
      */
     public function addJoinRelationWhere(): Closure
@@ -271,7 +235,7 @@ class JoinsRelationships
          * Add the "join relation" condition where clause to the query.
          */
         return function (Builder $joinQuery, Relation $relation, string $type): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             $joinQuery->mergeConstraintsFrom($relation->getQuery());
 
             $baseJoinQuery = $joinQuery->toBase();
@@ -305,7 +269,7 @@ class JoinsRelationships
          * Returns the belongs to relation for the next morph.
          */
         return function (MorphTo $relation, MorphTypes $morphTypes, Builder $relatedQuery): BelongsTo {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
 
             // When it comes to joining across morph types, we can really only support
             // a single type. However, when we're provided multiple types, we will
@@ -363,7 +327,7 @@ class JoinsRelationships
          * @param  Closure|array<string,Closure>|null  $callback
          */
         return function (string $relation, Closure|array|null $callback = null, bool $through = false): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'left', $through);
         };
     }
@@ -379,7 +343,7 @@ class JoinsRelationships
          * @param  Closure|array<string,Closure>|null  $callback
          */
         return function (string $relation, Closure|array|null $callback = null, bool $through = false): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'right', $through);
         };
     }
@@ -395,7 +359,7 @@ class JoinsRelationships
          * @param  Closure|array<string,Closure>|null  $callback
          */
         return function (string $relation, Closure|array|null $callback = null, bool $through = false): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'cross', $through);
         };
     }
@@ -411,7 +375,7 @@ class JoinsRelationships
          * @param  Closure|array<string,Closure>|null  $callback
          */
         return function (string $relation, Closure|array|null $callback = null, string $type = 'inner'): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, $type, true);
         };
     }
@@ -427,7 +391,7 @@ class JoinsRelationships
          * @param  Closure|array<string,Closure>|null  $callback
          */
         return function (string $relation, Closure|array|null $callback = null): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'left', true);
         };
     }
@@ -443,7 +407,7 @@ class JoinsRelationships
          * @param  Closure|array<string,Closure>|null  $callback
          */
         return function (string $relation, Closure|array|null $callback = null): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'right', true);
         };
     }
@@ -459,7 +423,7 @@ class JoinsRelationships
          * @param  Closure|array<string,Closure>|null  $callback
          */
         return function (string $relation, Closure|array|null $callback = null): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'cross', true);
         };
     }
@@ -484,7 +448,7 @@ class JoinsRelationships
             bool $through = false,
             ?Builder $relatedQuery = null
         ): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, $type, $through, $relatedQuery, $morphTypes);
         };
     }
@@ -507,7 +471,7 @@ class JoinsRelationships
             Closure|array|null $callback = null,
             bool $through = false
         ): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'left', $through, null, $morphTypes);
         };
     }
@@ -530,7 +494,7 @@ class JoinsRelationships
             Closure|array|null $callback = null,
             bool $through = false
         ): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'right', $through, null, $morphTypes);
         };
     }
@@ -553,7 +517,7 @@ class JoinsRelationships
             Closure|array|null $callback = null,
             bool $through = false
         ): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'cross', $through, null, $morphTypes);
         };
     }
@@ -576,7 +540,7 @@ class JoinsRelationships
             Closure|array|null $callback = null,
             string $type = 'inner'
         ): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, $type, true, null, $morphTypes);
         };
     }
@@ -598,7 +562,7 @@ class JoinsRelationships
             array|string $morphTypes = ['*'],
             Closure|array|null $callback = null
         ): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'left', true, null, $morphTypes);
         };
     }
@@ -620,7 +584,7 @@ class JoinsRelationships
             array|string $morphTypes = ['*'],
             Closure|array|null $callback = null
         ): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'right', true, null, $morphTypes);
         };
     }
@@ -642,7 +606,7 @@ class JoinsRelationships
             array|string $morphTypes = ['*'],
             Closure|array|null $callback = null
         ): Builder {
-            /** @var Builder $this */
+            /** @var Builder<TModel> $this */
             return $this->joinRelation($relation, $callback, 'cross', true, null, $morphTypes);
         };
     }
