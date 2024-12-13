@@ -34,6 +34,8 @@ use Reedware\LaravelRelationJoins\MorphTypes;
  * @method Builder|static crossJoinThroughMorphRelation($relation, $morphTypes = ['*'], Closure $callback = null)
  * @method Model getModel()
  *
+ * @template TModel of Model
+ *
  * @mixin \Illuminate\Database\Query\Builder
  */
 class Builder
