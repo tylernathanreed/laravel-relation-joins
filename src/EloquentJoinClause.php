@@ -8,15 +8,20 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\JoinClause;
 use ReflectionClass;
 
+/** @template TModel of Model */
 class EloquentJoinClause extends JoinClause
 {
     /**
      * The model associated to this join.
+     *
+     * @var TModel
      */
     public Model $model;
 
     /**
      * The eloquent query representing this join.
+     *
+     * @var Eloquent<Model>
      */
     public Eloquent $eloquent;
 
@@ -27,6 +32,8 @@ class EloquentJoinClause extends JoinClause
 
     /**
      * Create a new join clause instance.
+     *
+     * @param  TModel  $model
      */
     public function __construct(JoinClause $parentJoin, Model $model)
     {
@@ -74,6 +81,8 @@ class EloquentJoinClause extends JoinClause
 
     /**
      * Returns a new query builder for the model's table.
+     *
+     * @return Eloquent<TModel>
      */
     public function newEloquentQuery(): Eloquent
     {
@@ -84,6 +93,8 @@ class EloquentJoinClause extends JoinClause
 
     /**
      * Returns a new eloquent builder that doesn't have any global scopes or eager loading.
+     *
+     * @return Eloquent<TModel>
      */
     public function newModelQuery(): Eloquent
     {
@@ -92,9 +103,12 @@ class EloquentJoinClause extends JoinClause
 
     /**
      * Returns a new eloquent builder for this join clause.
+     *
+     * @return Eloquent<TModel>
      */
     public function newEloquentBuilder(): Eloquent
     {
+        /** @var Eloquent<TModel> */
         return new Eloquent($this);
     }
 
