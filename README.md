@@ -204,7 +204,7 @@ The first approach to handling multiple constraints is using an array syntax. Th
 User::query()->joinRelation('posts.comments', [
     function ($join) { $join->where('is_active', '=', 1); },
     function ($join) { $join->where('comments.title', 'like', '%looking for something%'); }
-});
+]);
 ```
 
 The array syntax supports both sequential and associative variants:
@@ -214,12 +214,12 @@ The array syntax supports both sequential and associative variants:
 User::query()->joinRelation('posts.comments', [
     null,
     function ($join) { $join->where('comments.title', 'like', '%looking for something%'); }
-});
+]);
 
 // Associative
 User::query()->joinRelation('posts.comments', [
     'comments' => function ($join) { $join->where('comments.title', 'like', '%looking for something%'); }
-});
+]);
 ```
 
 If you're using aliases, the associate array syntax refers to the fully qualified relation:
@@ -227,7 +227,7 @@ If you're using aliases, the associate array syntax refers to the fully qualifie
 User::query()->joinRelation('posts as articles.comments as threads', [
     'posts as articles' => function ($join) { $join->where('is_active', '=', 1); },
     'comments as threads' => function ($join) { $join->where('threads.title', 'like', '%looking for something%'); }
-});
+]);
 ```
 
 <a name="multiple-constraints-through"></a>
