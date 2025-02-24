@@ -66,6 +66,7 @@ This package is maintained with the latest version of Laravel in mind, but suppo
 
 | Package | Laravel     | PHP        |
 | :-----: | :---------: | :--------: |
+|     8.x | 11.x - 12.x | 8.2 - 8.4+ |
 |     7.x | 10.x - 11.x | 8.2 - 8.4+ |
 |     6.x | 10.x - 11.x | 8.1 - 8.3+ |
 |     5.x |  9.x - 10.x | 8.0 - 8.2+ |
