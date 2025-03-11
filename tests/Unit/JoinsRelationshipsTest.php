@@ -14,7 +14,7 @@ class JoinsRelationshipsTest extends TestCase
 {
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function anonymousRelation(Closure $query, string $builderClass)
+    public function anonymous_relation(Closure $query, string $builderClass)
     {
         $relation = Relation::noConstraints(function () {
             return (new EloquentUserModelStub)
@@ -30,7 +30,7 @@ class JoinsRelationshipsTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function anonymousRelation_alias(Closure $query, string $builderClass)
+    public function anonymous_relation_alias(Closure $query, string $builderClass)
     {
         $relation = Relation::noConstraints(function () {
             return (new EloquentUserModelStub)
@@ -81,7 +81,7 @@ class JoinsRelationshipsTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function multiconstraint_leftJoinRelation(Closure $query, string $builderClass)
+    public function multiconstraint_left_join_relation(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->leftJoinRelation('posts.comments', [
@@ -225,7 +225,7 @@ class JoinsRelationshipsTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function throwsOnEmptyMorphTypesArray(Closure $query, string $builderClass)
+    public function throws_on_empty_morph_types_array(Closure $query, string $builderClass)
     {
         $this->expectExceptionMessage('joinMorphRelation() requires at least one morph type.');
 

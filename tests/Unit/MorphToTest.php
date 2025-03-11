@@ -81,7 +81,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function withMorphType(Closure $query, string $builderClass)
+    public function with_morph_type(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
             ->joinMorphRelation('imageable', EloquentUserModelStub::class);
@@ -93,7 +93,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function withMorphType_alias(Closure $query, string $builderClass)
+    public function with_morph_type_alias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
             ->joinMorphRelation('imageable as imageable', EloquentUserModelStub::class);
@@ -105,7 +105,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function withMorphTypes(Closure $query, string $builderClass)
+    public function with_morph_types(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentFileModelStub)
             ->joinMorphRelation('link.imageable', [
@@ -120,7 +120,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function withMorphTypes_normal_in(Closure $query, string $builderClass)
+    public function with_morph_types_normal_in(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinMorphRelation('uploadedFiles.link.imageable', [
@@ -135,7 +135,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function withMorphTypes_normal_between(Closure $query, string $builderClass)
+    public function with_morph_types_normal_between(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentFileModelStub)
             ->joinMorphRelation('link.uploadedImages.imageable', [
@@ -150,7 +150,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function asBelongsTo(Closure $query, string $builderClass)
+    public function as_belongs_to(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
             ->joinRelation('postImageable');
@@ -208,7 +208,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin(Closure $query, string $builderClass)
+    public function left_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
             ->leftJoinMorphRelation('imageable', EloquentUserModelStub::class);
@@ -220,7 +220,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function rightJoin(Closure $query, string $builderClass)
+    public function right_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
             ->rightJoinMorphRelation('imageable', EloquentUserModelStub::class);
@@ -232,7 +232,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function crossJoin(Closure $query, string $builderClass)
+    public function cross_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
             ->crossJoinMorphRelation('imageable', EloquentUserModelStub::class);
@@ -244,7 +244,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function joinThrough_in(Closure $query, string $builderClass)
+    public function join_through_in(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('uploadedImages')
@@ -259,7 +259,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function joinThrough_out(Closure $query, string $builderClass)
+    public function join_through_out(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentImageModelStub)
             ->joinMorphRelation('imageable', [EloquentPostModelStub::class])
@@ -272,7 +272,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoinThrough(Closure $query, string $builderClass)
+    public function left_join_through(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('uploadedImages')
@@ -287,7 +287,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function rightJoinThrough(Closure $query, string $builderClass)
+    public function right_join_through(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('uploadedImages')
@@ -302,7 +302,7 @@ class MorphToTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function crossJoinThrough(Closure $query, string $builderClass)
+    public function cross_join_through(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('uploadedImages')

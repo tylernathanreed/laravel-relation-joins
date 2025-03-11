@@ -48,7 +48,7 @@ class MorphedByManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin(Closure $query, string $builderClass)
+    public function left_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentTagModelStub)
             ->leftJoinRelation('posts');

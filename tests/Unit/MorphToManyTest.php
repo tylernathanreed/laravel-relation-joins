@@ -47,7 +47,7 @@ class MorphToManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin(Closure $query, string $builderClass)
+    public function left_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
             ->leftJoinRelation('tags');
@@ -115,7 +115,7 @@ class MorphToManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_model_softDeletes(Closure $query, string $builderClass)
+    public function constraints_pivot_model_soft_deletes(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
             ->joinRelation('tagsUsingSoftDeletingPivotModel');
@@ -127,7 +127,7 @@ class MorphToManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_model_softDeletes_withTrashed(Closure $query, string $builderClass)
+    public function constraints_pivot_model_soft_deletes_with_trashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
             ->joinRelation('tagsUsingSoftDeletingPivotModel', function ($join, $pivot) {

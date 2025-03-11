@@ -11,7 +11,7 @@ use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
 class RelationJoinQueryTest extends TestCase
 {
     #[Test]
-    public function nonRelation()
+    public function non_relation()
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(EloquentUserModelStub::class.'::active must return a relationship instance.');
@@ -22,7 +22,7 @@ class RelationJoinQueryTest extends TestCase
     }
 
     #[Test]
-    public function unsupportedRelation()
+    public function unsupported_relation()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupported relation type ['.CustomRelation::class.'].');

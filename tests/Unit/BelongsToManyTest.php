@@ -36,7 +36,7 @@ class BelongsToManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function asMorph(Closure $query, string $builderClass)
+    public function as_morph(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentVideoModelStub)
             ->joinRelation('videoTags');
@@ -81,7 +81,7 @@ class BelongsToManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_parent(Closure $query, string $builderClass)
+    public function soft_deletes_parent(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
             ->joinRelation('roles');
@@ -92,7 +92,7 @@ class BelongsToManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_child(Closure $query, string $builderClass)
+    public function soft_deletes_child(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('softDeletingRoles');
@@ -114,7 +114,7 @@ class BelongsToManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function circular_childAlias(Closure $query, string $builderClass)
+    public function circular_child_alias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('messagedUsers as recipients');
@@ -125,7 +125,7 @@ class BelongsToManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin(Closure $query, string $builderClass)
+    public function left_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->leftJoinRelation('roles');
@@ -136,7 +136,7 @@ class BelongsToManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin_inverse(Closure $query, string $builderClass)
+    public function left_join_inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentRoleModelStub)
             ->leftJoinRelation('users');
@@ -239,7 +239,7 @@ class BelongsToManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_model_softDeletes(Closure $query, string $builderClass)
+    public function constraints_pivot_model_soft_deletes(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('rolesUsingSoftDeletingPivotModel');
@@ -250,7 +250,7 @@ class BelongsToManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_model_softDeletes_withTrashed(Closure $query, string $builderClass)
+    public function constraints_pivot_model_soft_deletes_with_trashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('rolesUsingSoftDeletingPivotModel', function ($join, $pivot) {
