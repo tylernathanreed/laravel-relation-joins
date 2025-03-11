@@ -43,7 +43,7 @@ Eloquent doesn't offer any tools for joining, so we've been stuck with the base 
 
 Aside from relationships themselves, Eloquent's omission of relationship joins means that you can't leverage several powerful features of Eloquent, such as model scopes and soft deletes. This package aims to correct all of that.
 
-I've seen other packages out there that try to accompish a goal similar to this one. I tried to get on board with at least one of them, but they all fell short for a number of reasons. Let me first explain the features of this package, and you might see why this one is better (at least what for what I intend to use it for).
+I've seen other packages out there that try to accomplish a goal similar to this one. I tried to get on board with at least one of them, but they all fell short for a number of reasons. Let me first explain the features of this package, and you might see why this one is better (at least what for what I intend to use it for).
 
 <a name="installation"></a>
 ## Installation
