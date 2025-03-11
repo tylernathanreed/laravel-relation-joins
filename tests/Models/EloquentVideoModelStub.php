@@ -2,6 +2,8 @@
 
 namespace Reedware\LaravelRelationJoins\Tests\Models;
 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
 class EloquentVideoModelStub extends EloquentRelationJoinModelStub
 {
     protected $table = 'videos';
@@ -24,5 +26,10 @@ class EloquentVideoModelStub extends EloquentRelationJoinModelStub
     public function videoTags()
     {
         return $this->belongsToMany(EloquentTagModelStub::class, 'taggables', 'taggable_id', 'tag_id')->wherePivot('taggable_type', '=', static::class);
+    }
+
+    public function relatableItems(): MorphMany
+    {
+        return $this->morphMany(EloquentRelatedItemModelStub::class, 'related');
     }
 }

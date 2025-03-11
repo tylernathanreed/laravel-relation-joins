@@ -60,6 +60,15 @@ class EloquentUserModelStub extends EloquentRelationJoinModelStub
         return $this->hasMany(EloquentPostModelStub::class, 'user_id', 'id');
     }
 
+    public function activePosts()
+    {
+        $q = $this->posts();
+
+        $q->where($q->qualifyColumn('status'), 'active');
+
+        return $q;
+    }
+
     public function country()
     {
         return $this->belongsTo(EloquentCountryModelStub::class, 'country_id', 'id');

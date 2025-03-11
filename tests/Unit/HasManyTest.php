@@ -264,4 +264,16 @@ class HasManyTest extends TestCase
         $this->assertEquals('select * from "users" inner join "posts" on "posts"."user_id" = "users"."id" and not exists (select * from "comments" where "posts"."id" = "comments"."post_id")', $builder->toSql());
         $this->assertEquals($builderClass, get_class($builder));
     }
+
+    #[Test]
+    #[DataProvider('queryDataProvider')]
+    public function qualifyColumn(Closure $query, string $builderClass)
+    {
+        $builder = $query(new EloquentUserModelStub)
+            ->joinRelation('activePosts as active_posts');
+
+        $this->assertEquals('select * from "users" inner join "posts" as "active_posts" on "active_posts"."user_id" = "users"."id" and "active_posts"."status" = ?', $builder->toSql());
+        $this->assertEquals([0 => 'active'], $builder->getBindings());
+        $this->assertEquals($builderClass, get_class($builder));
+    }
 }
