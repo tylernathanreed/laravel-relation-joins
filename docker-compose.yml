@@ -1,0 +1,12 @@
+services:
+    dev:
+        build:
+            context: ./vendor/reedware/sail-lite/runtimes/8.4
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        image: laravel-relation-joins
+        environment:
+            WWWUSER: '${WWWUSER}'
+        volumes:
+            - '.:/var/www/html'
