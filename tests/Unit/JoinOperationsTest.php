@@ -23,7 +23,7 @@ class JoinOperationsTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function orOn(Closure $query, string $builderClass)
+    public function or_on(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)->joinRelation('phone', function ($join) {
             $join->on('phones.extra_1', '=', 'users.extra_1');

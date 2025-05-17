@@ -48,7 +48,7 @@ class HasManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function asMorph(Closure $query, string $builderClass)
+    public function as_morph(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentVideoModelStub)
             ->joinRelation('videoComments');
@@ -60,7 +60,7 @@ class HasManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function childAlias(Closure $query, string $builderClass)
+    public function child_alias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
             ->joinRelation('comments as feedback');
@@ -110,7 +110,7 @@ class HasManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function through_leftJoin(Closure $query, string $builderClass)
+    public function through_left_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('posts', function ($join) {
@@ -127,7 +127,7 @@ class HasManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function through_rightJoin(Closure $query, string $builderClass)
+    public function through_right_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('posts', function ($join) {
@@ -144,7 +144,7 @@ class HasManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function through_crossJoin(Closure $query, string $builderClass)
+    public function through_cross_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('posts', function ($join) {
@@ -161,7 +161,7 @@ class HasManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin(Closure $query, string $builderClass)
+    public function left_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
             ->leftJoinRelation('comments');
@@ -172,7 +172,7 @@ class HasManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin_inverse(Closure $query, string $builderClass)
+    public function left_join_inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCommentModelStub)
             ->leftJoinRelation('post');
@@ -227,7 +227,7 @@ class HasManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function localScope(Closure $query, string $builderClass)
+    public function local_scope(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCountryModelStub)
             ->joinRelation('users', function ($join) {
@@ -254,7 +254,7 @@ class HasManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function doesntHave(Closure $query, string $builderClass)
+    public function doesnt_have(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('posts', function ($join) {
@@ -267,7 +267,7 @@ class HasManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function qualifyColumn(Closure $query, string $builderClass)
+    public function qualify_column(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('activePosts as active_posts');

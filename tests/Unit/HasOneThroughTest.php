@@ -101,7 +101,7 @@ class HasOneThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin(Closure $query, string $builderClass)
+    public function left_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSupplierModelStub)
             ->leftJoinRelation('userHistory');
@@ -112,7 +112,7 @@ class HasOneThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin_inverse(Closure $query, string $builderClass)
+    public function left_join_inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserHistoryModelStub)
             ->leftJoinRelation('user.supplier');
@@ -165,7 +165,7 @@ class HasOneThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_softDeletes(Closure $query, string $builderClass)
+    public function constraints_pivot_soft_deletes(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSupplierModelStub)
             ->joinRelation('userHistoryThroughSoftDeletingUser', function ($join, $through) {
@@ -179,7 +179,7 @@ class HasOneThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_softDeletes_withTrashed(Closure $query, string $builderClass)
+    public function constraints_pivot_soft_deletes_with_trashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSupplierModelStub)
             ->joinRelation('userHistoryThroughSoftDeletingUser', function ($join, $through) {
@@ -192,7 +192,7 @@ class HasOneThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_softDeletes_alias(Closure $query, string $builderClass)
+    public function constraints_pivot_soft_deletes_alias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSupplierModelStub)
             ->joinRelation('userHistoryThroughSoftDeletingUser as citizens,user_history');
@@ -203,7 +203,7 @@ class HasOneThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_softDeletes_withTrashed_alias(Closure $query, string $builderClass)
+    public function constraints_pivot_soft_deletes_with_trashed_alias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSupplierModelStub)
             ->joinRelation('userHistoryThroughSoftDeletingUser as citizens,user_history', function ($join, $through) {
@@ -216,7 +216,7 @@ class HasOneThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_missingMethod(Closure $query, string $builderClass)
+    public function constraints_pivot_missing_method(Closure $query, string $builderClass)
     {
         $this->expectException(BadMethodCallException::class);
 

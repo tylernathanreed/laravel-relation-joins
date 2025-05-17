@@ -33,6 +33,9 @@ This package adds the ability to join on a relationship by name.
         - [Nested Relationships](#joining-morph-to-nested)
     - [9. Anonymous Relations](#joining-anonymous)
     - [10. Everything else](#joining-miscellaneous)
+-  [Conflicts](#conflicts)
+    - [1. Packages & Alternatives](#packages-and-alternatives)
+    - [2. Overriding getTable](#get-table)
 
 <a name="introduction"></a>
 ## Introduction
@@ -43,7 +46,7 @@ Eloquent doesn't offer any tools for joining, so we've been stuck with the base 
 
 Aside from relationships themselves, Eloquent's omission of relationship joins means that you can't leverage several powerful features of Eloquent, such as model scopes and soft deletes. This package aims to correct all of that.
 
-I've seen other packages out there that try to accompish a goal similar to this one. I tried to get on board with at least one of them, but they all fell short for a number of reasons. Let me first explain the features of this package, and you might see why this one is better (at least what for what I intend to use it for).
+I've seen other packages out there that try to accomplish a goal similar to this one. I tried to get on board with at least one of them, but they all fell short for a number of reasons. Let me first explain the features of this package, and you might see why this one is better (at least what for what I intend to use it for).
 
 <a name="installation"></a>
 ## Installation
@@ -404,3 +407,49 @@ User::query()->joinRelation('licenses')->groupBy('users.id')->orderBy('users.id'
 Personally, I see myself using this a ton in Laravel Nova (specifically lenses), but I've been needing queries like this for years in countless scenarios.
 
 Joins are something that nearly every developer will eventually use, so having Eloquent natively support joining over relations would be fantastic. However, since that doesn't come out of the box, you'll have to install this package instead. My goal with this package is to mirror the Laravel "feel" of coding, where complex implementations (such as joining over named relations) is simple to use and easy to understand.
+
+<a name="conflicts"></a>
+## Conflicts
+
+Like any package that modifies or extends query behavior, there are bound to be conflicts with other packages that attempt to do something similar. I've architected this package with high compatability in mind. That said, there are some basic assumptions, which I feel are fair, that this package requires. Anything that violates these assumptions is at risk of conflicting with this package.
+
+Here are the approaches and requirements of this package:
+- This package does not override the default query builder, and instead leverages its [Macroable](https://github.com/laravel/framework/blob/12.x/src/Illuminate/Macroable/Traits/Macroable.php) behavior
+- This package does not require any changes to the Model instance, and even supports Models using their own Eloquent builder instances
+- This package requires the Eloquent Relations to respect their property types and return types
+- This package requires the `setTable` method on models to impact subsequent calls to `getTable` and `qualifyColumn`
+
+In short, if you have a package or implementation that's breaking return types, or preventing calls to `setTable` from having any affect, there's likely going to be some amount of conflict.
+
+<a name="packages-and-alternatives"></a>
+### 1. Packages & Alternatives
+
+Here are the known packages that conflict with this one, and why:
+
+[awobaz/compoships](https://github.com/topclaudy/compoships)
+- Properties of relations, like `BelongsTo::$foreignKey` are expected to be a `string` by the framework, but this package injects `array` values.
+- Use [reedware/laravel-composite-relations](https://github.com/tylernathanreed/laravel-composite-relations) instead, which defines new relations, rather than overriding existing ones, and respects return types
+
+
+<a name="get-table"></a>
+### 2. Overriding getTable
+
+When a join alias is used, the underlying implementation swaps out the table name of the model with the aliased counterpart so that any qualified constraints are bound against the aliased table, rather than the original one. This relies on the ability to set a model's table during runtime. If `getTable` returns a constant, you won't be able to use aliasing. You can still override the `getTable` function, you just have to support the behavior of `setTable`.
+
+Here's an example that **would conflict** with this package:
+
+```php
+public function getTable()
+{
+    return 'my_table';
+}
+```
+
+Here's an example that **would not conflict** with this package:
+
+```php
+public function getTable()
+{
+    return $this->table ?? 'my_table';
+}
+```

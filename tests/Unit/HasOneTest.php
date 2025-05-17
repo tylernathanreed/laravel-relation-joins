@@ -48,7 +48,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function asMorph(Closure $query, string $builderClass)
+    public function as_morph(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
             ->joinRelation('postImage');
@@ -71,7 +71,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_parent(Closure $query, string $builderClass)
+    public function soft_deletes_parent(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
             ->joinRelation('phone');
@@ -82,7 +82,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_parent_withTrashed(Closure $query, string $builderClass)
+    public function soft_deletes_parent_with_trashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
             ->joinRelation('phone')
@@ -94,7 +94,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_parent_inverse(Closure $query, string $builderClass)
+    public function soft_deletes_parent_inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPhoneModelStub)
             ->joinRelation('softDeletingUser');
@@ -105,7 +105,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_child(Closure $query, string $builderClass)
+    public function soft_deletes_child(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('softDeletingPhone');
@@ -116,7 +116,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_child_withTrashed(Closure $query, string $builderClass)
+    public function soft_deletes_child_with_trashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('softDeletingPhone', function ($join) {
@@ -129,7 +129,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_child_inverse(Closure $query, string $builderClass)
+    public function soft_deletes_child_inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingPhoneModelStub)
             ->joinRelation('user');
@@ -140,7 +140,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes(Closure $query, string $builderClass)
+    public function soft_deletes(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
             ->joinRelation('softDeletingPhone');
@@ -151,7 +151,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_withParentTrashed(Closure $query, string $builderClass)
+    public function soft_deletes_with_parent_trashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
             ->joinRelation('softDeletingPhone')
@@ -163,7 +163,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_withChildTrashed(Closure $query, string $builderClass)
+    public function soft_deletes_with_child_trashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
             ->joinRelation('softDeletingPhone', function ($join) {
@@ -176,7 +176,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_withTrashed(Closure $query, string $builderClass)
+    public function soft_deletes_with_trashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
             ->withTrashed()
@@ -190,7 +190,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin(Closure $query, string $builderClass)
+    public function left_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->leftJoinRelation('phone');
@@ -201,7 +201,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin_inverse(Closure $query, string $builderClass)
+    public function left_join_inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPhoneModelStub)
             ->leftJoinRelation('user');
@@ -212,7 +212,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function rightJoin(Closure $query, string $builderClass)
+    public function right_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->rightJoinRelation('phone');
@@ -223,7 +223,7 @@ class HasOneTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function crossJoin(Closure $query, string $builderClass)
+    public function cross_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->crossJoinRelation('phone');

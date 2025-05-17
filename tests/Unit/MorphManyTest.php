@@ -36,9 +36,9 @@ class MorphManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function aliasWithTableDefined(Closure $query, string $builderClass)
+    public function alias_with_table_defined(Closure $query, string $builderClass)
     {
-        $builder = $query(new EloquentVideoModelStub())
+        $builder = $query(new EloquentVideoModelStub)
             ->joinRelation('relatableItems as relatable');
 
         $this->assertEquals('select * from "videos" inner join "get_table_override" as "relatable" on "relatable"."related_id" = "videos"."id" and "relatable"."related_type" = ?', $builder->toSql());
@@ -48,7 +48,7 @@ class MorphManyTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin(Closure $query, string $builderClass)
+    public function left_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
             ->leftJoinRelation('polymorphicComments');

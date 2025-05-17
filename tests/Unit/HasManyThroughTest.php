@@ -82,7 +82,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_parent(Closure $query, string $builderClass)
+    public function soft_deletes_parent(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingCountryModelStub)
             ->joinRelation('posts');
@@ -93,7 +93,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_through(Closure $query, string $builderClass)
+    public function soft_deletes_through(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCountryModelStub)
             ->joinRelation('postsThroughSoftDeletingUser');
@@ -104,7 +104,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function softDeletes_child(Closure $query, string $builderClass)
+    public function soft_deletes_child(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCountryModelStub)
             ->joinRelation('softDeletingPosts');
@@ -137,7 +137,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function circular_alias_softDeletes(Closure $query, string $builderClass)
+    public function circular_alias_soft_deletes(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentSoftDeletingUserModelStub)
             ->joinRelation('employeePosts as employees,posts');
@@ -148,7 +148,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function throughCircular(Closure $query, string $builderClass)
+    public function through_circular(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('departmentEmployees');
@@ -159,7 +159,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function throughCircular_alias_softDeletes(Closure $query, string $builderClass)
+    public function through_circular_alias_soft_deletes(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentUserModelStub)
             ->joinRelation('employeesThroughSoftDeletingDepartment as employees');
@@ -170,7 +170,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin(Closure $query, string $builderClass)
+    public function left_join(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCountryModelStub)
             ->leftJoinRelation('posts');
@@ -181,7 +181,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function leftJoin_inverse(Closure $query, string $builderClass)
+    public function left_join_inverse(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentPostModelStub)
             ->leftJoinRelation('user.country');
@@ -233,7 +233,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_softDeletes(Closure $query, string $builderClass)
+    public function constraints_pivot_soft_deletes(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCountryModelStub)
             ->joinRelation('postsThroughSoftDeletingUser', function ($join, $through) {
@@ -247,7 +247,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_softDeletes_withTrashed(Closure $query, string $builderClass)
+    public function constraints_pivot_soft_deletes_with_trashed(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCountryModelStub)
             ->joinRelation('postsThroughSoftDeletingUser', function ($join, $through) {
@@ -260,7 +260,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_softDeletes_alias(Closure $query, string $builderClass)
+    public function constraints_pivot_soft_deletes_alias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCountryModelStub)
             ->joinRelation('postsThroughSoftDeletingUser as citizens,articles');
@@ -271,7 +271,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_softDeletes_withTrashed_alias(Closure $query, string $builderClass)
+    public function constraints_pivot_soft_deletes_with_trashed_alias(Closure $query, string $builderClass)
     {
         $builder = $query(new EloquentCountryModelStub)
             ->joinRelation('postsThroughSoftDeletingUser as citizens,articles', function ($join, $through) {
@@ -284,7 +284,7 @@ class HasManyThroughTest extends TestCase
 
     #[Test]
     #[DataProvider('queryDataProvider')]
-    public function constraints_pivot_missingMethod(Closure $query, string $builderClass)
+    public function constraints_pivot_missing_method(Closure $query, string $builderClass)
     {
         $this->expectException(BadMethodCallException::class);
 
