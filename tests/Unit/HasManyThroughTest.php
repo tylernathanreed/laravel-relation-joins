@@ -1,16 +1,16 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Unit;
+namespace Tests\Unit;
 
 use BadMethodCallException;
 use Closure;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentCountryModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentSoftDeletingCountryModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentSoftDeletingUserModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
+use Tests\Models\EloquentCountryModelStub;
+use Tests\Models\EloquentPostModelStub;
+use Tests\Models\EloquentSoftDeletingCountryModelStub;
+use Tests\Models\EloquentSoftDeletingUserModelStub;
+use Tests\Models\EloquentUserModelStub;
 
 class HasManyThroughTest extends TestCase
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Unit;
+namespace Tests\Unit;
 
 use Closure;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentCountryModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentPolymorphicCommentModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
+use Tests\Models\EloquentCountryModelStub;
+use Tests\Models\EloquentPolymorphicCommentModelStub;
+use Tests\Models\EloquentUserModelStub;
 
 class JoinsRelationshipsTest extends TestCase
 {

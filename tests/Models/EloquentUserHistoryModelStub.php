@@ -1,6 +1,6 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Models;
+namespace Tests\Models;
 
 class EloquentUserHistoryModelStub extends EloquentRelationJoinModelStub
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Unit;
+namespace Tests\Unit;
 
 use Closure;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
+use Tests\Models\EloquentUserModelStub;
 
 class JoinOperationsTest extends TestCase
 {

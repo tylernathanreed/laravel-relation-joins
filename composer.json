@@ -37,7 +37,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Reedware\\LaravelRelationJoins\\Tests\\": "tests/"
+            "Tests\\": "tests/"
         }
     },
     "extra": {

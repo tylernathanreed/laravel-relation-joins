@@ -1,6 +1,6 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Models;
+namespace Tests\Models;
 
 class EloquentFileModelStub extends EloquentRelationJoinModelStub
 {

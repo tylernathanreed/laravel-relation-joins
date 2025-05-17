@@ -1,14 +1,14 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Unit;
+namespace Tests\Unit;
 
 use Closure;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentFileModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentImageModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
+use Tests\Models\EloquentFileModelStub;
+use Tests\Models\EloquentImageModelStub;
+use Tests\Models\EloquentPostModelStub;
+use Tests\Models\EloquentUserModelStub;
 use RuntimeException;
 
 class MorphToTest extends TestCase

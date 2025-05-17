@@ -1,12 +1,12 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Unit;
+namespace Tests\Unit;
 
 use Closure;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentTagModelStub;
+use Tests\Models\EloquentPostModelStub;
+use Tests\Models\EloquentTagModelStub;
 
 class MorphedByManyTest extends TestCase
 {

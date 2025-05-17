@@ -1,6 +1,6 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Models;
+namespace Tests\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Unit;
+namespace Tests\Unit;
 
 use Closure;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentPhoneModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentSoftDeletingPhoneModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentSoftDeletingUserModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
+use Tests\Models\EloquentPhoneModelStub;
+use Tests\Models\EloquentPostModelStub;
+use Tests\Models\EloquentSoftDeletingPhoneModelStub;
+use Tests\Models\EloquentSoftDeletingUserModelStub;
+use Tests\Models\EloquentUserModelStub;
 
 class HasOneTest extends TestCase
 {

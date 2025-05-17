@@ -1,12 +1,12 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Unit;
+namespace Tests\Unit;
 
 use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\Attributes\Test;
-use Reedware\LaravelRelationJoins\Tests\CustomRelation;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
+use Tests\CustomRelation;
+use Tests\Models\EloquentUserModelStub;
 
 class RelationJoinQueryTest extends TestCase
 {

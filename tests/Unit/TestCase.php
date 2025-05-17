@@ -1,6 +1,6 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Unit;
+namespace Tests\Unit;
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Connection;
@@ -13,8 +13,8 @@ use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as TestBase;
 use Reedware\LaravelRelationJoins\LaravelRelationJoinServiceProvider;
-use Reedware\LaravelRelationJoins\Tests\CustomBuilder;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentRelationJoinModelStub;
+use Tests\CustomBuilder;
+use Tests\Models\EloquentRelationJoinModelStub;
 
 class TestCase extends TestBase
 {

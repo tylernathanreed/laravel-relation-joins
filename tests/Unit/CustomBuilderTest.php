@@ -1,12 +1,12 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Unit;
+namespace Tests\Unit;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use PHPUnit\Framework\Attributes\Test;
-use Reedware\LaravelRelationJoins\Tests\CustomBuilder;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentPostModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
+use Tests\CustomBuilder;
+use Tests\Models\EloquentPostModelStub;
+use Tests\Models\EloquentUserModelStub;
 
 class CustomBuilderTest extends TestCase
 {

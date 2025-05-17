@@ -1,14 +1,14 @@
 <?php
 
-namespace Reedware\LaravelRelationJoins\Tests\Unit;
+namespace Tests\Unit;
 
 use Closure;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentRoleModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentSoftDeletingUserModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentUserModelStub;
-use Reedware\LaravelRelationJoins\Tests\Models\EloquentVideoModelStub;
+use Tests\Models\EloquentRoleModelStub;
+use Tests\Models\EloquentSoftDeletingUserModelStub;
+use Tests\Models\EloquentUserModelStub;
+use Tests\Models\EloquentVideoModelStub;
 
 class BelongsToManyTest extends TestCase
 {
