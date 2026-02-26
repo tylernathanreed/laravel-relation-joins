@@ -17,13 +17,13 @@
     ],
     "require": {
         "php": ">=8.2",
-        "illuminate/contracts": "^11.0|^12.0",
-        "illuminate/database": "^11.0|^12.0",
-        "illuminate/support": "^11.0|^12.0"
+        "illuminate/contracts": "^11.0|^12.0|^13.0",
+        "illuminate/database": "^11.0|^12.0|^13.0",
+        "illuminate/support": "^11.0|^12.0|^13.0"
     },
     "require-dev": {
-        "illuminate/container": "^11.0|^12.0",
-        "larastan/larastan": "^2.9",
+        "illuminate/container": "^11.0|^12.0|^13.0",
+        "larastan/larastan": "^2.9|dev-l13",
         "laravel/pint": "^1.5",
         "mockery/mockery": "^1.6.6",
         "php-coveralls/php-coveralls": "^2.4",
