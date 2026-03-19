@@ -134,7 +134,7 @@ class JoinsRelationships
                         : array_combine($relations, $callbacks)
                 )
                 : [end($relations) => $callbacks];
-            
+
             $used = [];
 
             while (count($relations) > 0) {
