@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use Closure;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
@@ -20,7 +21,7 @@ class MorphToTest extends TestCase
     {
         $this->connection
             ->shouldReceive('select')
-            ->with($sql, $bindings, true)
+            ->with($sql, $bindings, true, Mockery::any())
             ->andReturn(json_decode(json_encode($results), false));
     }
 
