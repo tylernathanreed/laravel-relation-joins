@@ -134,11 +134,14 @@ class JoinsRelationships
                         : array_combine($relations, $callbacks)
                 )
                 : [end($relations) => $callbacks];
+            
+            $used = [];
 
             while (count($relations) > 0) {
                 $relation = array_shift($relations);
                 $callback = $callbacks[$relation] ?? null;
                 $useThrough = count($relations) > 0 && $through;
+                $used[] = $relation;
 
                 $relatedQuery = $this->joinRelation(
                     $relation,
@@ -148,6 +151,15 @@ class JoinsRelationships
                     $relatedQuery,
                     $morphTypes
                 );
+            }
+
+            $remaining = array_values(array_diff(array_keys($callbacks), $used));
+
+            if (count($remaining) > 0) {
+                throw new RuntimeException(sprintf(
+                    'Join has unused relations %s. Did you spell something incorrectly?',
+                    json_encode($remaining),
+                ));
             }
 
             return $this;

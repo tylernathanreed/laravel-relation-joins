@@ -231,4 +231,24 @@ class JoinsRelationshipsTest extends TestCase
 
         $query(new EloquentPolymorphicCommentModelStub)->joinMorphRelation('commentable', []);
     }
+
+    #[Test]
+    #[DataProvider('queryDataProvider')]
+    public function it_catches_missing_relations_on_array_syntax_joins(Closure $query, string $builderClass): void
+    {
+        $this->expectExceptionMessage(sprintf(
+            'Join has unused relations %s. Did you spell something incorrectly?',
+            '["likes_spelled_wrong"]',
+        ));
+
+        $query(new EloquentUserModelStub)
+            ->joinRelation('posts.comments.likes', [
+                'posts' => function ($join) {
+                    $join->where('posts.active', '=', true);
+                },
+                'likes_spelled_wrong' => function ($join) {
+                    $join->where('likes.emoji', '=', 'thumbs-up');
+                },
+            ]);
+    }
 }
