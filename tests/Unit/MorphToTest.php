@@ -21,7 +21,7 @@ class MorphToTest extends TestCase
     {
         $this->connection
             ->shouldReceive('select')
-            ->with($sql, $bindings, true, Mockery::any())
+            ->with($sql, $bindings, true, Mockery::andAnyOtherArgs())
             ->andReturn(json_decode(json_encode($results), false));
     }
 
