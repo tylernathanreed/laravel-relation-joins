@@ -61,7 +61,7 @@ class TestCase extends TestBase
 
         $this->connection
             ->shouldReceive('getQueryGrammar')
-            ->andReturn($grammar = new Grammar);
+            ->andReturn($grammar = new Grammar($this->connection));
 
         $this->connection
             ->shouldReceive('getPostProcessor')
@@ -72,6 +72,10 @@ class TestCase extends TestBase
             ->andReturnUsing(function () use ($grammar) {
                 return new BaseBuilder($this->connection, $grammar, $this->processor);
             });
+
+        $this->connection
+            ->shouldReceive('getTablePrefix')
+            ->andReturn(null);
     }
 
     /**

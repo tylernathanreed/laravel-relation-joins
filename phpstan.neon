@@ -13,6 +13,9 @@ parameters:
         - stubs/Relation.stub
     ignoreErrors:
         -
+            path: src/Mixins
+            identifier: varTag.nativeType
+        -
             message: '#Call to protected method \w+\(\) of class Illuminate\\Database\\Eloquent\\Builder.#'
             path: src/Mixins/JoinsRelationships.php
         -

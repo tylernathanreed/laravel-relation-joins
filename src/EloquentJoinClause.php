@@ -40,6 +40,7 @@ class EloquentJoinClause extends JoinClause
         parent::__construct(
             $parentJoin->newParentQuery(),
             $parentJoin->type,
+            // @phpstan-ignore argument.type (Laravel Docblock is wrong)
             $parentJoin->table
         );
 
@@ -117,7 +118,12 @@ class EloquentJoinClause extends JoinClause
      */
     public function newQuery(): JoinClause
     {
-        return new JoinClause($this->newParentQuery(), $this->type, $this->table);
+        return new JoinClause(
+            $this->newParentQuery(),
+            $this->type,
+            // @phpstan-ignore argument.type (Laravel docblock is wrong)
+            $this->table
+        );
     }
 
     /**

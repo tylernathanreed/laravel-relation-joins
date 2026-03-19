@@ -56,6 +56,7 @@ class JoinsRelationships
 
                 $relation = ($relatedQuery ?: $this)->getRelationWithoutConstraints($relationName);
 
+                // @phpstan-ignore instanceof.alwaysTrue (Laravel docblock makes non-guaranteed assumption)
                 if (! $relation instanceof Relation) {
                     throw new LogicException(sprintf(
                         '%s::%s must return a relationship instance.',
@@ -101,7 +102,6 @@ class JoinsRelationships
             );
 
             return ! is_null($relatedQuery) ? $joinQuery : $this;
-
         };
     }
 
@@ -257,7 +257,6 @@ class JoinsRelationships
             }
 
             $this->join($baseJoinQuery->from, function ($join) use ($baseJoinQuery) {
-
                 // There's an issue with mixing query builder where clauses
                 // with join builder where clauses. To solve for this, we
                 // have to recursively replace the nested where queries.
@@ -265,7 +264,6 @@ class JoinsRelationships
                 $this->replaceWhereNestedQueryBuildersWithJoinBuilders($baseJoinQuery);
 
                 $join->mergeWheres($baseJoinQuery->wheres, $baseJoinQuery->bindings['where']);
-
             }, null, null, $type);
 
             return $this;

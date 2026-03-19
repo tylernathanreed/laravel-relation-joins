@@ -25,7 +25,7 @@
         "illuminate/container": "^12.55|^13.1",
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.5",
-        "mockery/mockery": "^1.6.6",
+        "mockery/mockery": "^1.6.12",
         "php-coveralls/php-coveralls": "^2.4",
         "phpunit/phpunit": "^10.5",
         "reedware/sail-lite": "^1.2",
@@ -59,13 +59,12 @@
             "php-coveralls -v --dry-run"
         ],
         "test:static": "phpstan",
-        "test:style": "pint --test",
-        "test:style-fix": "pint",
+        "test:lint": "pint --test",
+        "test:lint:fix": "pint",
         "test:suite": "phpunit",
         "test": [
-            "@test:style",
+            "@test:lint",
             "@test:static",
-            "@test:suite",
             "@test:coverage"
         ]
     }
