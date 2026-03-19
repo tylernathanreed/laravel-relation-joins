@@ -17,12 +17,12 @@
     ],
     "require": {
         "php": ">=8.2",
-        "illuminate/contracts": "^12.0|^13.0",
-        "illuminate/database": "^12.0|^13.0",
-        "illuminate/support": "^12.0|^13.0"
+        "illuminate/contracts": "^12.55|^13.1",
+        "illuminate/database": "^12.55|^13.1",
+        "illuminate/support": "^12.55|^13.1"
     },
     "require-dev": {
-        "illuminate/container": "^12.0|^13.0",
+        "illuminate/container": "^12.55|^13.1",
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.5",
         "mockery/mockery": "^1.6.6",
