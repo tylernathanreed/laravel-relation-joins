@@ -4,20 +4,10 @@ parameters:
         - src
     excludePaths:
         - tests/*
-    stubFiles:
-        - stubs/BelongsToMany.stub
-        - stubs/EloquentBuilder.stub
-        - stubs/EloquentCollection.stub
-        - stubs/Model.stub
-        - stubs/QueryBuilder.stub
-        - stubs/Relation.stub
     ignoreErrors:
         -
             path: src/Mixins
             identifier: varTag.nativeType
         -
             message: '#Call to protected method \w+\(\) of class Illuminate\\Database\\Eloquent\\Builder.#'
-            path: src/Mixins/JoinsRelationships.php
-        -
-            message: '#Access to protected property Illuminate\\Database\\Eloquent\\Builder::\$\w+.#'
             path: src/Mixins/JoinsRelationships.php
