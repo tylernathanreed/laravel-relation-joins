@@ -1,6 +1,6 @@
 # Laravel Relation Joins
 
-[![Laravel Version](https://img.shields.io/badge/Laravel-11.x%2F12.x-blue)](https://laravel.com/)
+[![Laravel Version](https://img.shields.io/badge/Laravel-12.x%2F13.x-blue)](https://laravel.com/)
 [![Tests](https://github.com/tylernathanreed/laravel-relation-joins/actions/workflows/tests.yml/badge.svg)](https://github.com/tylernathanreed/laravel-relation-joins/actions/workflows/tests.yml)
 [![Lint](https://github.com/tylernathanreed/laravel-relation-joins/actions/workflows/coding-standards.yml/badge.svg)](https://github.com/tylernathanreed/laravel-relation-joins/actions/workflows/coding-standards.yml)
 [![Code Coverage](https://coveralls.io/repos/github/tylernathanreed/laravel-relation-joins/badge.svg?branch=master)](https://coveralls.io/github/tylernathanreed/laravel-relation-joins?branch=master)
@@ -69,6 +69,7 @@ This package is maintained with the latest version of Laravel in mind, but suppo
 
 | Package | Laravel     | PHP        |
 | :-----: | :---------: | :--------: |
+|     9.x | 12.x - 13.x | 8.2 - 8.5+ |
 |     8.x | 11.x - 12.x | 8.2 - 8.4+ |
 |     7.x | 10.x - 11.x | 8.2 - 8.4+ |
 |     6.x | 10.x - 11.x | 8.1 - 8.3+ |
