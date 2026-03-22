@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\CustomBuilder;
 use Tests\Models\EloquentPostModelStub;
@@ -36,5 +37,19 @@ class CustomBuilderTest extends TestCase
         $builder = (new EloquentUserModelStub)->newQuery();
 
         $this->assertEquals(EloquentBuilder::class, get_class($builder));
+    }
+
+    #[Test]
+    public function can_call_join()
+    {
+        $this->connection->shouldIgnoreMissing();
+
+        $builder = (new EloquentPostModelStub)->newQuery();
+
+        $this->assertInstanceOf(Collection::class, $builder->leftJoinRelation('user')->get());
+
+        $builder = (new EloquentUserModelStub)->useCustomBuilder()->newQuery();
+
+        $this->assertInstanceOf(Collection::class, $builder->leftJoinRelation('posts')->get());
     }
 }
