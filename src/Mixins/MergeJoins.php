@@ -48,7 +48,7 @@ class MergeJoins
                     return $where;
                 }
 
-                assert(method_exists($this, 'replaceWhereNestedQueryBuildersWithJoinBuilders'));
+                assert(static::hasMacro('replaceWhereNestedQueryBuildersWithJoinBuilders'));
                 $this->replaceWhereNestedQueryBuildersWithJoinBuilders($where['query']);
 
                 $joinClause = new JoinClause($where['query'], 'inner', $where['query']->from);

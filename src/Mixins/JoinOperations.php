@@ -41,7 +41,7 @@ class JoinOperations
          */
         return function (Closure|string $first, ?string $operator = null, ?string $second = null): Builder {
             /** @var Builder $this */
-            assert(method_exists($this, 'on'));
+            assert(static::hasMacro('on'));
 
             return $this->on($first, $operator, $second, 'or');
         };
