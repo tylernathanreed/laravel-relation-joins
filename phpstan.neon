@@ -9,5 +9,11 @@ parameters:
             path: src/Mixins
             identifier: varTag.nativeType
         -
+            path: src/Mixins
+            identifier: method.notFound
+        -
+            path: src/Mixins
+            identifier: staticMethod.notFound
+        -
             message: '#Call to protected method \w+\(\) of class Illuminate\\Database\\Eloquent\\Builder.#'
             path: src/Mixins/JoinsRelationships.php
