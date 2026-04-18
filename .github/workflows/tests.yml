@@ -25,6 +25,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pdo, sqlite, pdo_sqlite, gd
+          ini-values: zend.assertions=1,assert.active=1
           tools: composer:v2
           coverage: none
 
