@@ -21,7 +21,7 @@ class EloquentJoinClause extends JoinClause
     /**
      * The eloquent query representing this join.
      *
-     * @var Eloquent<Model>
+     * @var Eloquent<TModel>
      */
     public Eloquent $eloquent;
 

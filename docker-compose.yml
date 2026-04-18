@@ -1,9 +1,10 @@
 services:
     dev:
         build:
-            context: ./vendor/reedware/sail-lite/runtimes/8.4
+            context: ./vendor/reedware/sail-lite/runtimes/basic
             dockerfile: Dockerfile
             args:
+                PHP: '${PHP_VERSION:-8.4}'
                 WWWGROUP: '${WWWGROUP}'
         image: laravel-relation-joins
         environment:

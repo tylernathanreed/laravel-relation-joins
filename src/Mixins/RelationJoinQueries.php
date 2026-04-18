@@ -30,7 +30,7 @@ class RelationJoinQueries
          * @return Builder<TRelatedModel>
          */
         return function (Builder $query, Builder $parentQuery, string $type = 'inner', ?string $alias = null): Builder {
-            /** @var Relation<TRelatedModel,TDeclaringModel,TResult> $this */
+            /** @var Relation<Model,Model,TResult> $this */
             return RelationJoinQuery::get($this, $query, $parentQuery, $type, $alias);
         };
     }
