@@ -46,6 +46,7 @@ class JoinsRelationships
             if (is_string($relation)) {
                 if (strpos($relation, '.') !== false) {
                     assert(method_exists($this, 'joinNestedRelation'));
+
                     return $this->joinNestedRelation($relation, $callback, $type, $through, $morphTypes);
                 }
 
@@ -83,6 +84,7 @@ class JoinsRelationships
             // a modified version of this join, and they don't want to do it all over again.
             if ($through) {
                 assert(method_exists($this, 'applyJoinScopes'));
+
                 return $this->applyJoinScopes($joinQuery);
             }
 
@@ -349,6 +351,7 @@ class JoinsRelationships
         return function (string $relation, Closure|array|null $callback = null, bool $through = false): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'left', $through);
         };
     }
@@ -366,6 +369,7 @@ class JoinsRelationships
         return function (string $relation, Closure|array|null $callback = null, bool $through = false): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'right', $through);
         };
     }
@@ -383,6 +387,7 @@ class JoinsRelationships
         return function (string $relation, Closure|array|null $callback = null, bool $through = false): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'cross', $through);
         };
     }
@@ -400,6 +405,7 @@ class JoinsRelationships
         return function (string $relation, Closure|array|null $callback = null, string $type = 'inner'): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, $type, true);
         };
     }
@@ -417,6 +423,7 @@ class JoinsRelationships
         return function (string $relation, Closure|array|null $callback = null): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'left', true);
         };
     }
@@ -434,6 +441,7 @@ class JoinsRelationships
         return function (string $relation, Closure|array|null $callback = null): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'right', true);
         };
     }
@@ -451,6 +459,7 @@ class JoinsRelationships
         return function (string $relation, Closure|array|null $callback = null): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'cross', true);
         };
     }
@@ -477,6 +486,7 @@ class JoinsRelationships
         ): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, $type, $through, $relatedQuery, $morphTypes);
         };
     }
@@ -501,6 +511,7 @@ class JoinsRelationships
         ): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'left', $through, null, $morphTypes);
         };
     }
@@ -525,6 +536,7 @@ class JoinsRelationships
         ): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'right', $through, null, $morphTypes);
         };
     }
@@ -549,6 +561,7 @@ class JoinsRelationships
         ): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'cross', $through, null, $morphTypes);
         };
     }
@@ -573,6 +586,7 @@ class JoinsRelationships
         ): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, $type, true, null, $morphTypes);
         };
     }
@@ -596,6 +610,7 @@ class JoinsRelationships
         ): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'left', true, null, $morphTypes);
         };
     }
@@ -619,6 +634,7 @@ class JoinsRelationships
         ): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'right', true, null, $morphTypes);
         };
     }
@@ -642,6 +658,7 @@ class JoinsRelationships
         ): Builder {
             /** @var Builder<TModel> $this */
             assert(method_exists($this, 'joinRelation'));
+
             return $this->joinRelation($relation, $callback, 'cross', true, null, $morphTypes);
         };
     }
